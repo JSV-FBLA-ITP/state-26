@@ -38,6 +38,8 @@ export async function savePetToCloud(petData: PetData): Promise<{ data: any; err
                 shop_multipliers: petData.shop_multipliers,
                 total_expenses: petData.totalExpenses,
                 savings_goal: petData.savingsGoal,
+                monthly_income: petData.monthlyIncome,
+                monthly_expenses: petData.monthlyExpenses,
             })
             .select()
             .single();
@@ -137,6 +139,8 @@ export async function loadPetFromCloud(petId: string): Promise<{ data: PetData |
             savingsCurrent: (data.stats.money || 0) - (data.total_expenses || 0),
             lastInteraction: Date.now(),
             interactionCount: 0,
+            monthlyIncome: data.monthly_income,
+            monthlyExpenses: data.monthly_expenses,
         };
 
         return { data: mappedData, error: null };

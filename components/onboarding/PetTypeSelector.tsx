@@ -5,7 +5,7 @@ import { PawPrint, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 
 const PET_TYPES = [
-    { id: 'dog', name: 'Dog', icon: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&q=80' },
+    { id: 'dog', name: 'Dog', icon: 'https://plus.unsplash.com/premium_photo-1694819488591-a43907d1c5cc?q=80&w=828&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
     { id: 'cat', name: 'Cat', icon: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&q=80' },
     { id: 'hamster', name: 'Hamster', icon: 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=400&q=80' },
     { id: 'rabbit', name: 'Rabbit', icon: 'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=400&q=80' },

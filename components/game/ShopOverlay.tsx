@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { X, ArrowUpRight, ShoppingCart, Zap, Heart, Utensils, Coffee } from 'lucide-react';
+import { X, ShoppingCart, Zap, Heart, Utensils, Coffee, Coins } from 'lucide-react';
 
 interface Props {
     isOpen: boolean;
@@ -12,17 +12,33 @@ interface Props {
 }
 
 const UPGRADES = [
-    { id: 'hunger', name: 'Auto-Feeder', cost: 150, icon: Utensils, desc: 'Slows down hunger decay significantly.' },
-    { id: 'happy', name: 'Toy Box', cost: 200, icon: Heart, desc: 'Increases happiness gain from play.' },
-    { id: 'energy', name: 'Premium Bed', cost: 250, icon: Zap, desc: 'Restores energy faster while sleeping.' },
-    { id: 'health', name: 'Vitamin Pack', cost: 300, icon: Coffee, desc: 'Boosts base health recovery.' },
+    {
+        id: 'hunger', name: 'Auto-Feeder', cost: 150, icon: Utensils,
+        desc: 'Slows down hunger decay significantly.',
+        bg: 'bg-orange-500/10', border: 'hover:border-orange-500/50', iconColor: 'text-orange-500', iconBg: 'bg-orange-500/15',
+    },
+    {
+        id: 'happy', name: 'Toy Box', cost: 200, icon: Heart,
+        desc: 'Increases happiness gain from play sessions.',
+        bg: 'bg-emerald-500/10', border: 'hover:border-emerald-500/50', iconColor: 'text-emerald-500', iconBg: 'bg-emerald-500/15',
+    },
+    {
+        id: 'energy', name: 'Premium Bed', cost: 250, icon: Zap,
+        desc: 'Restores energy faster while your pet sleeps.',
+        bg: 'bg-yellow/10', border: 'hover:border-yellow/50', iconColor: 'text-yellow', iconBg: 'bg-yellow/15',
+    },
+    {
+        id: 'health', name: 'Vitamin Pack', cost: 300, icon: Coffee,
+        desc: 'Boosts base health recovery rate permanently.',
+        bg: 'bg-rose-500/10', border: 'hover:border-rose-500/50', iconColor: 'text-rose-500', iconBg: 'bg-rose-500/15',
+    },
 ];
 
 export function ShopOverlay({ isOpen, onClose, money, onPurchase }: Props) {
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-100 flex items-end sm:items-center justify-center p-4">
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -35,60 +51,73 @@ export function ShopOverlay({ isOpen, onClose, money, onPurchase }: Props) {
                         initial={{ scale: 0.9, opacity: 0, y: 20 }}
                         animate={{ scale: 1, opacity: 1, y: 0 }}
                         exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                        className="relative w-full max-w-2xl bg-card rounded-[2.5rem] shadow-2xl overflow-hidden border border-border/50"
+                        transition={{ ease: 'easeOut', duration: 0.25 }}
+                        className="relative w-full max-w-2xl bg-card/90 backdrop-blur-2xl rounded-[2.5rem] shadow-2xl overflow-hidden border border-border/50"
                     >
-                        <div className="p-8 border-b border-border/50 flex items-center justify-between bg-primary/5">
+                        {/* Header */}
+                        <div className="px-8 py-6 border-b border-border/50 flex items-center justify-between bg-linear-to-r from-violet-500/10 to-transparent">
                             <div className="flex items-center gap-4">
-                                <div className="p-3 rounded-2xl bg-primary/10">
-                                    <ShoppingCart className="w-6 h-6 text-primary" />
+                                <div className="p-3 rounded-2xl bg-violet-500/15">
+                                    <ShoppingCart className="w-6 h-6 text-violet-500" />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-black tracking-tight uppercase">Pet Shop</h2>
-                                    <p className="text-sm text-muted-foreground font-bold">Enhance your companion's life</p>
+                                    <h2 className="text-2xl font-black tracking-tight">Pet Shop</h2>
+                                    <p className="text-sm text-muted-foreground font-bold">Permanent upgrades for your companion</p>
                                 </div>
                             </div>
                             <Button variant="ghost" size="icon" onClick={onClose} className="rounded-xl">
-                                <X className="w-6 h-6" />
+                                <X className="w-5 h-5" />
                             </Button>
                         </div>
 
-                        <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {UPGRADES.map((item) => (
-                                <div
-                                    key={item.id}
-                                    className="p-6 rounded-3xl bg-muted/30 border border-border/50 hover:border-primary/30 transition-all group"
-                                >
-                                    <div className="flex items-start justify-between mb-4">
-                                        <div className="p-3 rounded-2xl bg-white shadow-sm border border-border/50 group-hover:scale-110 transition-transform">
-                                            <item.icon className="w-6 h-6 text-primary" />
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="text-[10px] font-black uppercase text-muted-foreground mb-1">Cost</p>
-                                            <p className="text-lg font-black text-primary">${item.cost}</p>
-                                        </div>
-                                    </div>
-                                    <h3 className="font-bold text-lg mb-1">{item.name}</h3>
-                                    <p className="text-sm text-muted-foreground mb-6">{item.desc}</p>
-
-                                    <Button
-                                        variant={money >= item.cost ? 'default' : 'secondary'}
-                                        disabled={money < item.cost}
-                                        onClick={() => onPurchase(item.id, item.cost)}
-                                        className="w-full rounded-xl font-bold"
+                        {/* Grid */}
+                        <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {UPGRADES.map((item, i) => {
+                                const canAfford = money >= item.cost;
+                                return (
+                                    <motion.div
+                                        key={item.id}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: i * 0.07 }}
+                                        className={`p-5 rounded-3xl border border-border/50 ${item.border} ${item.bg} transition-all group`}
                                     >
-                                        {money >= item.cost ? 'Purchase Upgrade' : 'Insufficient Funds'}
-                                        <ArrowUpRight className="ml-2 w-4 h-4" />
-                                    </Button>
-                                </div>
-                            ))}
+                                        <div className="flex items-start justify-between mb-4">
+                                            <div className={`w-11 h-11 rounded-xl ${item.iconBg} flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                                                <item.icon className={`w-5 h-5 ${item.iconColor}`} />
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-[9px] font-black uppercase text-muted-foreground mb-0.5">Cost</p>
+                                                <p className={`text-lg font-black ${canAfford ? item.iconColor : 'text-muted-foreground'}`}>${item.cost}</p>
+                                            </div>
+                                        </div>
+                                        <h3 className="font-bold text-base mb-1">{item.name}</h3>
+                                        <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{item.desc}</p>
+                                        <Button
+                                            disabled={!canAfford}
+                                            onClick={() => onPurchase(item.id, item.cost)}
+                                            className={`w-full rounded-xl font-bold text-sm h-10 ${canAfford ? '' : 'opacity-50'}`}
+                                            variant={canAfford ? 'default' : 'secondary'}
+                                        >
+                                            {canAfford ? 'Buy Upgrade' : 'Insufficient Funds'}
+                                        </Button>
+                                    </motion.div>
+                                );
+                            })}
                         </div>
 
-                        <div className="p-8 bg-muted/50 border-t border-border/50 flex justify-between items-center">
-                            <div>
-                                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Available Balance</p>
-                                <p className="text-2xl font-black text-primary">${money}</p>
+                        {/* Footer balance */}
+                        <div className="px-8 py-5 bg-muted/30 border-t border-border/50 flex justify-between items-center">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 rounded-xl bg-yellow/10">
+                                    <Coins className="w-5 h-5 text-yellow" />
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Balance</p>
+                                    <p className="text-xl font-black text-yellow">${money}</p>
+                                </div>
                             </div>
-                            <Button variant="outline" onClick={onClose} className="rounded-xl">Close Shop</Button>
+                            <Button variant="outline" onClick={onClose} className="rounded-xl font-bold">Done</Button>
                         </div>
                     </motion.div>
                 </div>

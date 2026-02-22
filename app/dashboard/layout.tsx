@@ -13,17 +13,23 @@ export default function DashboardLayout({
         <div className="min-h-screen bg-background text-foreground flex flex-col overflow-hidden">
             <DashboardTopbar />
             {/* Animated Background Mesh */}
-            <div className="fixed inset-0 pointer-events-none">
-                <div className="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-primary/5 rounded-full blur-[120px]" />
-                <div className="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-indigo-500/5 rounded-full blur-[120px]" />
+            <div className="fixed inset-0 pointer-events-none -z-10">
+                <div className="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-violet-500/5 rounded-full blur-[120px] animate-blob" />
+                <div className="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-fuchsia-500/5 rounded-full blur-[120px] animate-blob animation-delay-2000" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/3 h-1/3 bg-cyan-500/3 rounded-full blur-[100px] animate-blob animation-delay-4000" />
             </div>
 
             <main className="flex-1 relative z-10 overflow-y-auto">
-                <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading Pet Data...</div>}>
+                <Suspense fallback={
+                    <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-primary/20 animate-pulse" />
+                        <p className="text-muted-foreground font-semibold">Loading your companion…</p>
+                    </div>
+                }>
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        transition={{ duration: 0.5 }}
+                        transition={{ duration: 0.4 }}
                         className="h-full"
                     >
                         {children}

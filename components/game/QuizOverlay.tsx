@@ -101,15 +101,15 @@ export function QuizOverlay({ isOpen, onClose, onComplete }: Props) {
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                         {[
-                                            { id: 'easy', label: 'Beginner', reward: '$50', color: 'bg-emerald-50 text-emerald-600' },
-                                            { id: 'medium', label: 'Intermediate', reward: '$100', color: 'bg-amber-50 text-amber-600' },
-                                            { id: 'hard', label: 'Financial Pro', reward: '$200', color: 'bg-rose-50 text-rose-600' },
+                                            { id: 'easy', label: 'Beginner', reward: '$50', bg: 'bg-emerald-500/10 hover:bg-emerald-500/20 border-emerald-500/30 hover:border-emerald-500', text: 'text-emerald-500' },
+                                            { id: 'medium', label: 'Intermediate', reward: '$100', bg: 'bg-amber-500/10 hover:bg-amber-500/20 border-amber-500/30 hover:border-amber-500', text: 'text-amber-500' },
+                                            { id: 'hard', label: 'Financial Pro', reward: '$200', bg: 'bg-rose-500/10 hover:bg-rose-500/20 border-rose-500/30 hover:border-rose-500', text: 'text-rose-500' },
                                         ].map((d) => (
                                             <Button
                                                 key={d.id}
                                                 onClick={() => handleLevelSelect(d.id as any)}
                                                 variant="outline"
-                                                className={`h-32 rounded-3xl flex flex-col gap-2 border-2 hover:border-primary transition-all ${d.color}`}
+                                                className={`h-32 rounded-3xl flex flex-col gap-2 border-2 transition-all ${d.bg} ${d.text}`}
                                             >
                                                 <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Level</span>
                                                 <span className="text-lg font-black">{d.label}</span>

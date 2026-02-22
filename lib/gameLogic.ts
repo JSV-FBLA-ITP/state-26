@@ -38,6 +38,8 @@ export interface PetData {
     shop_multipliers: Record<string, number>;
     shop_upgrades: Record<string, number>;
     monthData: MonthData;
+    monthlyIncome?: number;
+    monthlyExpenses?: number;
 }
 
 export interface QuizQuestion {
