@@ -11,7 +11,7 @@ interface Props {
 }
 
 const tools = [
-    { label: 'Shop', icon: ShoppingBag, bg: 'bg-violet-500/10 group-hover:bg-violet-500/20', color: 'text-violet-500', glow: 'hover:shadow-violet-500/20' },
+    { label: 'Shop', icon: ShoppingBag, bg: 'bg-blue-500/10 group-hover:bg-blue-500/20', color: 'text-blue-500', glow: 'hover:shadow-blue-500/20' },
     { label: 'Quiz', icon: GraduationCap, bg: 'bg-amber-500/10 group-hover:bg-amber-500/20', color: 'text-amber-500', glow: 'hover:shadow-amber-500/20' },
     { label: 'Stats', icon: History, bg: 'bg-emerald-500/10 group-hover:bg-emerald-500/20', color: 'text-emerald-500', glow: 'hover:shadow-emerald-500/20' },
     { label: 'Settings', icon: Settings2, bg: 'bg-muted/50 group-hover:bg-muted', color: 'text-muted-foreground', glow: '' },

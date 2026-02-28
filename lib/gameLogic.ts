@@ -174,23 +174,46 @@ export function getEmotionData(stats: PetStats): EmotionData {
     }
 }
 
-export function applyMonthlyStatDecay(petData: PetData, currentMonth: number): PetStats {
-    const decayMultiplier = 1 + (currentMonth * 0.1);
-    const hungerLoss = Math.ceil(15 * decayMultiplier);
-    const happyLoss = Math.ceil(20 * decayMultiplier);
-    const energyLoss = Math.ceil(10 * decayMultiplier);
+export function applyMonthlyStatDecay(stats: PetStats, currentMonth: number): PetStats {
+    const decayMultiplier = 1 + (currentMonth * 0.05);
+    const hungerLoss = Math.ceil(20 * decayMultiplier);
+    const happyLoss = Math.ceil(15 * decayMultiplier);
+    const energyLoss = Math.ceil(25 * decayMultiplier);
 
-    const newStats = { ...petData.stats };
+    const newStats = { ...stats };
     newStats.hunger = Math.max(0, newStats.hunger - hungerLoss);
     newStats.happy = Math.max(0, newStats.happy - happyLoss);
     newStats.energy = Math.max(0, newStats.energy - energyLoss);
 
-    if (newStats.hunger < 20 || newStats.happy < 20) {
-        const healthLoss = Math.ceil(10 * decayMultiplier);
+    // Health suffers if other stats are low
+    if (newStats.hunger < 20 || newStats.happy < 20 || newStats.energy < 20) {
+        const healthLoss = Math.ceil(15 * decayMultiplier);
         newStats.health = Math.max(0, newStats.health - healthLoss);
     }
 
     return newStats;
+}
+
+export function processNextMonth(pet: PetData): PetData {
+    const newPet = { ...pet };
+    const income = pet.monthlyIncome || 0;
+    const expenses = pet.monthlyExpenses || 0;
+    const netSavings = income - expenses;
+
+    // 1. Financial Update
+    newPet.stats.money += netSavings;
+
+    // 2. Stat Decay
+    newPet.stats = applyMonthlyStatDecay(newPet.stats, newPet.monthData.currentMonth);
+
+    // 3. Month Increment
+    newPet.monthData.currentMonth += 1;
+
+    // 4. Refresh Required Actions
+    newPet.monthData.requiredActions = selectRandomRequiredActions();
+    newPet.monthData.actionsCompleted = {};
+
+    return newPet;
 }
 
 export function getRandomMessage(messages: string[]): string {

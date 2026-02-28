@@ -42,19 +42,19 @@ const features = [
         icon: TrendingUp,
         title: 'Financial Education',
         desc: "Learn real-world budgeting, compound interest, and expense tracking. Managing your pet's health requires mastering your own financial goals.",
-        gradient: 'from-violet-500/20 to-violet-500/5',
-        border: 'hover:border-violet-500/50',
-        iconBg: 'bg-violet-500/15',
-        iconColor: 'text-violet-500',
+        gradient: 'from-blue-500/20 to-blue-500/5',
+        border: 'hover:border-blue-500/50',
+        iconBg: 'bg-blue-500/15',
+        iconColor: 'text-blue-500',
     },
     {
         icon: Globe,
         title: 'Cloud Persistence',
         desc: 'Access your pet journey from any device. Our architecture ensures zero-latency state management across the globe.',
-        gradient: 'from-cyan-500/20 to-cyan-500/5',
-        border: 'hover:border-cyan-500/50',
-        iconBg: 'bg-cyan-500/15',
-        iconColor: 'text-cyan-500',
+        gradient: 'from-sky-500/20 to-sky-500/5',
+        border: 'hover:border-sky-500/50',
+        iconBg: 'bg-sky-500/15',
+        iconColor: 'text-sky-500',
     },
 ];
 
@@ -85,8 +85,8 @@ export default function LearnMorePage() {
                 {/* Hero */}
                 <section className="relative px-6 pt-24 pb-20 text-center overflow-hidden">
                     <div className="pointer-events-none absolute inset-0 -z-10">
-                        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full bg-violet-500/20 blur-[120px] animate-blob" />
-                        <div className="absolute top-20 -right-20 w-[300px] h-[300px] rounded-full bg-fuchsia-500/15 blur-[100px] animate-blob animation-delay-2000" />
+                        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full bg-blue-500/20 blur-[120px] animate-blob" />
+                        <div className="absolute top-20 -right-20 w-[300px] h-[300px] rounded-full bg-emerald-500/15 blur-[100px] animate-blob animation-delay-2000" />
                     </div>
                     <div className="max-w-4xl mx-auto">
                         <motion.div {...fadeUp(0)}>
@@ -100,7 +100,7 @@ export default function LearnMorePage() {
                             className="text-5xl md:text-7xl font-black tracking-tighter mb-6 leading-[1.05]"
                         >
                             The Future of{' '}
-                            <span className="gradient-text">Pet Ownership.</span>
+                            <span className="bg-linear-to-r from-blue-500 via-emerald-400 to-sky-400 bg-[length:200%_200%] bg-clip-text text-transparent">Pet Ownership.</span>
                         </motion.h1>
                         <motion.p
                             {...fadeUp(0.2)}
@@ -156,7 +156,7 @@ export default function LearnMorePage() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ ease: 'easeOut' }}
-                            className="relative rounded-3xl overflow-hidden p-12 text-center bg-linear-to-br from-violet-500 via-fuchsia-500 to-cyan-500 shadow-2xl shadow-violet-500/30"
+                            className="relative rounded-3xl overflow-hidden p-12 text-center bg-linear-to-br from-blue-500 via-emerald-500 to-sky-500 shadow-2xl shadow-blue-500/30"
                         >
                             <div className="absolute inset-0 bg-white/5" />
                             <div className="relative z-10">
@@ -169,7 +169,7 @@ export default function LearnMorePage() {
                                 <Link href="/onboarding">
                                     <Button
                                         size="lg"
-                                        className="rounded-2xl bg-white text-violet-700 hover:bg-white/90 font-bold text-base px-10 shadow-xl gap-2 group"
+                                        className="rounded-2xl bg-white text-blue-700 hover:bg-white/90 font-bold text-base px-10 shadow-xl gap-2 group"
                                     >
                                         Begin Onboarding
                                         <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />

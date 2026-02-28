@@ -8,6 +8,7 @@ import {
     Heart, Zap, Star, ArrowRight, Github
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { HeroCanvas } from '@/components/HeroCanvas';
 
 const fadeUp = (delay = 0) => ({
     initial: { opacity: 0, y: 24 },
@@ -20,28 +21,28 @@ const features = [
         icon: PawPrint,
         title: 'AI Customization',
         desc: 'Generate unique pet appearances powered by stable diffusion. Every companion is truly one of a kind.',
-        color: 'from-violet-500/20 to-violet-500/5',
-        border: 'hover:border-violet-500/50',
-        iconBg: 'bg-violet-500/15',
-        iconColor: 'text-violet-500',
+        color: 'from-blue-500/20 to-blue-500/5',
+        border: 'hover:border-blue-500/50',
+        iconBg: 'bg-blue-500/15',
+        iconColor: 'text-blue-500',
     },
     {
         icon: ShieldCheck,
         title: 'Cloud Persistence',
         desc: 'Your pet lives safely in our Supabase-powered cloud. Pick up right where you left off, any device.',
-        color: 'from-fuchsia-500/20 to-fuchsia-500/5',
-        border: 'hover:border-fuchsia-500/50',
-        iconBg: 'bg-fuchsia-500/15',
-        iconColor: 'text-fuchsia-500',
+        color: 'from-emerald-500/20 to-emerald-500/5',
+        border: 'hover:border-emerald-500/50',
+        iconBg: 'bg-emerald-500/15',
+        iconColor: 'text-emerald-500',
     },
     {
         icon: TrendingUp,
         title: 'Growth & Finance',
         desc: 'Level up your companion while mastering real financial literacy skills that stay with you for life.',
-        color: 'from-cyan-500/20 to-cyan-500/5',
-        border: 'hover:border-cyan-500/50',
-        iconBg: 'bg-cyan-500/15',
-        iconColor: 'text-cyan-500',
+        color: 'from-sky-500/20 to-sky-500/5',
+        border: 'hover:border-sky-500/50',
+        iconBg: 'bg-sky-500/15',
+        iconColor: 'text-sky-500',
     },
 ];
 
@@ -83,151 +84,209 @@ export default function LandingPage() {
             </nav>
 
             {/* ── Hero ── */}
-            <section className="relative flex flex-col items-center justify-center text-center px-6 pt-24 pb-20 overflow-hidden">
+            <section className="relative flex flex-col md:flex-row items-center justify-between px-6 pt-24 pb-20 md:pb-32 overflow-hidden max-w-7xl mx-auto w-full min-h-[90vh]">
 
-                {/* glowing orbs */}
-                <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-                    <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-violet-500/25 blur-[120px] animate-blob" />
-                    <div className="absolute -top-20 -right-20 w-[400px] h-[400px] rounded-full bg-fuchsia-500/20 blur-[100px] animate-blob animation-delay-2000" />
-                    <div className="absolute bottom-0 left-1/3 w-[350px] h-[350px] rounded-full bg-cyan-500/20 blur-[100px] animate-blob animation-delay-4000" />
+                {/* Left Content Area */}
+                <div className="flex-1 flex flex-col items-start text-left z-20 md:pr-10 w-full">
+                    {/* pill badge */}
+                    <motion.div {...fadeUp(0)}>
+                        <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-primary/20 bg-primary/10 text-primary text-sm font-semibold mb-8 shadow-sm backdrop-blur-md">
+                            <ShieldCheck className="w-4 h-4" />
+                            FBLA 2025-2026 Topic
+                        </div>
+                    </motion.div>
+
+                    {/* headline */}
+                    <motion.h1
+                        {...fadeUp(0.1)}
+                        className="text-5xl sm:text-6xl md:text-7xl font-bold font-outfit tracking-tight leading-[1.05] mb-6 max-w-3xl text-foreground"
+                    >
+                        Nurture Your Pet, <span className="bg-linear-to-r from-blue-500 to-emerald-400 bg-clip-text text-transparent">Master Your Money.</span>
+                    </motion.h1>
+
+                    {/* sub */}
+                    <motion.p
+                        {...fadeUp(0.2)}
+                        className="text-lg md:text-xl text-muted-foreground/90 font-inter leading-relaxed max-w-xl mb-10"
+                    >
+                        PetPal is the first virtual pet simulator that turns financial literacy into a game. Earn, budget, and save to keep your digital companion happy and healthy.
+                    </motion.p>
+
+                    {/* CTAs */}
+                    <motion.div {...fadeUp(0.3)} className="flex flex-col sm:flex-row items-center gap-4 mb-16 w-full sm:w-auto">
+                        <Link href="/onboarding" className="w-full sm:w-auto">
+                            <Button size="lg" className="w-full sm:w-auto h-14 rounded-full bg-blue-500 hover:bg-blue-600 text-white text-base font-bold px-8 shadow-xl shadow-blue-500/25 transition-all gap-2 group">
+                                Start Your Journey
+                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            </Button>
+                        </Link>
+                        <Link href="/demo" className="w-full sm:w-auto">
+                            <Button variant="outline" size="lg" className="w-full sm:w-auto h-14 rounded-full border-border/50 text-base font-bold px-8 backdrop-blur-sm bg-background/5 hover:bg-white/5 transition-all">
+                                Watch Demo
+                            </Button>
+                        </Link>
+                    </motion.div>
+
+
                 </div>
 
-                {/* pill badge */}
-                <motion.div {...fadeUp(0)}>
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-semibold mb-8 shadow-sm">
-                        <Sparkles className="w-3.5 h-3.5" />
-                        Modern Virtual Pet Care — Now in Beta
+                {/* Right 3D Area */}
+                <div className="flex-1 relative w-full h-[600px] md:min-h-[70vh] mt-16 md:mt-0 flex items-center justify-center">
+
+                    {/* Glowing background behind the 3D Dog */}
+                    <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
+                        <div className="w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-blue-500/20 rounded-full blur-[100px]" />
+                        <div className="absolute w-[200px] h-[200px] md:w-[300px] md:h-[300px] bg-emerald-500/10 rounded-full blur-[80px] translate-x-20 translate-y-20" />
                     </div>
-                </motion.div>
 
-                {/* headline */}
-                <motion.h1
-                    {...fadeUp(0.1)}
-                    className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tight leading-[1.05] mb-6 max-w-3xl"
-                >
-                    Your New Best Friend{' '}
-                    <span className="gradient-text block sm:inline">Awaits in the Cloud.</span>
-                </motion.h1>
+                    {/* The 3D Canvas */}
+                    <HeroCanvas />
 
-                {/* sub */}
-                <motion.p
-                    {...fadeUp(0.2)}
-                    className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl mb-10"
-                >
-                    PetPal blends the nostalgia of retro virtual pets with modern AI and
-                    financial literacy tools. Adopt, customize, and grow with your companion.
-                </motion.p>
 
-                {/* CTAs */}
-                <motion.div {...fadeUp(0.3)} className="flex flex-col sm:flex-row items-center gap-3 mb-20">
-                    <Link href="/onboarding">
-                        <Button size="lg" className="rounded-2xl text-base font-bold px-8 shadow-xl shadow-primary/30 gap-2 group">
-                            Start Your Journey
-                            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                        </Button>
-                    </Link>
-                    <Link href="/learn-more">
-                        <Button variant="outline" size="lg" className="rounded-2xl text-base font-bold px-8 backdrop-blur-sm bg-background/50">
-                            How It Works
-                        </Button>
-                    </Link>
-                </motion.div>
 
-                {/* floating pet emoji */}
-                <motion.div
-                    {...fadeUp(0.4)}
-                    className="animate-float text-8xl mb-20 select-none drop-shadow-2xl"
-                    aria-hidden
-                >
-                    🐾
-                </motion.div>
-
-                {/* stat bar */}
-                <motion.div
-                    {...fadeUp(0.5)}
-                    className="w-full max-w-3xl grid grid-cols-2 md:grid-cols-4 gap-4"
-                >
-                    {stats.map(({ label, value, icon: Icon }) => (
-                        <div
-                            key={label}
-                            className="flex flex-col items-center gap-1 p-4 rounded-2xl bg-card border border-border/60 shadow-sm"
-                        >
-                            <Icon className="w-5 h-5 text-primary mb-1" />
-                            <span className="text-2xl font-black tracking-tight">{value}</span>
-                            <span className="text-xs text-muted-foreground font-medium">{label}</span>
-                        </div>
-                    ))}
-                </motion.div>
+                </div>
             </section>
 
             {/* ── Feature cards ── */}
-            <section className="px-6 pb-24 max-w-6xl mx-auto w-full">
-                <motion.div {...fadeUp(0)} className="text-center mb-14">
-                    <p className="text-sm font-bold uppercase tracking-widest text-primary mb-3">Why PetPal</p>
-                    <h2 className="text-3xl md:text-4xl font-black tracking-tight">Everything your pet needs</h2>
+            <section className="px-6 pb-24 max-w-7xl mx-auto w-full relative z-10">
+                <motion.div {...fadeUp(0)} className="text-center mb-16">
+                    <p className="text-sm font-bold uppercase tracking-widest text-emerald-500 mb-3">Core Features</p>
+                    <h2 className="text-3xl md:text-5xl font-bold font-outfit tracking-tight text-foreground">
+                        Everything your pet needs
+                    </h2>
                 </motion.div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
                     {features.map(({ icon: Icon, title, desc, color, border, iconBg, iconColor }, i) => (
                         <motion.div
                             key={title}
                             {...fadeUp(i * 0.1)}
-                            className={`relative p-7 rounded-3xl bg-gradient-to-br ${color} border border-border/50 ${border} transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden group`}
+                            className={`relative p-8 rounded-[2rem] bg-card/40 backdrop-blur-xl border border-white/10 dark:border-white/5 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 overflow-hidden group`}
                         >
-                            <div className={`w-12 h-12 rounded-2xl ${iconBg} flex items-center justify-center mb-5`}>
-                                <Icon className={`w-6 h-6 ${iconColor}`} />
+                            {/* Accent bottom glow on hover */}
+                            <div className={`absolute bottom-0 left-0 right-0 h-1 bg-linear-to-r ${color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+
+                            <div className={`w-14 h-14 rounded-2xl ${iconBg} flex items-center justify-center mb-6 shadow-inner`}>
+                                <Icon className={`w-7 h-7 ${iconColor}`} />
                             </div>
-                            <h3 className="text-lg font-bold mb-2">{title}</h3>
-                            <p className="text-muted-foreground text-sm leading-relaxed">{desc}</p>
+                            <h3 className="text-xl font-bold font-outfit mb-3 text-foreground">{title}</h3>
+                            <p className="text-muted-foreground font-inter text-sm leading-relaxed">{desc}</p>
                         </motion.div>
                     ))}
                 </div>
             </section>
 
-            {/* ── CTA Banner ── */}
-            <section className="px-6 pb-24 max-w-6xl mx-auto w-full">
-                <motion.div
-                    {...fadeUp(0)}
-                    className="relative rounded-3xl overflow-hidden p-12 text-center bg-gradient-to-br from-violet-500 via-fuchsia-500 to-cyan-500 shadow-2xl shadow-violet-500/30"
-                >
-                    {/* subtle inner noise / texture overlay */}
-                    <div className="absolute inset-0 bg-white/5" />
-                    <div className="relative z-10">
-                        <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight mb-4">
-                            Ready to meet your companion?
-                        </h2>
-                        <p className="text-white/80 text-lg mb-8 max-w-md mx-auto">
-                            Join thousands of players already raising their virtual pets. It only takes 30 seconds.
-                        </p>
-                        <Link href="/onboarding">
-                            <Button
-                                size="lg"
-                                className="rounded-2xl bg-white text-violet-700 hover:bg-white/90 font-bold text-base px-10 shadow-xl gap-2 group"
-                            >
-                                Adopt Now — It&apos;s Free
-                                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                            </Button>
-                        </Link>
+            {/* ── Educational Bento Section ── */}
+            <section className="px-6 py-24 max-w-7xl mx-auto w-full border-t border-border/50">
+                <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
+
+                    {/* Left: Bento Image Grid */}
+                    <div className="flex-1 w-full grid grid-cols-2 grid-rows-2 gap-4">
+                        <div className="row-span-2 relative rounded-[2rem] overflow-hidden bg-muted group">
+                            <img
+                                src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=800&auto=format&fit=crop"
+                                alt="Cute Dog"
+                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            />
+                        </div>
+                        <div className="relative rounded-[2rem] bg-blue-500 p-8 flex flex-col justify-center overflow-hidden">
+                            {/* Decorative background circle */}
+                            <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl" />
+                            <ShieldCheck className="w-8 h-8 text-white mb-4" />
+                            <h4 className="text-white font-bold font-outfit text-xl mb-1">Certified Learning</h4>
+                            <p className="text-blue-100 text-sm font-inter">Curriculum aligned with national standards.</p>
+                        </div>
+                        <div className="relative rounded-[2rem] overflow-hidden bg-muted group">
+                            <img
+                                src="https://images.unsplash.com/photo-1513245543132-31f507417b26?q=80&w=800&auto=format&fit=crop"
+                                alt="Cute Cat"
+                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            />
+                        </div>
                     </div>
-                </motion.div>
+
+                    {/* Right: Checklist Area */}
+                    <div className="flex-1 w-full">
+                        <h2 className="text-4xl md:text-5xl font-bold font-outfit tracking-tight mb-6">
+                            Financial Literacy<br />Made Fun
+                        </h2>
+                        <p className="text-lg text-muted-foreground font-inter mb-10 leading-relaxed max-w-xl">
+                            We believe that financial education shouldn't be boring. By tying financial concepts to the well-being of a virtual pet, students develop an emotional connection to their financial decisions.
+                        </p>
+
+                        <div className="space-y-5 mb-10">
+                            {[
+                                "Understand the difference between needs and wants",
+                                "Learn the basics of interest and inflation",
+                                "Practice real-world budgeting scenarios",
+                                "Develop long-term financial planning skills",
+                            ].map((item, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, x: -20 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: i * 0.1 }}
+                                    className="flex items-center gap-4"
+                                >
+                                    <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
+                                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                                    </div>
+                                    <span className="font-semibold font-inter">{item}</span>
+                                </motion.div>
+                            ))}
+                        </div>
+
+                        <Button size="lg" className="rounded-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-8 h-14 w-full sm:w-auto shadow-lg shadow-emerald-500/20">
+                            Explore Curriculum
+                        </Button>
+                    </div>
+                </div>
+            </section>
+
+            {/* ── FBLA Target Section ── */}
+            <section className="px-6 py-32 w-full bg-slate-950/40 relative overflow-hidden flex flex-col items-center justify-center border-t border-border/50">
+                {/* Background ambient glow inside dark container */}
+                <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
+                    <div className="w-[600px] h-[300px] bg-blue-500/10 rounded-full blur-[120px]" />
+                </div>
+
+                <div className="max-w-4xl mx-auto w-full text-center relative z-10">
+                    <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 mx-auto flex items-center justify-center mb-8 backdrop-blur-md">
+                        <ShieldCheck className="w-8 h-8 text-blue-400" />
+                    </div>
+                    <h2 className="text-4xl md:text-5xl font-bold font-outfit text-white mb-6">
+                        FBLA Introduction to Programming
+                    </h2>
+                    <p className="text-xl text-slate-300 font-inter mb-16 leading-relaxed max-w-3xl mx-auto">
+                        This project is specifically designed to meet and exceed the requirements for the 2025-2026 FBLA competitive event. It demonstrates advanced concepts in state management, data persistence, and interactive UI design.
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                        <div className="p-8 rounded-[2rem] bg-slate-900/50 border border-slate-800 backdrop-blur-md hover:border-blue-500/50 transition-colors">
+                            <h3 className="text-xl font-bold font-outfit text-blue-400 mb-3">Technical Excellence</h3>
+                            <p className="text-slate-400 font-inter leading-relaxed">Built with React, TypeScript, and Three.js for a modern, high-performance experience.</p>
+                        </div>
+                        <div className="p-8 rounded-[2rem] bg-slate-900/50 border border-slate-800 backdrop-blur-md hover:border-emerald-500/50 transition-colors">
+                            <h3 className="text-xl font-bold font-outfit text-emerald-400 mb-3">Educational Impact</h3>
+                            <p className="text-slate-400 font-inter leading-relaxed">Directly addresses the need for financial literacy among middle and high school students.</p>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             {/* ── Footer ── */}
-            <footer className="border-t border-border/50 px-6 py-8 mt-auto">
-                <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2 font-bold text-foreground">
-                        <PawPrint className="w-4 h-4 text-primary" />
-                        PetPal
-                    </div>
-                    <p>© {new Date().getFullYear()} PetPal. All rights reserved.</p>
-                    <div className="flex items-center gap-4">
-                        <Link href="/learn-more" className="hover:text-foreground transition-colors">How it Works</Link>
-                        <Link href="/login" className="hover:text-foreground transition-colors">Login</Link>
-                        <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
-                            <Github className="w-4 h-4" />
-                        </a>
-                    </div>
+            <footer className="border-t border-border/50 px-6 py-12 mt-auto text-center flex flex-col items-center">
+                <div className="flex items-center gap-2 font-bold font-outfit text-foreground text-xl mb-6">
+                    <PawPrint className="w-6 h-6 text-blue-500" />
+                    PetPal
                 </div>
+                <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground font-semibold font-inter mb-8">
+                    <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
+                    <Link href="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link>
+                    <Link href="/contact" className="hover:text-foreground transition-colors">Contact</Link>
+                </div>
+                <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} PetPal. Built for FBLA 2025-2026.</p>
             </footer>
 
         </div>

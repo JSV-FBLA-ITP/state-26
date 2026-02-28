@@ -28,9 +28,9 @@ const guideSteps = [
         icon: Calendar,
         title: 'The Monthly Journey',
         desc: 'Each game cycle lasts 12 virtual months. Complete required monthly actions to advance. Missing them has consequences for your pet\'s well-being.',
-        color: 'text-violet-500',
-        bg: 'bg-violet-500/10',
-        border: 'border-violet-500/20',
+        color: 'text-blue-500',
+        bg: 'bg-blue-500/10',
+        border: 'border-blue-500/20',
         num: '03',
     },
 ];
@@ -38,8 +38,8 @@ const guideSteps = [
 const tips = [
     { icon: Zap, label: 'Energy Reserves', desc: "Don't let energy hit zero or your pet will fall ill, requiring expensive treatments.", color: 'text-yellow' },
     { icon: GraduationCap, label: 'Daily Quizzes', desc: 'The Financial Quiz is the easiest way to earn extra cash for upgrades.', color: 'text-amber-500' },
-    { icon: PawPrint, label: 'Switching Pets', desc: "You can manage multiple pets. Check 'Lives' to balance your collective.", color: 'text-fuchsia-500' },
-    { icon: Utensils, label: 'Market Timing', desc: 'Check the shop for multipliers — they are permanent stat investments.', color: 'text-violet-500' },
+    { icon: PawPrint, label: 'Switching Pets', desc: "You can manage multiple pets. Check 'Lives' to balance your collective.", color: 'text-emerald-500' },
+    { icon: Utensils, label: 'Market Timing', desc: 'Check the shop for multipliers — they are permanent stat investments.', color: 'text-blue-500' },
 ];
 
 export default function HowToPlayPage() {
@@ -61,7 +61,7 @@ export default function HowToPlayPage() {
                     transition={{ delay: 0.1 }}
                     className="text-4xl md:text-6xl font-black mb-4 tracking-tight"
                 >
-                    How to <span className="gradient-text">PetPal.</span>
+                    How to <span className="bg-linear-to-r from-blue-500 via-emerald-400 to-sky-400 bg-[length:200%_200%] bg-clip-text text-transparent">PetPal.</span>
                 </motion.h1>
                 <motion.p
                     initial={{ opacity: 0, y: 20 }}

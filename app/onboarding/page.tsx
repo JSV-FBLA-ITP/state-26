@@ -53,13 +53,16 @@ function OnboardingInner() {
             return;
         }
 
+        const surplus = (monthlyIncome || 0) - (monthlyExpenses || 0);
+        const startingMoney = (monthlyIncome && monthlyExpenses && surplus > 0) ? Math.max(100, Math.round(surplus * 0.2)) : 500;
+
         const newPet: PetData = {
             type: petType,
             name: petName,
             ownerName,
             householdName,
             petImage,
-            stats: { ...randomizeInitialStats(), money: 500 },
+            stats: { ...randomizeInitialStats(), money: startingMoney },
             learnedTricks: [],
             totalExpenses: 0,
             savingsGoal: 500,
@@ -102,8 +105,8 @@ function OnboardingInner() {
         <div className="min-h-screen bg-background flex items-center justify-center p-4 md:p-8 relative overflow-hidden">
             {/* Background orbs */}
             <div className="pointer-events-none absolute inset-0 -z-10">
-                <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-violet-500/15 blur-[120px] animate-blob" />
-                <div className="absolute -bottom-40 -right-40 w-[400px] h-[400px] rounded-full bg-fuchsia-500/15 blur-[100px] animate-blob animation-delay-2000" />
+                <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-blue-500/15 blur-[120px] animate-blob" />
+                <div className="absolute -bottom-40 -right-40 w-[400px] h-[400px] rounded-full bg-emerald-500/15 blur-[100px] animate-blob animation-delay-2000" />
             </div>
 
             <div className="max-w-3xl w-full">
@@ -121,8 +124,7 @@ function OnboardingInner() {
                     {/* Gradient progress bar */}
                     <div className="absolute top-0 left-0 w-full h-1.5 bg-muted overflow-hidden rounded-t-[2.5rem]">
                         <motion.div
-                            className="h-full rounded-full"
-                            style={{ background: 'linear-gradient(to right, oklch(0.72 0.24 290), oklch(0.65 0.28 330), oklch(0.72 0.18 200))' }}
+                            className="h-full rounded-full bg-linear-to-r from-blue-500 via-emerald-500 to-sky-500"
                             initial={{ width: '25%' }}
                             animate={{ width: `${(step / 4) * 100}%` }}
                             transition={{ ease: 'easeOut', duration: 0.4 }}
@@ -193,8 +195,7 @@ function OnboardingInner() {
                             <Button
                                 onClick={() => handleFinalize(false)}
                                 disabled={!petName || isSubmitting}
-                                className="rounded-xl h-11 px-8 font-bold shadow-lg shadow-primary/20 gap-2"
-                                style={{ background: 'linear-gradient(135deg, oklch(0.72 0.24 290), oklch(0.65 0.28 330))' }}
+                                className="rounded-xl h-11 px-8 font-bold shadow-lg shadow-primary/20 gap-2 bg-linear-to-r from-blue-500 to-emerald-500 hover:from-blue-600 hover:to-emerald-600 text-white border-0"
                             >
                                 {isSubmitting ? 'Bringing to Life...' : 'Finalize & Start'}
                                 {!isSubmitting && <Wand2 className="w-4 h-4" />}

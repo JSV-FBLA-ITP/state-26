@@ -193,3 +193,38 @@ export async function deletePet(petId: string): Promise<{ error: any }> {
         return { error: err };
     }
 }
+
+export async function deleteHousehold(householdName: string): Promise<{ error: any }> {
+    try {
+        const { data: sessionData } = await supabase.auth.getUser();
+        const userId = sessionData?.user?.id;
+
+        if (!userId) {
+            const keysToRemove: string[] = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key?.startsWith('pet_guest_')) {
+                    const petData = localStorage.getItem(key);
+                    if (petData) {
+                        const parsed = JSON.parse(petData);
+                        if (parsed.householdName === householdName) {
+                            keysToRemove.push(key);
+                        }
+                    }
+                }
+            }
+            keysToRemove.forEach(key => localStorage.removeItem(key));
+            return { error: null };
+        }
+
+        const { error } = await supabase
+            .from('pets')
+            .delete()
+            .eq('household_name', householdName)
+            .eq('user_id', userId);
+
+        return { error };
+    } catch (err) {
+        return { error: err };
+    }
+}

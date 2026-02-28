@@ -55,13 +55,13 @@ export function ShopOverlay({ isOpen, onClose, money, onPurchase }: Props) {
                         className="relative w-full max-w-2xl bg-card/90 backdrop-blur-2xl rounded-[2.5rem] shadow-2xl overflow-hidden border border-border/50"
                     >
                         {/* Header */}
-                        <div className="px-8 py-6 border-b border-border/50 flex items-center justify-between bg-linear-to-r from-violet-500/10 to-transparent">
+                        <div className="px-8 py-6 border-b border-border/50 flex items-center justify-between bg-linear-to-r from-blue-500/10 to-transparent">
                             <div className="flex items-center gap-4">
-                                <div className="p-3 rounded-2xl bg-violet-500/15">
-                                    <ShoppingCart className="w-6 h-6 text-violet-500" />
+                                <div className="p-3 rounded-2xl bg-blue-500/15">
+                                    <ShoppingCart className="w-6 h-6 text-blue-500" />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-black tracking-tight">Pet Shop</h2>
+                                    <h2 className="text-2xl font-black tracking-tight">Supply Store</h2>
                                     <p className="text-sm text-muted-foreground font-bold">Permanent upgrades for your companion</p>
                                 </div>
                             </div>

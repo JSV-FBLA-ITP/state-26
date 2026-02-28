@@ -115,24 +115,25 @@ export default function ExpensesPage() {
                 {/* Sidebar */}
                 <div className="space-y-5">
                     {/* Balance */}
-                    <div className="p-6 rounded-2xl bg-violet-500/10 border border-violet-500/20">
-                        <h3 className="text-sm font-bold mb-4 flex items-center gap-2">
-                            <Wallet className="w-4 h-4 text-violet-500" />
-                            <span className="text-violet-500">Economic Outlook</span>
-                        </h3>
-                        <div className="mb-3">
-                            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Current Liquidity</p>
-                            <p className="text-3xl font-black text-violet-500">${pet?.stats.money ?? 0}</p>
+                    <div className="p-6 rounded-2xl bg-blue-500/10 border border-blue-500/20">
+                        <div className="flex items-center gap-2 mb-4">
+                            <Wallet className="w-4 h-4 text-blue-500" />
+                            <span className="text-blue-500">Economic Outlook</span>
                         </div>
-                        <div className="h-2 w-full bg-muted rounded-full overflow-hidden mb-2">
-                            <motion.div
-                                className="h-full bg-violet-500"
-                                initial={{ width: 0 }}
-                                animate={{ width: `${Math.min(100, ((pet?.stats.money || 0) / 1000) * 100)}%` }}
-                                transition={{ ease: 'easeOut', duration: 0.8 }}
-                            />
+                        <div className="flex justify-between items-end">
+                            <div>
+                                <p className="text-3xl font-black text-blue-500">${pet?.stats.money ?? 0}</p>
+                                <p className="text-sm font-bold text-blue-500/70">Available Cash</p>
+                            </div>
+                            <div className="w-24 h-2 bg-blue-500/20 rounded-full overflow-hidden">
+                                <motion.div
+                                    className="h-full bg-blue-500"
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${Math.min(100, ((pet?.stats.money || 0) / 1000) * 100)}%` }}
+                                    transition={{ ease: 'easeOut', duration: 0.8 }}
+                                />
+                            </div>
                         </div>
-                        <p className="text-xs text-muted-foreground">Maintain at least <strong>$200</strong> for emergencies.</p>
                     </div>
 
                     {/* Balance coins */}

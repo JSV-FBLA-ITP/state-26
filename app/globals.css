@@ -61,20 +61,25 @@
   --card-foreground: oklch(0.15 0.02 280);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.15 0.02 280);
-  /* Violet-purple primary */
-  --primary: oklch(0.6 0.24 290);
+
+  /* Electric Blue Primary */
+  --primary: oklch(0.6 0.18 250);
   --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.96 0.01 290);
-  --secondary-foreground: oklch(0.3 0.05 290);
-  --muted: oklch(0.96 0.01 290);
-  --muted-foreground: oklch(0.52 0.06 290);
-  --accent: oklch(0.93 0.03 290);
-  --accent-foreground: oklch(0.2 0.04 290);
+  /* Emerald Green Secondary */
+  --secondary: oklch(0.7 0.15 160);
+  --secondary-foreground: oklch(0.99 0 0);
+
+  --muted: oklch(0.96 0.01 250);
+  --muted-foreground: oklch(0.52 0.06 250);
+  --accent: oklch(0.93 0.03 250);
+  --accent-foreground: oklch(0.2 0.04 250);
   --destructive: oklch(0.6 0.2 25);
-  --border: oklch(0.91 0.03 290);
-  --input: oklch(0.91 0.03 290);
-  --ring: oklch(0.6 0.24 290);
-  --radius: 1rem;
+  --border: oklch(0.91 0.03 250);
+  --input: oklch(0.91 0.03 250);
+  --ring: oklch(0.6 0.18 250);
+
+  /* Large rounded corners base */
+  --radius: 1.5rem;
 
   /* Custom Accents */
   --emerald: oklch(0.7 0.15 160);
@@ -87,25 +92,29 @@
 }
 
 .dark {
-  --background: oklch(0.1 0.015 280);
-  --foreground: oklch(0.96 0.01 280);
-  --card: oklch(0.14 0.02 280);
-  --card-foreground: oklch(0.96 0.01 280);
-  --popover: oklch(0.14 0.02 280);
-  --popover-foreground: oklch(0.96 0.01 280);
-  /* Brighter violet for dark */
-  --primary: oklch(0.72 0.24 290);
-  --primary-foreground: oklch(0.1 0.015 280);
-  --secondary: oklch(0.18 0.03 280);
-  --secondary-foreground: oklch(0.96 0.01 280);
-  --muted: oklch(0.18 0.03 280);
-  --muted-foreground: oklch(0.65 0.06 280);
-  --accent: oklch(0.2 0.04 280);
-  --accent-foreground: oklch(0.96 0.01 280);
+  /* Deep Slate Dark Mode */
+  --background: oklch(0.15 0.02 260);
+  --foreground: oklch(0.96 0.01 260);
+  --card: oklch(0.2 0.02 260);
+  --card-foreground: oklch(0.96 0.01 260);
+  --popover: oklch(0.2 0.02 260);
+  --popover-foreground: oklch(0.96 0.01 260);
+
+  /* Electric Blue Primary */
+  --primary: oklch(0.6 0.18 250);
+  --primary-foreground: oklch(0.1 0.015 260);
+  /* Emerald Green Secondary */
+  --secondary: oklch(0.7 0.15 160);
+  --secondary-foreground: oklch(0.96 0.01 260);
+
+  --muted: oklch(0.25 0.03 260);
+  --muted-foreground: oklch(0.65 0.06 260);
+  --accent: oklch(0.28 0.04 260);
+  --accent-foreground: oklch(0.96 0.01 260);
   --destructive: oklch(0.5 0.22 25);
-  --border: oklch(0.22 0.04 280);
-  --input: oklch(0.22 0.04 280);
-  --ring: oklch(0.72 0.24 290);
+  --border: oklch(0.3 0.04 260);
+  --input: oklch(0.3 0.04 260);
+  --ring: oklch(0.6 0.18 250);
 }
 
 @layer base {
@@ -120,19 +129,41 @@
 
 /* ── Landing page animations ── */
 @keyframes blob {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33%       { transform: translate(30px, -50px) scale(1.1); }
-  66%       { transform: translate(-20px, 20px) scale(0.9); }
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-14px); }
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-14px);
+  }
 }
 
 @keyframes shimmer {
-  from { background-position: 0% 50%; }
-  to   { background-position: 100% 50%; }
+  from {
+    background-position: 0% 50%;
+  }
+
+  to {
+    background-position: 100% 50%;
+  }
 }
 
 .animate-blob {
@@ -143,19 +174,14 @@
   animation: float 5s ease-in-out infinite;
 }
 
-.animation-delay-2000 { animation-delay: 2s; }
-.animation-delay-4000 { animation-delay: 4s; }
-.animation-delay-6000 { animation-delay: 6s; }
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
 
-.gradient-text {
-  background: linear-gradient(135deg,
-    oklch(0.72 0.24 290),
-    oklch(0.65 0.28 330),
-    oklch(0.72 0.18 200)
-  );
-  background-size: 200% 200%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shimmer 4s ease-in-out infinite alternate;
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+.animation-delay-6000 {
+  animation-delay: 6s;
 }

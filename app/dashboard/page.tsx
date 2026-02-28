@@ -83,7 +83,6 @@ export default function DashboardPage() {
         if (!pet) return;
 
         const newPet = { ...pet };
-        // Determine which stat to boost based on action type
         const statMap: Record<ActionType, keyof typeof newPet.stats> = {
             feed: 'hunger',
             play: 'happy',
@@ -93,12 +92,36 @@ export default function DashboardPage() {
         };
 
         const targetStat = statMap[type];
-        newPet.stats[targetStat] = Math.min(100, newPet.stats[targetStat] + 10);
+
+        // Use logic from gameLogic for consistency
+        const { getDiminishedBoost, recordClickForStat } = require('@/lib/gameLogic');
+        recordClickForStat(targetStat);
+        const boost = getDiminishedBoost(targetStat, 15, newPet.stats[targetStat]);
+
+        newPet.stats[targetStat] = Math.min(100, newPet.stats[targetStat] + boost);
         newPet.interactionCount += 1;
 
+        // Record action completion for the month
+        newPet.monthData.actionsCompleted[type] = (newPet.monthData.actionsCompleted[type] || 0) + 1;
+
         setPet({ ...newPet });
-        setFeedback({ message: `Your pet feels better after: ${type}!`, type: 'success' });
+
+        if (boost > 0) {
+            setFeedback({ message: `Your pet feels better! (+${boost} ${targetStat})`, type: 'success' });
+        } else {
+            setFeedback({ message: `Your pet is already full or bored of this!`, type: 'info' });
+        }
         setTimeout(() => setFeedback({ message: '', type: null }), 3000);
+    };
+
+    const handleNextMonth = () => {
+        if (!pet) return;
+        const { processNextMonth } = require('@/lib/gameLogic');
+        const nextPet = processNextMonth(pet);
+        setPet(nextPet);
+        setFeedback({ message: `Welcome to Month ${nextPet.monthData.currentMonth}!`, type: 'success' });
+        setTimeout(() => setFeedback({ message: '', type: null }), 3000);
+        savePetToCloud(nextPet);
     };
 
     const handlePurchase = (stat: string, cost: number) => {
@@ -180,7 +203,13 @@ export default function DashboardPage() {
             {/* Right Sidebar: Stats & Management */}
             <div className="w-full lg:w-[30%] lg:min-w-[340px] lg:max-w-[480px] bg-card/30 backdrop-blur-xl border-t lg:border-t-0 lg:border-l border-border/50 flex flex-col shrink-0 lg:shrink">
                 <div className="p-8 flex-1 overflow-y-auto custom-scrollbar min-h-[400px] lg:min-h-0">
-                    <StatSidebar stats={pet.stats} monthData={pet.monthData} />
+                    <StatSidebar
+                        stats={pet.stats}
+                        monthData={pet.monthData}
+                        income={pet.monthlyIncome}
+                        expenses={pet.monthlyExpenses}
+                        onNextMonth={handleNextMonth}
+                    />
                 </div>
 
                 <div className="p-4 pb-12 lg:pb-4 border-t border-border/50 bg-background/50 sticky bottom-0 z-50">

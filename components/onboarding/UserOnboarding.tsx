@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
-import { Home, PlusCircle, CheckCircle2, Sparkles, Calculator, ChevronDown, ChevronUp } from 'lucide-react';
+import { Home, PlusCircle, CheckCircle2, Sparkles, Calculator, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 
 interface Props {
     householdName: string;
@@ -40,6 +41,19 @@ export function UserOnboarding({ householdName, onHouseholdChange, preselectedHo
     const [selectedArea, setSelectedArea] = useState(2);
     const [householdSize, setHouseholdSize] = useState(1);
     const [showCalculator, setShowCalculator] = useState(false);
+    const [deletingHousehold, setDeletingHousehold] = useState<string | null>(null);
+
+    const handleDeleteHousehold = async (householdName: string) => {
+        const { deleteHousehold } = await import('@/lib/storage');
+        const { error } = await deleteHousehold(householdName);
+        if (!error) {
+            setExistingHouseholds(prev => prev.filter(h => h.name !== householdName));
+            if (householdName === householdName) {
+                setMode('pick');
+            }
+        }
+        setDeletingHousehold(null);
+    };
 
     // Fetch all unique households the user already has
     useEffect(() => {
@@ -130,20 +144,48 @@ export function UserOnboarding({ householdName, onHouseholdChange, preselectedHo
                 <div className="space-y-3 mb-4">
                     <p className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Your Households</p>
                     {existingHouseholds.map((h) => (
-                        <button
-                            key={h.name}
-                            onClick={() => { onHouseholdChange(h.name, h.ownerName); setMode('pick'); }}
-                            className={`w-full flex items-center justify-between px-5 py-4 rounded-2xl border-2 font-bold text-left transition-all ${householdName === h.name
-                                ? 'border-primary bg-primary/10 text-primary'
-                                : 'border-border/50 bg-card/50 hover:border-primary/50 hover:bg-primary/5'
-                                }`}
-                        >
-                            <div className="flex items-center gap-3">
-                                <Home className="w-4 h-4 shrink-0" />
-                                <span>{h.name}</span>
-                            </div>
-                            {householdName === h.name && <CheckCircle2 className="w-5 h-5 text-primary" />}
-                        </button>
+                        <div key={h.name} className="flex items-center gap-2">
+                            <button
+                                onClick={() => { onHouseholdChange(h.name, h.ownerName); setMode('pick'); }}
+                                className={`flex-1 flex items-center justify-between px-5 py-4 rounded-2xl border-2 font-bold text-left transition-all ${householdName === h.name
+                                    ? 'border-primary bg-primary/10 text-primary'
+                                    : 'border-border/50 bg-card/50 hover:border-primary/50 hover:bg-primary/5'
+                                    }`}
+                            >
+                                <div className="flex items-center gap-3">
+                                    <Home className="w-4 h-4 shrink-0" />
+                                    <span>{h.name}</span>
+                                </div>
+                                {householdName === h.name && <CheckCircle2 className="w-5 h-5 text-primary" />}
+                            </button>
+                            <AlertDialog open={deletingHousehold === h.name} onOpenChange={(open) => setDeletingHousehold(open ? h.name : null)}>
+                                <AlertDialogTrigger asChild>
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); }}
+                                        className="p-3 rounded-2xl border-2 border-border/50 bg-card/50 hover:bg-red-500/10 hover:border-red-500/50 text-muted-foreground hover:text-red-500 transition-all"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>Delete Household</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            Are you sure you want to delete "{h.name}"? This will also delete all pets in this household. This action cannot be undone.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction
+                                            onClick={() => handleDeleteHousehold(h.name)}
+                                            className="bg-red-500 hover:bg-red-600 text-white"
+                                        >
+                                            Delete
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+                        </div>
                     ))}
                 </div>
             )}
@@ -153,7 +195,7 @@ export function UserOnboarding({ householdName, onHouseholdChange, preselectedHo
                 <button
                     onClick={() => setMode(m => m === 'new' ? 'pick' : 'new')}
                     className={`w-full flex items-center gap-3 px-5 py-4 rounded-2xl border-2 font-bold transition-all ${mode === 'new'
-                        ? 'border-violet-500/60 bg-violet-500/10 text-violet-500'
+                        ? 'border-blue-500/60 bg-blue-500/10 text-blue-500'
                         : 'border-dashed border-border/60 text-muted-foreground hover:border-primary/40 hover:text-primary'
                         }`}
                 >
@@ -167,7 +209,7 @@ export function UserOnboarding({ householdName, onHouseholdChange, preselectedHo
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: 'auto', opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            transition={{ ease: 'easeOut', duration: 0.2 }}
+                            transition={{ ease: 'easeInOut', duration: 0.3 }}
                             className="overflow-hidden"
                         >
                             <div className="pt-3 relative">
@@ -201,7 +243,7 @@ export function UserOnboarding({ householdName, onHouseholdChange, preselectedHo
                                     animate={{ opacity: 1, y: 0 }}
                                     className="space-y-4 mt-4"
                                 >
-                                    <p className="text-xs font-bold text-primary">
+                                    <p className="text-sm font-bold text-primary">
                                         Household &ldquo;{newName.trim()}&rdquo; will be created ✓
                                     </p>
 

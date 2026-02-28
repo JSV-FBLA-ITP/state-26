@@ -31,7 +31,7 @@ export function PetNaming({ name, onNameChange }: Props) {
                 </div>
             </div>
 
-            <p className="mt-6 text-sm text-muted-foreground font-medium flex items-center justify-center gap-2">
+            <p className="mt-6 text-base text-foreground/80 font-bold flex items-center justify-center gap-2">
                 <span>Letters and spaces only</span>
                 <span className="w-1 h-1 rounded-full bg-border" />
                 <span>Max 12 characters</span>

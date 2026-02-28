@@ -91,7 +91,7 @@ export default function MyPetsPage() {
                     </p>
                 </div>
                 <Link href="/onboarding">
-                    <Button className="rounded-2xl h-14 px-8 font-extrabold shadow-xl shadow-primary/25 bg-linear-to-r from-primary to-violet-600 border-0 hover:scale-[1.02] active:scale-95 transition-all">
+                    <Button className="rounded-2xl h-14 px-8 font-extrabold shadow-xl shadow-primary/25 bg-linear-to-r from-primary to-blue-600 border-0 hover:scale-[1.02] active:scale-95 transition-all">
                         <Plus className="w-6 h-6 mr-2" />
                         Create New Household
                     </Button>
@@ -128,8 +128,8 @@ export default function MyPetsPage() {
                         <section key={hh} className="space-y-8">
                             <div className="flex items-center justify-between border-b border-border/50 pb-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 rounded-xl bg-violet-500/10">
-                                        <Home className="w-6 h-6 text-violet-500" />
+                                    <div className="p-2 rounded-xl bg-blue-500/10">
+                                        <Home className="w-6 h-6 text-blue-500" />
                                     </div>
                                     <h2 className="text-3xl font-black tracking-tight">{hh}</h2>
                                     <span className="bg-muted px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest text-muted-foreground">

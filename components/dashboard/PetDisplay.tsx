@@ -41,24 +41,18 @@ export function PetDisplay({ pet, emotion }: Props) {
                 />
 
                 {/* Emotion Overlay */}
-                <div className="absolute top-6 left-6 right-6 flex items-start justify-between">
+                <div className="absolute top-6 left-6 right-6 flex items-start justify-center">
                     <motion.div
-                        initial={{ x: -20, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl shadow-lg border border-border/50 flex items-center gap-3"
+                        initial={{ y: -20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className="bg-white/90 backdrop-blur-md px-5 py-3 rounded-[2rem] shadow-lg border border-border/50 flex flex-col items-center gap-1"
                     >
-                        <div className="p-2 rounded-lg bg-primary/10">
-                            <HeaderIcon className="w-5 h-5 text-primary" />
-                        </div>
-                        <div>
-                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Currently</p>
-                            <p className="font-bold text-primary">{emotion.emotion}</p>
+                        <p className="font-black text-2xl text-primary">{pet.name}</p>
+                        <div className="flex items-center gap-2">
+                            <HeaderIcon className="w-4 h-4 text-primary" />
+                            <p className="font-bold text-sm text-primary uppercase tracking-wide">{emotion.emotion}</p>
                         </div>
                     </motion.div>
-
-                    <div className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl shadow-lg border border-border/50">
-                        <p className="font-black text-xl text-primary">{pet.name}</p>
-                    </div>
                 </div>
             </motion.div>
 
