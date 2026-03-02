@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { ActionType, ALL_ACTIONS, ACTION_LABELS } from '@/lib/gameLogic';
+import { ActionType, ALL_ACTIONS, ACTION_LABELS, ACTION_COSTS } from '@/lib/gameLogic';
 import { Button } from '@/components/ui/button';
 import * as Icons from 'lucide-react';
 import { useState } from 'react';
@@ -58,6 +58,7 @@ export function ActionGrid({ onAction }: Props) {
                                 }`}>
                                 {label}
                             </span>
+                            <span className="text-[9px] font-bold text-amber-500 mt-0.5">${ACTION_COSTS[action]}</span>
 
                             {/* Burst Rings */}
                             <AnimatePresence>

@@ -27,7 +27,7 @@ const guideSteps = [
     {
         icon: Calendar,
         title: 'The Monthly Journey',
-        desc: 'Each game cycle lasts 12 virtual months. Complete required monthly actions to advance. Missing them has consequences for your pet\'s well-being.',
+        desc: 'Progress through infinite virtual months. Complete required monthly actions to advance. Missing them has consequences for your pet\'s well-being.',
         color: 'text-blue-500',
         bg: 'bg-blue-500/10',
         border: 'border-blue-500/20',

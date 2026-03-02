@@ -66,7 +66,7 @@ export function PetsModal({ isOpen, onClose, onSelectPet }: PetsModalProps) {
                                     >
                                         <div className="w-16 h-16 relative rounded-xl overflow-hidden bg-background">
                                             {p.image_url ? (
-                                                <Image src={p.image_url} alt={p.name} fill className="object-cover" />
+                                                <Image src={p.image_url} alt={p.name} fill className="object-cover" unoptimized />
                                             ) : (
                                                 <PawPrint className="w-8 h-8 absolute top-4 left-4 text-muted-foreground" />
                                             )}

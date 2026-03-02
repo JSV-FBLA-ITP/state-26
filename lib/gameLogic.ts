@@ -69,6 +69,14 @@ export const ACTION_LABELS: Record<ActionType, string> = {
     healthCheck: 'Pill Health Check',
 };
 
+export const ACTION_COSTS: Record<ActionType, number> = {
+    feed: 10,
+    play: 15,
+    sleep: 5,
+    clean: 8,
+    healthCheck: 20,
+};
+
 export const QUIZ_QUESTIONS: Record<string, QuizQuestion[]> = {
     easy: [
         { question: "What is the primary purpose of a budget?", options: ["To track spending and plan expenses", "To avoid paying taxes", "To keep money in a bank", "To invest in stocks"], correct: 0 },
@@ -105,6 +113,15 @@ export function shuffleArray<T>(arr: T[]): T[] {
 export function selectRandomRequiredActions(): ActionType[] {
     const shuffled = [...ALL_ACTIONS].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, 3);
+}
+
+export function areRequiredActionsCompleted(monthData: MonthData): boolean {
+    if (!monthData.requiredActions || monthData.requiredActions.length === 0) {
+        return true;
+    }
+    return monthData.requiredActions.every(
+        (action) => (monthData.actionsCompleted[action] || 0) > 0
+    );
 }
 
 export function randomizeInitialStats(): PetStats {

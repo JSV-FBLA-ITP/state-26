@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { ActionType, getEmotionData, PetData } from '@/lib/gameLogic';
+import { ActionType, getEmotionData, PetData, areRequiredActionsCompleted, ACTION_COSTS } from '@/lib/gameLogic';
 import { loadPet, savePetToCloud } from '@/lib/storage';
 import { PetDisplay } from '@/components/dashboard/PetDisplay';
 import { StatSidebar } from '@/components/dashboard/StatSidebar';
@@ -13,9 +13,6 @@ import { StatsOverlay } from '@/components/game/StatsOverlay';
 import { OptionsOverlay } from '@/components/game/OptionsOverlay';
 import { createClient } from '@/utils/supabase/client';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ThemeToggle } from '@/components/ThemeToggle';
-import { UserMenu } from '@/components/dashboard/DashboardUserMenu';
-import { Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function DashboardPage() {
@@ -25,6 +22,7 @@ export default function DashboardPage() {
     const [quizOpen, setQuizOpen] = useState(false);
     const [statsOpen, setStatsOpen] = useState(false);
     const [optionsOpen, setOptionsOpen] = useState(false);
+    const [gameOver, setGameOver] = useState(false);
     const [feedback, setFeedback] = useState<{ message: string; type: 'success' | 'warn' | 'info' | null }>({ message: '', type: null });
 
     const loadData = useCallback(async () => {
@@ -45,6 +43,10 @@ export default function DashboardPage() {
         const { data, error } = await loadPet(petId!);
         if (!error && data) {
             setPet(data);
+            // Check if pet is already dead on load
+            if (data.stats.health <= 0) {
+                setGameOver(true);
+            }
         } else {
             console.error('Error loading pet:', error);
             // If local pet not found, clear and onboarding
@@ -82,6 +84,13 @@ export default function DashboardPage() {
     const handleAction = (type: ActionType) => {
         if (!pet) return;
 
+        const cost = ACTION_COSTS[type];
+        if ((pet.stats.money || 0) < cost) {
+            setFeedback({ message: `Not enough money! Need $${cost}`, type: 'warn' });
+            setTimeout(() => setFeedback({ message: '', type: null }), 3000);
+            return;
+        }
+
         const newPet = { ...pet };
         const statMap: Record<ActionType, keyof typeof newPet.stats> = {
             feed: 'hunger',
@@ -99,6 +108,8 @@ export default function DashboardPage() {
         const boost = getDiminishedBoost(targetStat, 15, newPet.stats[targetStat]);
 
         newPet.stats[targetStat] = Math.min(100, newPet.stats[targetStat] + boost);
+        newPet.stats.money = (newPet.stats.money || 0) - cost;
+        newPet.totalExpenses += cost;
         newPet.interactionCount += 1;
 
         // Record action completion for the month
@@ -106,18 +117,43 @@ export default function DashboardPage() {
 
         setPet({ ...newPet });
 
+        // Check for game over
+        if (newPet.stats.health <= 0) {
+            setGameOver(true);
+            return;
+        }
+
         if (boost > 0) {
-            setFeedback({ message: `Your pet feels better! (+${boost} ${targetStat})`, type: 'success' });
+            setFeedback({ message: `Your pet feels better! (+${boost} ${targetStat}, -$${cost})`, type: 'success' });
         } else {
-            setFeedback({ message: `Your pet is already full or bored of this!`, type: 'info' });
+            setFeedback({ message: `Your pet is already full or bored of this! (-$${cost})`, type: 'info' });
         }
         setTimeout(() => setFeedback({ message: '', type: null }), 3000);
     };
 
     const handleNextMonth = () => {
         if (!pet) return;
+        
+        if (!areRequiredActionsCompleted(pet.monthData)) {
+            const missingActions = pet.monthData.requiredActions
+                .filter(action => (pet.monthData.actionsCompleted[action] || 0) === 0)
+                .map(action => action.charAt(0).toUpperCase() + action.slice(1).replace(/([A-Z])/g, ' $1'))
+                .join(', ');
+            setFeedback({ message: `Complete these actions first: ${missingActions}`, type: 'warn' });
+            setTimeout(() => setFeedback({ message: '', type: null }), 4000);
+            return;
+        }
+
         const { processNextMonth } = require('@/lib/gameLogic');
         const nextPet = processNextMonth(pet);
+        
+        // Check for game over after monthly decay
+        if (nextPet.stats.health <= 0) {
+            setPet(nextPet);
+            setGameOver(true);
+            return;
+        }
+        
         setPet(nextPet);
         setFeedback({ message: `Welcome to Month ${nextPet.monthData.currentMonth}!`, type: 'success' });
         setTimeout(() => setFeedback({ message: '', type: null }), 3000);
@@ -154,30 +190,24 @@ export default function DashboardPage() {
         window.location.href = '/';
     };
 
+    const handleGameOver = () => {
+        localStorage.removeItem('currentPetId');
+        window.location.href = '/dashboard/pets';
+    };
+
     if (loading) return null;
     if (!pet) return <div>Pet not found.</div>;
 
     const emotion = getEmotionData(pet.stats);
 
+    // Hide main game UI when game over
+    const showGameUI = !gameOver;
+
     return (
-        <div className="flex flex-col lg:flex-row min-h-screen lg:h-screen lg:max-h-screen overflow-y-auto lg:overflow-hidden bg-background">
+        <div className={`flex flex-col lg:flex-row min-h-screen lg:h-screen lg:max-h-screen overflow-y-auto lg:overflow-hidden bg-background ${gameOver ? 'pointer-events-none' : ''}`}>
             {/* Left Column: Visuals */}
             <div className="flex-1 relative flex flex-col items-center justify-center p-8 lg:p-12 bg-linear-to-br from-primary/5 to-transparent shrink-0">
-                {/* Dashboard Header Icons */}
-                <div className="absolute top-8 right-8 flex items-center gap-4 z-40">
-                    <Button
-                        variant="secondary"
-                        className="rounded-2xl font-bold border-2 bg-card/50 backdrop-blur-xl hover:bg-primary/20 hover:border-primary/50"
-                        onClick={handleManualSave}
-                    >
-                        <Save className="w-5 h-5 mr-2" />
-                        Save Progress
-                    </Button>
-                    <ThemeToggle />
-                    <UserMenu />
-                </div>
-
-                <PetDisplay pet={pet} emotion={emotion} />
+                <PetDisplay pet={pet} emotion={emotion} isGameOver={gameOver} />
 
                 <div className="h-6 mt-4 mb-2 flex items-center justify-center">
                     <AnimatePresence>
@@ -197,7 +227,7 @@ export default function DashboardPage() {
                     </AnimatePresence>
                 </div>
 
-                <ActionGrid onAction={handleAction} />
+                {showGameUI && <ActionGrid onAction={handleAction} />}
             </div>
 
             {/* Right Sidebar: Stats & Management */}
@@ -209,17 +239,20 @@ export default function DashboardPage() {
                         income={pet.monthlyIncome}
                         expenses={pet.monthlyExpenses}
                         onNextMonth={handleNextMonth}
+                        onAction={handleAction}
                     />
                 </div>
 
-                <div className="p-4 pb-12 lg:pb-4 border-t border-border/50 bg-background/50 sticky bottom-0 z-50">
-                    <ControlPanel
-                        onShopOpen={() => setShopOpen(true)}
-                        onQuizOpen={() => setQuizOpen(true)}
-                        onStatsOpen={() => setStatsOpen(true)}
-                        onOptionsOpen={() => setOptionsOpen(true)}
-                    />
-                </div>
+                {showGameUI && (
+                    <div className="p-4 pb-12 lg:pb-4 border-t border-border/50 bg-background/50 sticky bottom-0 z-50">
+                        <ControlPanel
+                            onShopOpen={() => setShopOpen(true)}
+                            onQuizOpen={() => setQuizOpen(true)}
+                            onStatsOpen={() => setStatsOpen(true)}
+                            onOptionsOpen={() => setOptionsOpen(true)}
+                        />
+                    </div>
+                )}
             </div>
 
             <ShopOverlay
@@ -247,6 +280,51 @@ export default function DashboardPage() {
                 onSave={handleManualSave}
                 onLogout={handleLogout}
             />
+
+            {/* Game Over Overlay */}
+            <AnimatePresence>
+                {gameOver && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.8, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            className="bg-card border-2 border-rose-500/50 rounded-[2rem] p-8 max-w-md mx-4 text-center shadow-2xl shadow-rose-500/20"
+                        >
+                            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-rose-500/20 flex items-center justify-center">
+                                <span className="text-5xl">💀</span>
+                            </div>
+                            <h2 className="text-3xl font-black text-rose-500 mb-2">GAME OVER</h2>
+                            <p className="text-muted-foreground mb-6">
+                                Your pet&apos;s health reached 0. Your pet has passed away after {pet.monthData.currentMonth} months together.
+                            </p>
+                            <div className="bg-muted/50 rounded-xl p-4 mb-6">
+                                <p className="text-sm text-muted-foreground">Final Statistics</p>
+                                <div className="grid grid-cols-2 gap-4 mt-2 text-sm">
+                                    <div>
+                                        <span className="text-muted-foreground">Months Survived:</span>
+                                        <p className="font-black">{pet.monthData.currentMonth}</p>
+                                    </div>
+                                    <div>
+                                        <span className="text-muted-foreground">Money Saved:</span>
+                                        <p className="font-black text-emerald-500">${pet.stats.money || 0}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <Button
+                                onClick={handleGameOver}
+                                className="w-full py-6 text-lg font-bold bg-rose-500 hover:bg-rose-600 text-white rounded-xl"
+                            >
+                                Return to Pet Selection
+                            </Button>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
         </div>
     );

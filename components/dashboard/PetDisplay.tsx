@@ -8,29 +8,30 @@ import * as Icons from 'lucide-react';
 interface Props {
     pet: PetData;
     emotion: EmotionData;
+    isGameOver?: boolean;
 }
 
-export function PetDisplay({ pet, emotion }: Props) {
+export function PetDisplay({ pet, emotion, isGameOver }: Props) {
     const HeaderIcon = (Icons as any)[emotion.emoji] || Icons.Smile;
 
     return (
         <div className="relative w-full max-w-lg aspect-square flex items-center justify-center">
-            {/* Glow effect */}
-            <div className="absolute inset-0 bg-primary/20 rounded-full blur-[100px] animate-pulse" />
+            {/* Glow effect - red for dead pet */}
+            <div className={`absolute inset-0 rounded-full blur-[100px] ${isGameOver ? 'bg-rose-500/30' : 'bg-primary/20 animate-pulse'}`} />
 
             {/* Floating platform */}
-            <div className="absolute bottom-4 w-3/4 h-12 bg-black/10 rounded-[100%] blur-xl" />
+            <div className={`absolute bottom-4 w-3/4 h-12 rounded-[100%] blur-xl ${isGameOver ? 'bg-rose-500/20' : 'bg-black/10'}`} />
 
             <motion.div
-                animate={{
+                animate={isGameOver ? {} : {
                     y: [0, -20, 0],
                 }}
-                transition={{
+                transition={isGameOver ? {} : {
                     duration: 4,
                     repeat: Infinity,
                     ease: "easeInOut"
                 }}
-                className="relative w-full h-full rounded-[3rem] overflow-hidden border-4 border-white shadow-2xl bg-white"
+                className={`relative w-full h-full rounded-[3rem] overflow-hidden border-4 shadow-2xl bg-white ${isGameOver ? 'border-rose-500 grayscale' : 'border-white'}`}
             >
                 <Image
                     src={pet.petImage}
@@ -38,6 +39,7 @@ export function PetDisplay({ pet, emotion }: Props) {
                     fill
                     className="object-cover"
                     priority
+                    unoptimized
                 />
 
                 {/* Emotion Overlay */}

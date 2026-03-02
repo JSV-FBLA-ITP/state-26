@@ -85,7 +85,13 @@ export default function MyPetsPage() {
                         Household Hub
                         <Home className="w-8 h-8 text-primary" />
                     </h1>
-                    <p className="text-muted-foreground text-lg leading-relaxed max-w-2xl">
+                    <div className="flex items-center gap-4 mt-2">
+                        <Link href="/" className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-bold text-muted-foreground hover:text-foreground hover:bg-background/60 transition-all">
+                            <Home className="w-4 h-4" />
+                            Home
+                        </Link>
+                    </div>
+                    <p className="text-muted-foreground text-lg leading-relaxed max-w-2xl mt-4">
                         Manage your family companions across all your active households.
                         Each household can grow its own unique legacy.
                     </p>
@@ -223,7 +229,7 @@ export default function MyPetsPage() {
 
                                         <div className="aspect-4/3 relative overflow-hidden">
                                             {p.image_url ? (
-                                                <Image src={p.image_url} alt={p.name} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                                                <Image src={p.image_url} alt={p.name} fill className="object-cover group-hover:scale-110 transition-transform duration-700" unoptimized />
                                             ) : (
                                                 <div className="w-full h-full bg-muted flex items-center justify-center">
                                                     <PawPrint className="w-12 h-12 text-muted-foreground/30" />

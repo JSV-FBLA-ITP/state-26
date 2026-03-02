@@ -1,8 +1,8 @@
-import { PetStats, MonthData } from '@/lib/gameLogic';
-import { Progress } from '@/components/ui/progress';
-import { Heart, Zap, Coffee, Utensils, Coins, Calendar, ArrowRight, TrendingUp, TrendingDown } from 'lucide-react';
+import { PetStats, MonthData, ACTION_LABELS, ACTION_COSTS, ActionType } from '@/lib/gameLogic';
+import { Heart, Zap, Coffee, Utensils, Calendar, ArrowRight, TrendingUp, TrendingDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import * as Icons from 'lucide-react';
 
 interface Props {
     stats: PetStats;
@@ -10,9 +10,10 @@ interface Props {
     income?: number;
     expenses?: number;
     onNextMonth: () => void;
+    onAction: (type: ActionType) => void;
 }
 
-export function StatSidebar({ stats, monthData, income = 0, expenses = 0, onNextMonth }: Props) {
+export function StatSidebar({ stats, monthData, income = 0, expenses = 0, onNextMonth, onAction }: Props) {
     const netSavings = income - expenses;
 
     const statConfig = [
@@ -46,13 +47,42 @@ export function StatSidebar({ stats, monthData, income = 0, expenses = 0, onNext
                             Next Month <ArrowRight className="w-4 h-4" />
                         </Button>
                     </div>
-                    <div className="space-y-2">
-                        <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-muted-foreground px-1">
-                            <span>Year Progress</span>
-                            <span>{Math.round((monthData.currentMonth / 12) * 100)}%</span>
-                        </div>
-                        <Progress value={(monthData.currentMonth / 12) * 100} className="h-2 bg-primary/10 shadow-inner" />
-                    </div>
+                </div>
+            </div>
+
+            {/* Required Actions */}
+            <div className="space-y-4">
+                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-2">Required Actions</h3>
+                <div className="grid grid-cols-3 gap-2">
+                    {monthData.requiredActions?.map((action) => {
+                        const isCompleted = (monthData.actionsCompleted[action] || 0) > 0;
+                        const [iconName, ...labelParts] = ACTION_LABELS[action].split(' ');
+                        const Icon = (Icons as any)[iconName] || Icons.HelpCircle;
+                        const label = labelParts.join(' ');
+
+                        return (
+                            <motion.button
+                                key={action}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => onAction(action)}
+                                className={`flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all ${
+                                    isCompleted
+                                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-400'
+                                        : 'bg-card/40 border-border/40 hover:border-primary/50 text-muted-foreground hover:text-primary'
+                                }`}
+                            >
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-2 transition-all ${
+                                    isCompleted ? 'bg-emerald-500 text-white' : 'bg-primary/5 text-muted-foreground group-hover:bg-primary/15 group-hover:text-primary'
+                                }`}>
+                                    <Icon className="w-5 h-5" />
+                                </div>
+                                <span className="text-[9px] font-black uppercase tracking-tighter">{label}</span>
+                                <span className="text-[8px] font-bold text-amber-500">${ACTION_COSTS[action]}</span>
+                                {isCompleted && <span className="text-[8px] font-black text-emerald-500 mt-1">DONE</span>}
+                            </motion.button>
+                        );
+                    })}
                 </div>
             </div>
 

@@ -93,7 +93,7 @@ export function PetCustomizer({ petType, image, onImageChange }: Props) {
                             animate={{ scale: 1, opacity: 1 }}
                             className="w-full h-full"
                         >
-                            <Image src={image} alt="Generated pet" fill className="object-cover" />
+                            <Image src={image} alt="Generated pet" fill className="object-cover" unoptimized />
                             <div className="absolute inset-0 ring-1 ring-inset ring-black/10" />
                         </motion.div>
                     ) : (
