@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Sparkles, Wand2, RefreshCw } from 'lucide-react';
+import { Sparkles, Wand2, RefreshCw, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
@@ -16,24 +16,35 @@ interface Props {
 export function PetCustomizer({ petType, image, onImageChange }: Props) {
     const [prompt, setPrompt] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const placeholders: Record<string, string> = {
-        dog: 'https://images.unsplash.com/photo-1518717758536-85ae29035b6d?w=800&q=80',
-        cat: 'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=800&q=80',
-        hamster: 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=800&q=80',
-        rabbit: 'https://images.unsplash.com/photo-1518791841217-8f162f1e1131?w=800&q=80',
-    };
+    const generateImage = async () => {
+        const trimmedPrompt = prompt.trim();
+        if (!trimmedPrompt) return;
 
-    const simulateGeneration = async () => {
         setIsGenerating(true);
-        // In a real app, this would call HuggingFace or similar
-        await new Promise(r => setTimeout(r, 2000));
-        onImageChange(placeholders[petType] || placeholders.dog);
-        setIsGenerating(false);
-    };
+        setError(null);
 
-    const handleSkip = () => {
-        onImageChange(placeholders[petType] || placeholders.dog);
+        try {
+            const fullPrompt = `A cute ${petType}, ${trimmedPrompt}, digital art, vibrant colors, studio lighting, high quality`;
+            const res = await fetch('/api/generate-pet-image', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: fullPrompt }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.error || 'Image generation failed');
+            }
+
+            onImageChange(data.imageUrl);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+        } finally {
+            setIsGenerating(false);
+        }
     };
 
     return (
@@ -52,23 +63,20 @@ export function PetCustomizer({ petType, image, onImageChange }: Props) {
                                 className="rounded-2xl h-14 bg-background px-5 pr-32 border-2 focus-visible:ring-primary/20"
                             />
                             <Button
-                                onClick={simulateGeneration}
-                                disabled={isGenerating}
+                                onClick={generateImage}
+                                disabled={isGenerating || !prompt.trim()}
                                 className="absolute right-2 top-2 bottom-2 rounded-xl px-4"
                             >
                                 {isGenerating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4 mr-2" />}
-                                {isGenerating ? 'Magic...' : 'Generate'}
+                                {isGenerating ? 'Generating...' : 'Generate'}
                             </Button>
                         </div>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={handleSkip}
-                            disabled={isGenerating}
-                            className="w-fit ml-1 text-muted-foreground hover:text-primary transition-colors"
-                        >
-                            Skip AI and use default
-                        </Button>
+                        {error && (
+                            <div className="flex items-center gap-2 text-sm text-destructive mt-1 ml-1">
+                                <AlertCircle className="w-4 h-4 shrink-0" />
+                                <span>{error}</span>
+                            </div>
+                        )}
                     </div>
 
                     <div className="p-6 rounded-3xl bg-primary/5 border border-primary/10">

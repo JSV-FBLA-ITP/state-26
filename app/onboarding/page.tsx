@@ -184,13 +184,20 @@ function OnboardingInner() {
                         </Button>
 
                         {step < 4 ? (
-                            <Button
-                                onClick={handleNext}
-                                disabled={!canAdvance()}
-                                className="rounded-xl h-11 px-8 font-bold shadow-lg shadow-primary/20 gap-2"
-                            >
-                                Next <ChevronRight className="w-4 h-4" />
-                            </Button>
+                            <div className="flex flex-col items-end gap-1.5">
+                                <Button
+                                    onClick={handleNext}
+                                    disabled={!canAdvance()}
+                                    className="rounded-xl h-11 px-8 font-bold shadow-lg shadow-primary/20 gap-2"
+                                >
+                                    Next <ChevronRight className="w-4 h-4" />
+                                </Button>
+                                {step === 3 && !petImage && (
+                                    <p className="text-xs text-muted-foreground">
+                                        Generate an AI image to continue
+                                    </p>
+                                )}
+                            </div>
                         ) : (
                             <Button
                                 onClick={() => handleFinalize(false)}
