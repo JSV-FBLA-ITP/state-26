@@ -1,36 +1,170 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🐾 PetPal — Nurture Your Pet, Master Your Money
 
-## Getting Started
+> **FBLA Introduction to Programming · 2025–2026**
 
-First, run the development server:
+PetPal is a virtual pet simulator built around **financial literacy**. Players earn, budget, and save in-game currency to keep their digital companion happy and healthy — turning abstract money concepts into an emotionally engaging, hands-on experience designed for middle and high school students.
+
+---
+
+## ✨ Features
+
+| Feature | Description |
+|---|---|
+| **Interactive Virtual Pet** | A real-time 3D dog (Three.js) that floats, wags its tail, and tracks your mouse cursor |
+| **AI Pet Customization** | Generate unique pet appearances via the Hugging Face API (Stable Diffusion) |
+| **Financial Literacy Gameplay** | Budget, earn, and spend in-game currency; complete financial quizzes to level up |
+| **Dashboard & Stats** | Sidebar showing pet health, happiness, hunger, and level progression |
+| **Shop Overlay** | Buy food, toys, and accessories using earned in-game currency |
+| **Quiz Overlay** | Answer financial literacy questions to earn coins and XP |
+| **Cloud Persistence** | User accounts and pet data saved to Supabase; pick up where you left off on any device |
+| **Dark / Light Mode** | Full theme support via `next-themes` |
+| **Onboarding Flow** | Step-by-step pet creation and account setup |
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **Framework** | [Next.js 16](https://nextjs.org/) (App Router) |
+| **Language** | TypeScript 5 |
+| **Styling** | Tailwind CSS v4 + shadcn/ui components |
+| **3D Engine** | [@react-three/fiber](https://docs.pmnd.rs/react-three-fiber) + [@react-three/drei](https://drei.pmnd.rs/) + [Three.js](https://threejs.org/) |
+| **Animations** | [Framer Motion](https://www.framer.com/motion/) + `@react-spring/three` |
+| **Database / Auth** | [Supabase](https://supabase.com/) (PostgreSQL + Row-Level Security) |
+| **AI Image Gen** | [Hugging Face Inference API](https://huggingface.co/inference-api) |
+| **Icons** | [Lucide React](https://lucide.dev/) |
+
+---
+
+## 📁 Project Structure
+
+```
+state-26/
+├── app/                      # Next.js App Router pages
+│   ├── page.tsx              # Landing page
+│   ├── layout.tsx            # Root layout & theme provider
+│   ├── globals.css           # Global styles
+│   ├── auth/                 # Authentication callback route
+│   ├── login/                # Login page
+│   ├── onboarding/           # Pet creation / onboarding flow
+│   ├── dashboard/            # Main game dashboard
+│   └── api/                  # API route handlers
+├── components/
+│   ├── DogModel.tsx          # 3D dog model (Three.js meshes + animations)
+│   ├── HeroCanvas.tsx        # React Three Fiber canvas for the landing hero
+│   ├── ThemeProvider.tsx     # next-themes provider wrapper
+│   ├── ThemeToggle.tsx       # Dark/light mode toggle button
+│   ├── dashboard/            # Dashboard-specific components
+│   │   ├── ActionGrid.tsx    # Care action buttons (feed, play, etc.)
+│   │   ├── ControlPanel.tsx  # Top-level game controls
+│   │   ├── DashboardTopbar.tsx
+│   │   ├── DashboardUserMenu.tsx
+│   │   ├── PetDisplay.tsx    # AI-generated pet image display
+│   │   ├── PetsModal.tsx     # Pet management modal
+│   │   └── StatSidebar.tsx   # Health / happiness / coin stats
+│   ├── game/                 # In-game overlay components
+│   │   ├── OptionsOverlay.tsx
+│   │   ├── QuizOverlay.tsx   # Financial literacy quizzes
+│   │   ├── ShopOverlay.tsx   # In-game shop
+│   │   └── StatsOverlay.tsx
+│   ├── onboarding/           # Onboarding step components
+│   └── ui/                   # shadcn/ui primitives (Button, Card, etc.)
+├── lib/                      # Shared utilities and Supabase client
+├── utils/                    # Helper functions
+├── supabase/                 # Supabase migrations & types
+├── public/                   # Static assets
+└── .env.local                # Environment variables (not committed)
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- **Node.js** ≥ 18
+- A [Supabase](https://supabase.com/) project
+- A [Hugging Face](https://huggingface.co/) account with API access
+
+### 1. Clone the repository
+
+```bash
+git clone <repo-url>
+cd state-26
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure environment variables
+
+Create a `.env.local` file in the project root:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+HUGGING_FACE_API_KEY=your_huggingface_api_key
+```
+
+### 4. Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📜 Available Scripts
 
-## Learn More
+| Script | Description |
+|---|---|
+| `npm run dev` | Start the development server |
+| `npm run build` | Build for production |
+| `npm start` | Start the production server |
+| `npm run lint` | Run ESLint |
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🗄️ Database (Supabase)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The app uses Supabase for:
+- **Authentication** — email/password sign-up and login
+- **Pet data persistence** — pet name, stats (health, happiness, hunger, level, coins), and AI-generated image URL stored per user
+- **Row-Level Security (RLS)** — users can only read/write their own pet data
 
-## Deploy on Vercel
+Migrations and schema definitions live in the `supabase/` directory.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🎮 How to Play
+
+1. **Sign up** and go through the onboarding flow to create and name your pet.
+2. An **AI-generated image** of your pet is created via the Hugging Face API.
+3. On the **Dashboard**, care for your pet by feeding, playing, and exercising it — each action costs in-game coins.
+4. Complete **Financial Literacy Quizzes** to earn coins and XP, leveling up your pet.
+5. Visit the **Shop** to buy items that boost your pet's stats.
+6. Keep your pet's health, happiness, and hunger bars full to advance!
+
+---
+
+## 🏆 FBLA Context
+
+This project was built for the **FBLA (Future Business Leaders of America) Introduction to Programming** competitive event for the **2025–2026** school year. It demonstrates:
+
+- Advanced state management in React
+- Full-stack data persistence with Supabase
+- Real-time 3D rendering with Three.js
+- API integration (Hugging Face AI image generation)
+- Responsive, accessible UI design with Tailwind CSS and shadcn/ui
+
+---
+
+## 📄 License
+
+Built for FBLA 2025–2026. All rights reserved.

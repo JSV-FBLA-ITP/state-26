@@ -43,6 +43,12 @@ export default function DashboardPage() {
         const { data, error } = await loadPet(petId!);
         if (!error && data) {
             setPet(data);
+
+            // Auto-migrate guest pet to cloud if user just logged in
+            if (petId!.startsWith('guest_')) {
+                await savePetToCloud(data);
+            }
+
             // Check if pet is already dead on load
             if (data.stats.health <= 0) {
                 setGameOver(true);
@@ -133,7 +139,7 @@ export default function DashboardPage() {
 
     const handleNextMonth = () => {
         if (!pet) return;
-        
+
         if (!areRequiredActionsCompleted(pet.monthData)) {
             const missingActions = pet.monthData.requiredActions
                 .filter(action => (pet.monthData.actionsCompleted[action] || 0) === 0)
@@ -146,14 +152,14 @@ export default function DashboardPage() {
 
         const { processNextMonth } = require('@/lib/gameLogic');
         const nextPet = processNextMonth(pet);
-        
+
         // Check for game over after monthly decay
         if (nextPet.stats.health <= 0) {
             setPet(nextPet);
             setGameOver(true);
             return;
         }
-        
+
         setPet(nextPet);
         setFeedback({ message: `Welcome to Month ${nextPet.monthData.currentMonth}!`, type: 'success' });
         setTimeout(() => setFeedback({ message: '', type: null }), 3000);
