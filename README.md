@@ -1,6 +1,6 @@
 # 🐾 PetPal — Nurture Your Pet, Master Your Money
 
-> **FBLA Introduction to Programming · 2025–2026**
+
 
 PetPal is a virtual pet simulator built around **financial literacy**. Players earn, budget, and save in-game currency to keep their digital companion happy and healthy — turning abstract money concepts into an emotionally engaging, hands-on experience designed for middle and high school students.
 
@@ -153,18 +153,6 @@ Migrations and schema definitions live in the `supabase/` directory.
 
 ---
 
-## 🏆 FBLA Context
-
-This project was built for the **FBLA (Future Business Leaders of America) Introduction to Programming** competitive event for the **2025–2026** school year. It demonstrates:
-
-- Advanced state management in React
-- Full-stack data persistence with Supabase
-- Real-time 3D rendering with Three.js
-- API integration (Hugging Face AI image generation)
-- Responsive, accessible UI design with Tailwind CSS and shadcn/ui
-
----
-
 ## 📄 License
 
-Built for FBLA 2025–2026. All rights reserved.
+© 2026 PetPal. All rights reserved.

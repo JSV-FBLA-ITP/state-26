@@ -1,17 +1,25 @@
-'use client';
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Sparkles, Wand2, RefreshCw, AlertCircle } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { Sparkles, Wand2, RefreshCw, AlertCircle, Palette } from 'lucide-react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Props {
     petType: string;
     image: string;
     onImageChange: (image: string) => void;
 }
+
+const SUGGESTIONS = [
+    'wearing a tiny top hat and monocle',
+    'cosmic fur with glowing stars',
+    'cyberpunk neon accessories',
+    'majestic golden armor',
+    'vibrant rainbow patterns',
+    'steampunk goggles and leather vest',
+];
 
 export function PetCustomizer({ petType, image, onImageChange }: Props) {
     const [prompt, setPrompt] = useState('');
@@ -48,78 +56,130 @@ export function PetCustomizer({ petType, image, onImageChange }: Props) {
     };
 
     return (
-        <div>
-            <h2 className="text-4xl font-bold tracking-tight mb-2">Style Your Friend</h2>
-            <p className="text-muted-foreground mb-8 text-lg">Use AI to generate a unique look for your {petType}.</p>
+        <div className="max-w-2xl mx-auto space-y-4">
+            {/* Header */}
+            <div className="flex items-center gap-3">
+                <motion.div
+                    initial={{ scale: 0, rotate: 180 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    className="w-9 h-9 bg-fuchsia-500/10 rounded-xl flex items-center justify-center border border-fuchsia-500/20 shrink-0"
+                >
+                    <Palette className="w-4 h-4 text-fuchsia-500" />
+                </motion.div>
+                <div>
+                    <h2 className="text-xl font-black tracking-tight text-foreground leading-tight">Style Your Friend</h2>
+                    <p className="text-muted-foreground text-xs">
+                        Use our AI mirror to create a unique look for your {petType}.
+                    </p>
+                </div>
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-                <div className="space-y-6">
-                    <div className="flex flex-col gap-2">
-                        <div className="relative">
-                            <Input
-                                placeholder="e.g. wearing a tiny top hat, cosmic fur, cyborg accessories..."
-                                value={prompt}
-                                onChange={(e) => setPrompt(e.target.value)}
-                                className="rounded-2xl h-14 bg-background px-5 pr-32 border-2 focus-visible:ring-primary/20"
-                            />
-                            <Button
-                                onClick={generateImage}
-                                disabled={isGenerating || !prompt.trim()}
-                                className="absolute right-2 top-2 bottom-2 rounded-xl px-4"
-                            >
-                                {isGenerating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4 mr-2" />}
-                                {isGenerating ? 'Generating...' : 'Generate'}
-                            </Button>
-                        </div>
-                        {error && (
-                            <div className="flex items-center gap-2 text-sm text-destructive mt-1 ml-1">
-                                <AlertCircle className="w-4 h-4 shrink-0" />
-                                <span>{error}</span>
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="p-6 rounded-3xl bg-primary/5 border border-primary/10">
-                        <div className="flex items-start gap-4">
-                            <div className="p-2 rounded-xl bg-primary/10">
-                                <Sparkles className="w-5 h-5 text-primary" />
-                            </div>
-                            <div>
-                                <h4 className="font-bold text-primary mb-1">AI Design Helper</h4>
-                                <p className="text-sm text-primary/70">
-                                    Try prompts like &quot;rainbow colored fur&quot;, &quot;golden armor&quot;, or &quot;cyberpunk aesthetics&quot; for the best results.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+            {/* Input row */}
+            <div className="space-y-2">
+                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Describe their look</Label>
+                <div className="flex gap-2">
+                    <Input
+                        placeholder={`e.g. wearing a tiny top hat...`}
+                        value={prompt}
+                        onChange={(e) => setPrompt(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && generateImage()}
+                        className="flex-1 rounded-xl h-11 bg-card/50 px-4 border border-border/60 focus-visible:ring-1 focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:border-primary transition-all text-sm"
+                    />
+                    <Button
+                        onClick={generateImage}
+                        disabled={isGenerating || !prompt.trim()}
+                        className="h-11 px-4 rounded-xl gap-2 shadow-lg shadow-primary/20 shrink-0"
+                    >
+                        {isGenerating
+                            ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" /><span className="text-sm font-semibold">Generating…</span></>
+                            : <><Wand2 className="w-3.5 h-3.5" /><span className="text-sm font-semibold">Generate</span></>
+                        }
+                    </Button>
                 </div>
 
-                <div className="aspect-square rounded-[2rem] bg-muted/30 border-2 border-dashed border-border/50 flex items-center justify-center relative overflow-hidden">
+                <AnimatePresence>
+                    {error && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="flex items-center gap-2 text-xs text-destructive font-medium p-2.5 bg-destructive/10 rounded-lg border border-destructive/20"
+                        >
+                            <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                            <span>{error}</span>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+
+            {/* Suggestions */}
+            <div className="space-y-1.5">
+                <div className="flex items-center gap-1.5">
+                    <Sparkles className="w-3 h-3 text-fuchsia-500" />
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">Suggestions</p>
+                </div>
+                <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                    {SUGGESTIONS.map((s) => (
+                        <button
+                            key={s}
+                            onClick={() => setPrompt(s)}
+                            className="px-3 py-1.5 rounded-lg bg-muted/40 hover:bg-primary/10 hover:text-primary border border-border/40 hover:border-primary/30 transition-all text-xs font-medium whitespace-nowrap shrink-0"
+                        >
+                            {s}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Image preview */}
+            <div className="h-52 rounded-2xl bg-card/30 border border-dashed border-border/50 flex items-center justify-center relative overflow-hidden group">
+                <AnimatePresence mode="wait">
                     {image ? (
                         <motion.div
-                            initial={{ scale: 0.9, opacity: 0 }}
+                            key="pet-image"
+                            initial={{ scale: 0.95, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             className="w-full h-full"
                         >
-                            <Image src={image} alt="Generated pet" fill className="object-cover" unoptimized />
-                            <div className="absolute inset-0 ring-1 ring-inset ring-black/10" />
+                            <div className="w-full h-full overflow-hidden relative">
+                                <Image src={image} alt="Generated pet" fill className="object-cover" unoptimized />
+                                <div className="absolute inset-0 ring-1 ring-inset ring-black/10" />
+                            </div>
                         </motion.div>
                     ) : (
-                        <div className="text-center p-8">
-                            <div className="w-16 h-16 rounded-3xl bg-background flex items-center justify-center mx-auto mb-4 border border-border shadow-sm">
-                                <Wand2 className="w-8 h-8 text-muted-foreground/50" />
+                        <motion.div
+                            key="placeholder"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="text-center space-y-2"
+                        >
+                            <div className="w-10 h-10 rounded-xl bg-muted/50 flex items-center justify-center mx-auto border border-border/50 group-hover:scale-110 transition-transform duration-500">
+                                <Wand2 className="w-5 h-5 text-muted-foreground/40" />
                             </div>
-                            <p className="text-muted-foreground font-medium">Your AI-generated pet will appear here.</p>
-                        </div>
+                            <div>
+                                <p className="text-muted-foreground font-semibold text-sm">Preview will appear here</p>
+                                <p className="text-xs text-muted-foreground/50 mt-0.5">Describe a style and click Generate</p>
+                            </div>
+                        </motion.div>
                     )}
+                </AnimatePresence>
 
-                    {isGenerating && (
-                        <div className="absolute inset-0 bg-background/60 backdrop-blur-sm flex flex-col items-center justify-center">
-                            <RefreshCw className="w-10 h-10 text-primary animate-spin mb-4" />
-                            <p className="font-bold text-primary animate-pulse">Consulting the magic mirrors...</p>
+                {isGenerating && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="absolute inset-0 bg-background/85 backdrop-blur-md flex flex-col items-center justify-center z-20 gap-3"
+                    >
+                        <div className="relative">
+                            <div className="w-12 h-12 rounded-full border-[3px] border-primary/20 border-t-primary animate-spin" />
+                            <Sparkles className="absolute inset-0 m-auto w-5 h-5 text-primary animate-pulse" />
                         </div>
-                    )}
-                </div>
+                        <div className="text-center">
+                            <p className="text-sm font-bold text-foreground">Creating your look…</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">This takes about 10 seconds</p>
+                        </div>
+                    </motion.div>
+                )}
             </div>
         </div>
     );

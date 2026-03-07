@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -7,10 +8,11 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import {
     Sparkles, PawPrint, ShieldCheck, TrendingUp,
-    Heart, Zap, Star, ArrowRight, Github
+    Heart, Zap, Star, ArrowRight, Github, LayoutDashboard
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { HeroCanvas } from '@/components/HeroCanvas';
+import { fetchUserPets } from '@/lib/storage';
 
 const fadeUp = (delay = 0) => ({
     initial: { opacity: 0, y: 24 },
@@ -56,6 +58,26 @@ const stats = [
 ];
 
 export default function LandingPage() {
+    const [hasPets, setHasPets] = useState(false);
+    const [petCount, setPetCount] = useState(0);
+    const [firstPetName, setFirstPetName] = useState<string | null>(null);
+
+    useEffect(() => {
+        async function checkForPets() {
+            try {
+                const { data } = await fetchUserPets();
+                if (data && data.length > 0) {
+                    setHasPets(true);
+                    setPetCount(data.length);
+                    setFirstPetName(data[0]?.name || null);
+                }
+            } catch {
+                // silently ignore — user simply has no pets yet
+            }
+        }
+        checkForPets();
+    }, []);
+
     return (
         <div className="min-h-screen bg-background flex flex-col overflow-x-hidden">
 
@@ -75,11 +97,25 @@ export default function LandingPage() {
                         <Link href="/login">
                             <Button variant="ghost" size="sm" className="font-semibold">Login</Button>
                         </Link>
-                        <Link href="/onboarding">
-                            <Button size="sm" className="font-semibold rounded-xl shadow-md shadow-primary/25">
-                                Get Started
-                            </Button>
-                        </Link>
+                        {hasPets ? (
+                            <Link href="/dashboard">
+                                <Button size="sm" className="font-semibold rounded-xl shadow-md shadow-primary/25 gap-1.5">
+                                    <LayoutDashboard className="w-3.5 h-3.5" />
+                                    My Pets
+                                    {petCount > 1 && (
+                                        <span className="ml-0.5 bg-primary-foreground/20 text-primary-foreground rounded-full text-[10px] font-black w-4 h-4 flex items-center justify-center">
+                                            {petCount}
+                                        </span>
+                                    )}
+                                </Button>
+                            </Link>
+                        ) : (
+                            <Link href="/onboarding">
+                                <Button size="sm" className="font-semibold rounded-xl shadow-md shadow-primary/25">
+                                    Get Started
+                                </Button>
+                            </Link>
+                        )}
                         <ThemeToggle />
                     </div>
                 </div>
@@ -94,7 +130,7 @@ export default function LandingPage() {
                     <motion.div {...fadeUp(0)}>
                         <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-primary/20 bg-primary/10 text-primary text-sm font-semibold mb-8 shadow-sm backdrop-blur-md">
                             <ShieldCheck className="w-4 h-4" />
-                            FBLA 2025-2026 Topic
+                            Premier Financial Education
                         </div>
                     </motion.div>
 
@@ -116,17 +152,37 @@ export default function LandingPage() {
 
                     {/* CTAs */}
                     <motion.div {...fadeUp(0.3)} className="flex flex-col sm:flex-row items-center gap-4 mb-16 w-full sm:w-auto">
-                        <Link href="/onboarding" className="w-full sm:w-auto">
-                            <Button size="lg" className="w-full sm:w-auto h-14 rounded-full bg-blue-500 hover:bg-blue-600 text-white text-base font-bold px-8 shadow-xl shadow-blue-500/25 transition-all gap-2 group">
-                                Start Your Journey
-                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </Button>
-                        </Link>
-                        <Link href="/demo" className="w-full sm:w-auto">
-                            <Button variant="outline" size="lg" className="w-full sm:w-auto h-14 rounded-full border-border/50 text-base font-bold px-8 backdrop-blur-sm bg-background/5 hover:bg-white/5 transition-all">
-                                Watch Demo
-                            </Button>
-                        </Link>
+                        {hasPets ? (
+                            <>
+                                <Link href="/dashboard" className="w-full sm:w-auto">
+                                    <Button size="lg" className="w-full sm:w-auto h-14 rounded-full bg-blue-500 hover:bg-blue-600 text-white text-base font-bold px-8 shadow-xl shadow-blue-500/25 transition-all gap-2 group">
+                                        <LayoutDashboard className="w-5 h-5" />
+                                        Continue{firstPetName ? ` with ${firstPetName}` : ' Your Journey'}
+                                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                    </Button>
+                                </Link>
+                                <Link href="/onboarding" className="w-full sm:w-auto">
+                                    <Button variant="outline" size="lg" className="w-full sm:w-auto h-14 rounded-full border-border/50 text-base font-bold px-8 backdrop-blur-sm bg-background/5 hover:bg-white/5 transition-all gap-2">
+                                        <PawPrint className="w-5 h-5" />
+                                        Add New Pet
+                                    </Button>
+                                </Link>
+                            </>
+                        ) : (
+                            <>
+                                <Link href="/onboarding" className="w-full sm:w-auto">
+                                    <Button size="lg" className="w-full sm:w-auto h-14 rounded-full bg-blue-500 hover:bg-blue-600 text-white text-base font-bold px-8 shadow-xl shadow-blue-500/25 transition-all gap-2 group">
+                                        Start Your Journey
+                                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                    </Button>
+                                </Link>
+                                <Link href="/demo" className="w-full sm:w-auto">
+                                    <Button variant="outline" size="lg" className="w-full sm:w-auto h-14 rounded-full border-border/50 text-base font-bold px-8 backdrop-blur-sm bg-background/5 hover:bg-white/5 transition-all">
+                                        Watch Demo
+                                    </Button>
+                                </Link>
+                            </>
+                        )}
                     </motion.div>
 
 
@@ -248,36 +304,7 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* ── FBLA Target Section ── */}
-            <section className="px-6 py-32 w-full bg-slate-950/40 relative overflow-hidden flex flex-col items-center justify-center border-t border-border/50">
-                {/* Background ambient glow inside dark container */}
-                <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
-                    <div className="w-[600px] h-[300px] bg-blue-500/10 rounded-full blur-[120px]" />
-                </div>
 
-                <div className="max-w-4xl mx-auto w-full text-center relative z-10">
-                    <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 mx-auto flex items-center justify-center mb-8 backdrop-blur-md">
-                        <ShieldCheck className="w-8 h-8 text-blue-400" />
-                    </div>
-                    <h2 className="text-4xl md:text-5xl font-bold font-outfit text-white mb-6">
-                        FBLA Introduction to Programming
-                    </h2>
-                    <p className="text-xl text-slate-300 font-inter mb-16 leading-relaxed max-w-3xl mx-auto">
-                        This project is specifically designed to meet and exceed the requirements for the 2025-2026 FBLA competitive event. It demonstrates advanced concepts in state management, data persistence, and interactive UI design.
-                    </p>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-                        <div className="p-8 rounded-[2rem] bg-slate-900/50 border border-slate-800 backdrop-blur-md hover:border-blue-500/50 transition-colors">
-                            <h3 className="text-xl font-bold font-outfit text-blue-400 mb-3">Technical Excellence</h3>
-                            <p className="text-slate-400 font-inter leading-relaxed">Built with React, TypeScript, and Three.js for a modern, high-performance experience.</p>
-                        </div>
-                        <div className="p-8 rounded-[2rem] bg-slate-900/50 border border-slate-800 backdrop-blur-md hover:border-emerald-500/50 transition-colors">
-                            <h3 className="text-xl font-bold font-outfit text-emerald-400 mb-3">Educational Impact</h3>
-                            <p className="text-slate-400 font-inter leading-relaxed">Directly addresses the need for financial literacy among middle and high school students.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
 
             {/* ── Footer ── */}
             <footer className="border-t border-border/50 px-6 py-12 mt-auto text-center flex flex-col items-center">
@@ -290,7 +317,7 @@ export default function LandingPage() {
                     <Link href="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link>
                     <Link href="/contact" className="hover:text-foreground transition-colors">Contact</Link>
                 </div>
-                <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} PetPal. Built for FBLA 2025-2026.</p>
+                <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} PetPal. All rights reserved.</p>
             </footer>
 
         </div>

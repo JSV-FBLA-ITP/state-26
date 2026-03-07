@@ -157,12 +157,12 @@
 }
 
 @keyframes shimmer {
-  from {
-    background-position: 0% 50%;
+  0% {
+    transform: translateX(-100%);
   }
 
-  to {
-    background-position: 100% 50%;
+  100% {
+    transform: translateX(200%);
   }
 }
 

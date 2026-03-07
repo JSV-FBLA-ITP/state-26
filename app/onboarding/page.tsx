@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
@@ -13,12 +12,13 @@ import { UserOnboarding } from '@/components/onboarding/UserOnboarding';
 import { randomizeInitialStats, PetData } from '@/lib/gameLogic';
 import { savePetToCloud } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Wand2, Sparkles, PawPrint, ArrowRight } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { ChevronLeft, Sparkles, PawPrint, ArrowRight, CheckCircle2, RefreshCw } from 'lucide-react';
 
-const STEPS = ['Household', 'Pet Type', 'Customize', 'Name'];
+const STEPS = ['Choose Pet', 'Give Name', 'Create Home', 'Style'];
 
 function OnboardingInner() {
-    const [step, setStep] = useState(1);
+    const [step, setStep] = useState(0); // 0-indexed
     const [householdName, setHouseholdName] = useState('');
     const [ownerName, setOwnerName] = useState('');
     const [monthlyIncome, setMonthlyIncome] = useState<number | undefined>();
@@ -27,22 +27,22 @@ function OnboardingInner() {
     const [petImage, setPetImage] = useState('');
     const [petName, setPetName] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isFinishing, setIsFinishing] = useState(false);
     const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+
     const router = useRouter();
     const searchParams = useSearchParams();
-
-    // Pre-fill household from URL param (e.g. /onboarding?household=The+Johnsons)
     const preselectedHousehold = searchParams.get('household') || undefined;
 
-    const handleHouseholdChange = (name: string, owner: string, income?: number, expenses?: number) => {
-        setHouseholdName(name);
-        setOwnerName(owner || name);
-        setMonthlyIncome(income);
-        setMonthlyExpenses(expenses);
+    const handleNext = () => {
+        if (step < STEPS.length - 1) {
+            setStep(s => s + 1);
+        } else {
+            handleFinalize();
+        }
     };
 
-    const handleNext = () => setStep((s) => s + 1);
-    const handleBack = () => setStep((s) => s - 1);
+    const handleBack = () => setStep((s) => Math.max(0, s - 1));
 
     const handleFinalize = async (isGuest = false) => {
         setIsSubmitting(true);
@@ -56,13 +56,12 @@ function OnboardingInner() {
 
         const surplus = (monthlyIncome || 0) - (monthlyExpenses || 0);
         const startingMoney = (monthlyIncome && monthlyExpenses && surplus > 0) ? Math.max(100, Math.round(surplus * 0.2)) : 500;
-
         const finalPetImage = petImage || PET_TYPES.find(p => p.id === petType)?.icon || '';
 
         const newPet: PetData = {
             type: petType,
             name: petName,
-            ownerName,
+            ownerName: ownerName || householdName,
             householdName,
             petImage: finalPetImage,
             stats: { ...randomizeInitialStats(), money: startingMoney },
@@ -79,177 +78,208 @@ function OnboardingInner() {
             monthlyExpenses,
         };
 
-        if (user && !isGuest) {
-            const { data, error } = await savePetToCloud(newPet);
-            if (!error && data) {
-                localStorage.setItem('currentPetId', data.id);
-                router.push('/dashboard');
+        try {
+            if (user && !isGuest) {
+                const { data, error } = await savePetToCloud(newPet);
+                if (error) throw error;
+                if (data) localStorage.setItem('currentPetId', data.id);
             } else {
-                alert('Something went wrong saving your pet. Please try again.');
+                const guestId = `guest_${Math.random().toString(36).substr(2, 9)}`;
+                localStorage.setItem('currentPetId', guestId);
+                localStorage.setItem(`pet_${guestId}`, JSON.stringify(newPet));
             }
-        } else {
-            const guestId = `guest_${Math.random().toString(36).substr(2, 9)}`;
-            localStorage.setItem('currentPetId', guestId);
-            localStorage.setItem(`pet_${guestId}`, JSON.stringify(newPet));
+
+            // Celebration sequence
+            setIsFinishing(true);
+            await new Promise(resolve => setTimeout(resolve, 3000));
             router.push('/dashboard');
+        } catch (err) {
+            console.error('Error saving pet:', err);
+            alert('Something went wrong saving your pet. Please try again.');
+        } finally {
+            setIsSubmitting(false);
         }
-        setIsSubmitting(false);
     };
 
     const canAdvance = () => {
-        if (step === 1) return householdName.length >= 2;
-        if (step === 2) return !!petType;
+        if (step === 0) return !!petType;
+        if (step === 1) return petName.trim().length >= 2;
+        if (step === 2) return householdName.trim().length >= 2;
         if (step === 3) return true;
-        if (step === 4) return !!petName;
         return false;
     };
 
-    return (
-        <div className="min-h-screen bg-background flex items-center justify-center p-4 md:p-8 relative overflow-hidden">
-            {/* Background orbs */}
-            <div className="pointer-events-none absolute inset-0 -z-10">
-                <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-blue-500/15 blur-[120px] animate-blob" />
-                <div className="absolute -bottom-40 -right-40 w-[400px] h-[400px] rounded-full bg-emerald-500/15 blur-[100px] animate-blob animation-delay-2000" />
-            </div>
+    if (isFinishing) {
+        return (
+            <div className="fixed inset-0 z-50 bg-background flex items-center justify-center overflow-hidden">
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative text-center space-y-8 p-8 max-w-lg">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] -z-10 animate-pulse" />
 
-            <div className="max-w-3xl w-full">
-                {/* Logo */}
-                <div className="flex items-center justify-center gap-2 mb-8">
-                    <div className="w-9 h-9 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/40">
-                        <PawPrint className="w-4 h-4 text-primary-foreground" />
+                    <motion.div
+                        initial={{ scale: 0, rotate: -20 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ type: 'spring', damping: 12, stiffness: 100, delay: 0.2 }}
+                        className="w-32 h-32 bg-primary rounded-[2.5rem] flex items-center justify-center mx-auto shadow-2xl shadow-primary/40 relative"
+                    >
+                        <Sparkles className="w-16 h-16 text-primary-foreground" />
+                    </motion.div>
+
+                    <div className="space-y-4">
+                        <motion.h2 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4 }} className="text-5xl md:text-6xl font-black tracking-tight">
+                            It&apos;s Official!
+                        </motion.h2>
+                        <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.6 }} className="text-xl md:text-2xl text-muted-foreground font-medium">
+                            Welcome home, <span className="text-primary font-black uppercase tracking-wide">{petName}</span>.
+                        </motion.p>
                     </div>
-                    <span className="font-black text-xl tracking-tighter">PetPal</span>
+
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }} className="flex flex-col items-center gap-4 pt-8">
+                        <div className="flex items-center gap-3 text-primary font-bold">
+                            <RefreshCw className="w-5 h-5 animate-spin" />
+                            <span>Moving into the dashboard...</span>
+                        </div>
+                    </motion.div>
+                </motion.div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="min-h-screen bg-linear-to-b from-background via-background/95 to-muted/30 flex flex-col items-center py-12 px-4 relative overflow-x-hidden">
+            {/* Ambient background */}
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
+
+            <div className="w-full max-w-4xl mx-auto space-y-12 relative z-10">
+                {/* Header & Steps */}
+                <div className="flex flex-col items-center text-center space-y-8">
+                    <motion.div initial={{ y: -10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="flex items-center gap-3 bg-card/50 backdrop-blur-md px-6 py-3 rounded-full border border-border/50 shadow-sm">
+                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                            <PawPrint className="w-5 h-5 text-primary-foreground" />
+                        </div>
+                        <span className="font-black tracking-widest uppercase text-xs">Pet Onboarding</span>
+                    </motion.div>
+
+                    <div className="relative w-full max-w-2xl px-4">
+                        <div className="absolute inset-0 flex items-center px-4" aria-hidden="true">
+                            <div className="w-full h-2 bg-muted/30 rounded-full relative z-0 overflow-hidden">
+                                <motion.div
+                                    className="absolute left-0 top-0 h-full bg-gradient-to-r from-primary to-blue-500 rounded-full"
+                                    initial={{ width: '0%' }}
+                                    animate={{ width: `${(step / (STEPS.length - 1)) * 100}%` }}
+                                    transition={{ type: 'spring', damping: 20, stiffness: 100 }}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="relative flex justify-between">
+                            {STEPS.map((s, i) => (
+                                <div key={s} className="flex flex-col items-center">
+                                    <motion.button
+                                        onClick={() => i < step && setStep(i)}
+                                        className={`w-10 h-10 rounded-xl flex items-center justify-center border-2 transition-all relative z-10 ${i <= step
+                                            ? 'bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/25'
+                                            : 'bg-card border-border text-muted-foreground'
+                                            }`}
+                                        animate={{ scale: i === step ? 1.15 : 1, y: i === step ? -4 : 0 }}
+                                        whileHover={{ scale: i <= step ? 1.1 : 1 }}
+                                        whileTap={{ scale: 0.95 }}
+                                    >
+                                        {i < step ? <CheckCircle2 className="w-5 h-5" /> : <span className="text-sm font-black">{i + 1}</span>}
+                                    </motion.button>
+                                    <span className={`mt-3 text-[10px] uppercase tracking-widest font-black transition-colors ${i === step ? 'text-primary' : 'text-muted-foreground/60'}`}>
+                                        {s}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
 
-                {/* Card */}
-                <div className="bg-card/60 backdrop-blur-2xl border border-border/50 rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative overflow-hidden">
-
-                    {/* Gradient progress bar */}
-                    <div className="absolute top-0 left-0 w-full h-1.5 bg-muted overflow-hidden rounded-t-[2.5rem]">
-                        <motion.div
-                            className="h-full rounded-full bg-linear-to-r from-blue-500 via-emerald-500 to-sky-500"
-                            initial={{ width: '25%' }}
-                            animate={{ width: `${(step / 4) * 100}%` }}
-                            transition={{ ease: 'easeOut', duration: 0.4 }}
-                        />
-                    </div>
-
-                    {/* Step indicators */}
-                    <div className="flex items-center justify-center gap-2 mb-10">
-                        {STEPS.map((label, i) => (
-                            <div key={label} className="flex items-center gap-2">
-                                <div className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-black transition-all ${i + 1 < step ? 'bg-primary text-primary-foreground' : i + 1 === step ? 'bg-primary text-primary-foreground ring-4 ring-primary/20' : 'bg-muted text-muted-foreground'}`}>
-                                    {i + 1 < step ? '✓' : i + 1}
-                                </div>
-                                <span className={`text-xs font-bold hidden sm:block transition-colors ${i + 1 === step ? 'text-foreground' : 'text-muted-foreground'}`}>{label}</span>
-                                {i < STEPS.length - 1 && <div className={`w-8 h-0.5 rounded-full mx-1 transition-colors ${i + 1 < step ? 'bg-primary' : 'bg-muted'}`} />}
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Step content */}
+                {/* Main Content */}
+                <Card className="p-8 md:p-12 min-h-[550px] flex flex-col justify-center relative overflow-hidden bg-card/40 backdrop-blur-xl border-border/50 rounded-[3rem] shadow-2xl">
                     <AnimatePresence mode="wait">
-                        {step === 1 && (
-                            <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+                        <motion.div
+                            key={step}
+                            initial={{ x: 20, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            exit={{ x: -20, opacity: 0 }}
+                            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                        >
+                            {step === 0 && <PetTypeSelector selected={petType} onSelect={setPetType} />}
+                            {step === 1 && <PetNaming name={petName} onNameChange={setPetName} />}
+                            {step === 2 && (
                                 <UserOnboarding
                                     householdName={householdName}
-                                    onHouseholdChange={handleHouseholdChange}
-                                    preselectedHousehold={preselectedHousehold}
+                                    onHouseholdChange={(name, owner, income, expenses) => {
+                                        setHouseholdName(name);
+                                        setOwnerName(owner);
+                                        setMonthlyIncome(income);
+                                        setMonthlyExpenses(expenses);
+                                    }}
+                                    preselectedHousehold={preselectedHousehold || undefined}
                                 />
-                            </motion.div>
-                        )}
-                        {step === 2 && (
-                            <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                                <PetTypeSelector selected={petType} onSelect={setPetType} />
-                            </motion.div>
-                        )}
-                        {step === 3 && (
-                            <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                                <PetCustomizer petType={petType} image={petImage} onImageChange={setPetImage} />
-                            </motion.div>
-                        )}
-                        {step === 4 && (
-                            <motion.div key="step4" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                                <PetNaming name={petName} onNameChange={setPetName} />
-                            </motion.div>
-                        )}
+                            )}
+                            {step === 3 && (
+                                <PetCustomizer
+                                    petType={petType}
+                                    image={petImage}
+                                    onImageChange={setPetImage}
+                                />
+                            )}
+                        </motion.div>
                     </AnimatePresence>
+                </Card>
 
-                    {/* Navigation */}
-                    <div className="mt-10 flex items-center justify-between pt-8 border-t border-border/50">
-                        <Button
-                            variant="ghost"
-                            onClick={handleBack}
-                            disabled={step === 1 || isSubmitting}
-                            className="rounded-xl h-11 px-6 font-semibold gap-2"
-                        >
-                            <ChevronLeft className="w-4 h-4" /> Back
-                        </Button>
+                {/* Footer */}
+                <div className="flex items-center justify-between w-full max-w-2xl mx-auto pt-4">
+                    <Button
+                        variant="ghost"
+                        onClick={handleBack}
+                        disabled={step === 0 || isSubmitting}
+                        className="rounded-2xl h-14 px-8 font-black gap-2 hover:bg-muted"
+                    >
+                        <ChevronLeft className="w-5 h-5" /> Back
+                    </Button>
 
-                        {step < 4 ? (
-                            <div className="flex flex-col items-end gap-1.5">
-                                <Button
-                                    onClick={handleNext}
-                                    disabled={!canAdvance()}
-                                    className="rounded-xl h-11 px-8 font-bold shadow-lg shadow-primary/20 gap-2"
-                                >
-                                    {step === 3 && !petImage ? 'Skip' : 'Next'} <ChevronRight className="w-4 h-4" />
-                                </Button>
-                                {step === 3 && !petImage && (
-                                    <p className="text-xs text-muted-foreground mr-2">
-                                        Optional
-                                    </p>
-                                )}
-                            </div>
+                    <Button
+                        onClick={handleNext}
+                        disabled={!canAdvance() || isSubmitting}
+                        className={`rounded-2xl h-14 px-10 font-black gap-2 transition-all transform hover:scale-105 active:scale-95 shadow-xl ${canAdvance() ? 'bg-primary shadow-primary/30' : 'bg-muted'}`}
+                    >
+                        {isSubmitting ? (
+                            <>Creating Magic... <RefreshCw className="w-5 h-5 animate-spin" /></>
+                        ) : step === STEPS.length - 1 ? (
+                            <>Finish & Start Journey <CheckCircle2 className="w-5 h-5" /></>
                         ) : (
-                            <Button
-                                onClick={() => handleFinalize(false)}
-                                disabled={!petName || isSubmitting}
-                                className="rounded-xl h-11 px-8 font-bold shadow-lg shadow-primary/20 gap-2 bg-linear-to-r from-blue-500 to-emerald-500 hover:from-blue-600 hover:to-emerald-600 text-white border-0"
-                            >
-                                {isSubmitting ? 'Bringing to Life...' : 'Finalize & Start'}
-                                {!isSubmitting && <Wand2 className="w-4 h-4" />}
-                            </Button>
+                            <>Continue <ArrowRight className="w-5 h-5" /></>
                         )}
-                    </div>
+                    </Button>
                 </div>
             </div>
 
-            {/* Login Prompt Modal */}
+            {/* Login Prompt Tray */}
             <AnimatePresence>
                 {showLoginPrompt && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
-                            className="bg-card/80 backdrop-blur-2xl p-8 rounded-[2rem] border border-border/50 shadow-2xl max-w-md w-full text-center"
-                        >
-                            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-primary/20">
+                        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-card p-8 rounded-[3rem] border border-border/50 shadow-2xl max-w-md w-full text-center space-y-6">
+                            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto border border-primary/20">
                                 <Sparkles className="w-8 h-8 text-primary" />
                             </div>
-                            <h2 className="text-3xl font-black mb-3">Almost There!</h2>
-                            <p className="text-muted-foreground mb-8 leading-relaxed">
-                                To save <strong>{petName}</strong> to your account and start your journey, sign in first.
+                            <h2 className="text-3xl font-black">Hold on!</h2>
+                            <p className="text-muted-foreground leading-relaxed">
+                                To save <strong>{petName}</strong> permanently, you should sign in first. Or continue as a guest (data will match this browser only).
                             </p>
-                            <div className="grid grid-cols-1 gap-3">
-                                <Link href="/login">
-                                    <Button className="w-full h-12 rounded-xl font-bold gap-2 text-base shadow-lg shadow-primary/25">
-                                        Sign In / Create Account <ArrowRight className="w-4 h-4" />
+                            <div className="flex flex-col gap-3">
+                                <Link href="/login" className="w-full">
+                                    <Button className="w-full h-14 rounded-2xl font-black gap-2 shadow-xl shadow-primary/25">
+                                        Sign In Now <ArrowRight className="w-4 h-4" />
                                     </Button>
                                 </Link>
-                                <Button
-                                    variant="outline"
-                                    onClick={() => handleFinalize(true)}
-                                    className="w-full h-12 rounded-xl font-bold border-2"
-                                >
-                                    Continue as Guest (Local Only)
+                                <Button variant="outline" onClick={() => handleFinalize(true)} className="h-14 rounded-2xl font-black border-2">
+                                    Continue as Guest
                                 </Button>
-                                <Button
-                                    variant="ghost"
-                                    onClick={() => setShowLoginPrompt(false)}
-                                    className="rounded-xl text-muted-foreground"
-                                >
+                                <Button variant="ghost" onClick={() => setShowLoginPrompt(false)} className="rounded-2xl font-bold">
                                     Cancel
                                 </Button>
                             </div>
@@ -263,7 +293,7 @@ function OnboardingInner() {
 
 export default function OnboardingPage() {
     return (
-        <Suspense>
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><RefreshCw className="w-10 h-10 animate-spin text-primary" /></div>}>
             <OnboardingInner />
         </Suspense>
     );
