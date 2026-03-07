@@ -12,7 +12,6 @@ interface Props {
 }
 
 export function PetDisplay({ pet, emotion, isGameOver }: Props) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const HeaderIcon = (Icons as any)[emotion.emoji] || Icons.Smile;
 
     return (
@@ -34,20 +33,14 @@ export function PetDisplay({ pet, emotion, isGameOver }: Props) {
                 }}
                 className={`relative w-full h-full rounded-[3rem] overflow-hidden border-4 shadow-2xl bg-white ${isGameOver ? 'border-rose-500 grayscale' : 'border-white'}`}
             >
-                {pet.petImage ? (
-                    <Image
-                        src={pet.petImage}
-                        alt={pet.name}
-                        fill
-                        className="object-cover"
-                        priority
-                        unoptimized
-                    />
-                ) : (
-                    <div className="w-full h-full bg-muted flex items-center justify-center">
-                        <Icons.PawPrint className="w-24 h-24 text-muted-foreground/30" />
-                    </div>
-                )}
+                <Image
+                    src={pet.petImage}
+                    alt={pet.name}
+                    fill
+                    className="object-cover"
+                    priority
+                    unoptimized
+                />
 
                 {/* Emotion Overlay */}
                 <div className="absolute top-6 left-6 right-6 flex items-start justify-center">
@@ -67,5 +60,6 @@ export function PetDisplay({ pet, emotion, isGameOver }: Props) {
 
             {/* Speech Bubble (Optional/Future) */}
         </div>
+        
     );
 }
