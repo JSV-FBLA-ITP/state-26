@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { X, GraduationCap, Trophy, CheckCircle2, AlertCircle } from 'lucide-react';

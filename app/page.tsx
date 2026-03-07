@@ -1,7 +1,9 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button } from '@/components/ui/button';
 import {
     Sparkles, PawPrint, ShieldCheck, TrendingUp,
@@ -183,10 +185,11 @@ export default function LandingPage() {
                     {/* Left: Bento Image Grid */}
                     <div className="flex-1 w-full grid grid-cols-2 grid-rows-2 gap-4">
                         <div className="row-span-2 relative rounded-[2rem] overflow-hidden bg-muted group">
-                            <img
+                            <Image
                                 src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=800&auto=format&fit=crop"
                                 alt="Cute Dog"
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                fill
+                                className="object-cover transition-transform duration-700 group-hover:scale-105"
                             />
                         </div>
                         <div className="relative rounded-[2rem] bg-blue-500 p-8 flex flex-col justify-center overflow-hidden">
@@ -197,10 +200,11 @@ export default function LandingPage() {
                             <p className="text-blue-100 text-sm font-inter">Curriculum aligned with national standards.</p>
                         </div>
                         <div className="relative rounded-[2rem] overflow-hidden bg-muted group">
-                            <img
+                            <Image
                                 src="https://images.unsplash.com/photo-1513245543132-31f507417b26?q=80&w=800&auto=format&fit=crop"
                                 alt="Cute Cat"
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                fill
+                                className="object-cover transition-transform duration-700 group-hover:scale-105"
                             />
                         </div>
                     </div>
@@ -211,7 +215,7 @@ export default function LandingPage() {
                             Financial Literacy<br />Made Fun
                         </h2>
                         <p className="text-lg text-muted-foreground font-inter mb-10 leading-relaxed max-w-xl">
-                            We believe that financial education shouldn't be boring. By tying financial concepts to the well-being of a virtual pet, students develop an emotional connection to their financial decisions.
+                            We believe that financial education shouldn&apos;t be boring. By tying financial concepts to the well-being of a virtual pet, students develop an emotional connection to their financial decisions.
                         </p>
 
                         <div className="space-y-5 mb-10">

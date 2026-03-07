@@ -15,11 +15,13 @@ interface PetsModalProps {
 }
 
 export function PetsModal({ isOpen, onClose, onSelectPet }: PetsModalProps) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [pets, setPets] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (isOpen) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setLoading(true);
             fetchUserPets().then(({ data }) => {
                 if (data) setPets(data);

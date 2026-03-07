@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -5,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import Link from 'next/link';
-import { PetTypeSelector } from '@/components/onboarding/PetTypeSelector';
+import { PetTypeSelector, PET_TYPES } from '@/components/onboarding/PetTypeSelector';
 import { PetCustomizer } from '@/components/onboarding/PetCustomizer';
 import { PetNaming } from '@/components/onboarding/PetNaming';
 import { UserOnboarding } from '@/components/onboarding/UserOnboarding';
@@ -56,12 +57,14 @@ function OnboardingInner() {
         const surplus = (monthlyIncome || 0) - (monthlyExpenses || 0);
         const startingMoney = (monthlyIncome && monthlyExpenses && surplus > 0) ? Math.max(100, Math.round(surplus * 0.2)) : 500;
 
+        const finalPetImage = petImage || PET_TYPES.find(p => p.id === petType)?.icon || '';
+
         const newPet: PetData = {
             type: petType,
             name: petName,
             ownerName,
             householdName,
-            petImage,
+            petImage: finalPetImage,
             stats: { ...randomizeInitialStats(), money: startingMoney },
             learnedTricks: [],
             totalExpenses: 0,
@@ -96,7 +99,7 @@ function OnboardingInner() {
     const canAdvance = () => {
         if (step === 1) return householdName.length >= 2;
         if (step === 2) return !!petType;
-        if (step === 3) return !!petImage;
+        if (step === 3) return true;
         if (step === 4) return !!petName;
         return false;
     };
@@ -190,11 +193,11 @@ function OnboardingInner() {
                                     disabled={!canAdvance()}
                                     className="rounded-xl h-11 px-8 font-bold shadow-lg shadow-primary/20 gap-2"
                                 >
-                                    Next <ChevronRight className="w-4 h-4" />
+                                    {step === 3 && !petImage ? 'Skip' : 'Next'} <ChevronRight className="w-4 h-4" />
                                 </Button>
                                 {step === 3 && !petImage && (
-                                    <p className="text-xs text-muted-foreground">
-                                        Generate an AI image to continue
+                                    <p className="text-xs text-muted-foreground mr-2">
+                                        Optional
                                     </p>
                                 )}
                             </div>

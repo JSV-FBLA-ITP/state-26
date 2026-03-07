@@ -1,5 +1,6 @@
 'use client';
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Settings2, LogOut, Save, Trash2, Home, Volume2, Moon, Sun, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';

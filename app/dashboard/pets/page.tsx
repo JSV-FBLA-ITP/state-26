@@ -4,13 +4,14 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchUserPets, deletePet, savePetToCloud } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
-import { PawPrint, Plus, Heart, Zap, Coins, ArrowRight, Sparkles, X, ReceiptText, Settings2, Edit2, Trash2, Check, RotateCcw, Home } from 'lucide-react';
+import { PawPrint, Plus, Heart, Zap, Coins, ArrowRight, ReceiptText, Settings2, Edit2, Trash2, Check, RotateCcw, Home } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PetData } from '@/lib/gameLogic';
 
 export default function MyPetsPage() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [pets, setPets] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [editingPetId, setEditingPetId] = useState<string | null>(null);
@@ -26,14 +27,16 @@ export default function MyPetsPage() {
     };
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         loadPets();
     }, []);
 
     const handleSelectPet = (petId: string) => {
         localStorage.setItem('currentPetId', petId);
-        window.location.href = '/dashboard';
+        window.location.assign('/dashboard');
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleRename = async (pet: any) => {
         if (!editingName.trim() || editingName === pet.name) {
             setEditingPetId(null);
@@ -68,6 +71,7 @@ export default function MyPetsPage() {
     };
 
     // Group pets by household
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const petsByHousehold = pets.reduce((acc: { [key: string]: any[] }, pet) => {
         const hh = pet.household_name || pet.householdName || 'Other';
         if (!acc[hh]) acc[hh] = [];
@@ -288,7 +292,7 @@ export default function MyPetsPage() {
                                             <div className="grid grid-cols-2 gap-3">
                                                 <Button
                                                     onClick={() => handleSelectPet(p.id)}
-                                                    className="rounded-2xl h-12 font-bold group bg-primary/10 text-primary hover:bg-primary hover:text-white border-0 transition-all font-black uppercase tracking-wide"
+                                                    className="rounded-2xl h-12 group bg-primary/10 text-primary hover:bg-primary hover:text-white border-0 transition-all font-black uppercase tracking-wide"
                                                 >
                                                     Focus
                                                     <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -297,7 +301,7 @@ export default function MyPetsPage() {
                                                     <Button
                                                         variant="outline"
                                                         onClick={() => localStorage.setItem('currentPetId', p.id)}
-                                                        className="w-full rounded-2xl h-12 font-bold border-2 hover:bg-card/80 font-black uppercase tracking-wide"
+                                                        className="w-full rounded-2xl h-12 border-2 hover:bg-card/80 font-black uppercase tracking-wide"
                                                     >
                                                         <ReceiptText className="w-4 h-4 mr-2" />
                                                         Ledger

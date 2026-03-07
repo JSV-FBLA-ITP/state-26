@@ -87,7 +87,7 @@ export function PetCustomizer({ petType, image, onImageChange }: Props) {
                             <div>
                                 <h4 className="font-bold text-primary mb-1">AI Design Helper</h4>
                                 <p className="text-sm text-primary/70">
-                                    Try prompts like "rainbow colored fur", "golden armor", or "cyberpunk aesthetics" for the best results.
+                                    Try prompts like &quot;rainbow colored fur&quot;, &quot;golden armor&quot;, or &quot;cyberpunk aesthetics&quot; for the best results.
                                 </p>
                             </div>
                         </div>

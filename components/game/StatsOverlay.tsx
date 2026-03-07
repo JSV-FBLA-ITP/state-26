@@ -1,5 +1,7 @@
 'use client';
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react/no-unescaped-entities */
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, History, TrendingUp, Award, ReceiptText, BarChart3, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';

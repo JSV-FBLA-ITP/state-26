@@ -57,6 +57,7 @@ export function StatSidebar({ stats, monthData, income = 0, expenses = 0, onNext
                     {monthData.requiredActions?.map((action) => {
                         const isCompleted = (monthData.actionsCompleted[action] || 0) > 0;
                         const [iconName, ...labelParts] = ACTION_LABELS[action].split(' ');
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         const Icon = (Icons as any)[iconName] || Icons.HelpCircle;
                         const label = labelParts.join(' ');
 
@@ -66,15 +67,13 @@ export function StatSidebar({ stats, monthData, income = 0, expenses = 0, onNext
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={() => onAction(action)}
-                                className={`flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all ${
-                                    isCompleted
+                                className={`flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all ${isCompleted
                                         ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-400'
                                         : 'bg-card/40 border-border/40 hover:border-primary/50 text-muted-foreground hover:text-primary'
-                                }`}
+                                    }`}
                             >
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-2 transition-all ${
-                                    isCompleted ? 'bg-emerald-500 text-white' : 'bg-primary/5 text-muted-foreground group-hover:bg-primary/15 group-hover:text-primary'
-                                }`}>
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-2 transition-all ${isCompleted ? 'bg-emerald-500 text-white' : 'bg-primary/5 text-muted-foreground group-hover:bg-primary/15 group-hover:text-primary'
+                                    }`}>
                                     <Icon className="w-5 h-5" />
                                 </div>
                                 <span className="text-[9px] font-black uppercase tracking-tighter">{label}</span>

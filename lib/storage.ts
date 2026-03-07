@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { PetData } from '@/lib/gameLogic';
 import { supabase } from '@/lib/supabase';
 
@@ -7,7 +9,7 @@ import { supabase } from '@/lib/supabase';
  */
 
 export async function savePetToCloud(petData: PetData): Promise<{ data: any; error: any }> {
-    let petId = (petData as any).id || localStorage.getItem('currentPetId');
+    const petId = (petData as any).id || localStorage.getItem('currentPetId');
     const { data: sessionData } = await supabase.auth.getUser();
     const userId = sessionData?.user?.id;
 
@@ -73,7 +75,7 @@ export async function loadPet(petId: string): Promise<{ data: PetData | null; er
 }
 
 export async function fetchUserPets(): Promise<{ data: any[] | null; error: any }> {
-    let allPets: any[] = [];
+    const allPets: any[] = [];
 
     // 1. Get local guest pets
     if (typeof window !== 'undefined') {

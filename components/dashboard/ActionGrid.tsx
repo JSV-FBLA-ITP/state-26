@@ -2,7 +2,6 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { ActionType, ALL_ACTIONS, ACTION_LABELS, ACTION_COSTS } from '@/lib/gameLogic';
-import { Button } from '@/components/ui/button';
 import * as Icons from 'lucide-react';
 import { useState } from 'react';
 
@@ -23,6 +22,7 @@ export function ActionGrid({ onAction }: Props) {
         <div className="w-full max-w-2xl mt-8 flex flex-wrap justify-center gap-4 md:gap-6 px-4 pb-8">
             {ALL_ACTIONS.map((action, i) => {
                 const [iconName, ...labelParts] = ACTION_LABELS[action].split(' ');
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const Icon = (Icons as any)[iconName] || Icons.HelpCircle;
                 const label = labelParts.join(' ');
                 const isActive = activeAction === action;

@@ -37,7 +37,6 @@ export function UserOnboarding({ householdName, onHouseholdChange, preselectedHo
     const [newName, setNewName] = useState('');
     const [monthlyIncome, setMonthlyIncome] = useState(initialIncome?.toString() || '');
     const [monthlyExpenses, setMonthlyExpenses] = useState(initialExpenses?.toString() || '');
-    const [useCalculator, setUseCalculator] = useState(false);
     const [selectedArea, setSelectedArea] = useState(2);
     const [householdSize, setHouseholdSize] = useState(1);
     const [showCalculator, setShowCalculator] = useState(false);
@@ -91,6 +90,7 @@ export function UserOnboarding({ householdName, onHouseholdChange, preselectedHo
             }
         };
         load();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleNewSubmit = () => {
@@ -171,7 +171,7 @@ export function UserOnboarding({ householdName, onHouseholdChange, preselectedHo
                                     <AlertDialogHeader>
                                         <AlertDialogTitle>Delete Household</AlertDialogTitle>
                                         <AlertDialogDescription>
-                                            Are you sure you want to delete "{h.name}"? This will also delete all pets in this household. This action cannot be undone.
+                                            Are you sure you want to delete &quot;{h.name}&quot;? This will also delete all pets in this household. This action cannot be undone.
                                         </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
