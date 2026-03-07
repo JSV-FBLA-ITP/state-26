@@ -19,29 +19,67 @@ export default function LoginPage() {
 
     const supabase = createClient();
 
+    /** After any successful auth, migrate a lingering guest pet to the cloud. */
+    const migrateGuestPetIfNeeded = async () => {
+        const petId = localStorage.getItem('currentPetId');
+        if (!petId?.startsWith('guest_')) return;
+        try {
+            const { savePetToCloud, loadPet } = await import('@/lib/storage');
+            const { data: petData } = await loadPet(petId);
+            if (petData) {
+                const { data } = await savePetToCloud(petData);
+                if (data?.id) localStorage.setItem('currentPetId', data.id);
+            }
+        } catch {
+            // Non-fatal — pet stays as guest if migration fails
+        }
+    };
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) setError(error.message);
-        else window.location.href = '/dashboard';
-        setLoading(false);
+        if (error) {
+            setError(error.message === 'Invalid login credentials'
+                ? 'Incorrect email or password. Please try again.'
+                : error.message);
+            setLoading(false);
+            return;
+        }
+        await migrateGuestPetIfNeeded();
+        window.location.href = '/dashboard';
     };
 
     const handleSignUp = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
-        const { error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
-        });
-        if (error) setError(error.message);
-        else setMessage('Check your email for a confirmation link!');
-        setLoading(false);
+        // Email confirmation is disabled in Supabase — the session is created immediately
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if (error) {
+            setError(error.message);
+            setLoading(false);
+            return;
+        }
+        if (data.session) {
+            // Account created + session active — migrate guest pet then go to dashboard
+            await migrateGuestPetIfNeeded();
+            window.location.href = '/dashboard';
+        } else {
+            // Fallback — shouldn't happen with confirmation off, but handle gracefully
+            setMessage('Account created! Signing you in…');
+            const { error: loginErr } = await supabase.auth.signInWithPassword({ email, password });
+            if (!loginErr) {
+                await migrateGuestPetIfNeeded();
+                window.location.href = '/dashboard';
+            } else {
+                setError('Account created but sign-in failed. Please try logging in.');
+            }
+            setLoading(false);
+        }
     };
+
 
     return (
         <div className="min-h-screen bg-background flex items-center justify-center p-6 relative overflow-hidden">

@@ -190,18 +190,7 @@ export default function LandingPage() {
 
                 {/* Right 3D Area */}
                 <div className="flex-1 relative w-full h-[600px] md:min-h-[70vh] mt-16 md:mt-0 flex items-center justify-center">
-
-                    {/* Glowing background behind the 3D Dog */}
-                    <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
-                        <div className="w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-blue-500/20 rounded-full blur-[100px]" />
-                        <div className="absolute w-[200px] h-[200px] md:w-[300px] md:h-[300px] bg-emerald-500/10 rounded-full blur-[80px] translate-x-20 translate-y-20" />
-                    </div>
-
-                    {/* The 3D Canvas */}
                     <HeroCanvas />
-
-
-
                 </div>
             </section>
 
@@ -242,8 +231,8 @@ export default function LandingPage() {
                     <div className="flex-1 w-full grid grid-cols-2 grid-rows-2 gap-4">
                         <div className="row-span-2 relative rounded-[2rem] overflow-hidden bg-muted group">
                             <Image
-                                src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=800&auto=format&fit=crop"
-                                alt="Cute Dog"
+                                src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?q=80&w=800&auto=format&fit=crop"
+                                alt="Happy golden retriever"
                                 fill
                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                             />
@@ -257,8 +246,8 @@ export default function LandingPage() {
                         </div>
                         <div className="relative rounded-[2rem] overflow-hidden bg-muted group">
                             <Image
-                                src="https://images.unsplash.com/photo-1513245543132-31f507417b26?q=80&w=800&auto=format&fit=crop"
-                                alt="Cute Cat"
+                                src="https://images.unsplash.com/photo-1548366086-7f1b76106622?q=80&w=800&auto=format&fit=crop"
+                                alt="Cute rabbit"
                                 fill
                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                             />
@@ -297,9 +286,11 @@ export default function LandingPage() {
                             ))}
                         </div>
 
-                        <Button size="lg" className="rounded-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-8 h-14 w-full sm:w-auto shadow-lg shadow-emerald-500/20">
-                            Explore Curriculum
-                        </Button>
+                        <Link href="/learn-more">
+                            <Button size="lg" className="rounded-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-8 h-14 w-full sm:w-auto shadow-lg shadow-emerald-500/20">
+                                Learn More
+                            </Button>
+                        </Link>
                     </div>
                 </div>
             </section>

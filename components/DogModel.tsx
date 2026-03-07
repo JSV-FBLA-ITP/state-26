@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -9,15 +9,16 @@ export function DogModel() {
     const tailRef = useRef<THREE.Mesh>(null);
     const headGroupRef = useRef<THREE.Group>(null);
 
-    const [mouse, setMouse] = useState({ x: 0, y: 0 });
+    // useRef keeps mouse position in sync with the render loop — no React re-renders
+    const mouseRef = useRef({ x: 0, y: 0 });
 
     useEffect(() => {
         const handleMouseMove = (e: MouseEvent) => {
-            const x = (e.clientX / window.innerWidth) * 2 - 1;
-            const y = -(e.clientY / window.innerHeight) * 2 + 1;
-            setMouse({ x, y });
+            mouseRef.current = {
+                x: (e.clientX / window.innerWidth) * 2 - 1,
+                y: -(e.clientY / window.innerHeight) * 2 + 1,
+            };
         };
-
         window.addEventListener('mousemove', handleMouseMove);
         return () => window.removeEventListener('mousemove', handleMouseMove);
     }, []);
@@ -28,21 +29,32 @@ export function DogModel() {
             tailRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 15) * 0.4;
         }
 
+        const { x, y } = mouseRef.current;
+
         // Gentle floating
         if (groupRef.current) {
             groupRef.current.position.y = Math.sin(state.clock.elapsedTime * 2) * 0.1;
 
-            // Mouse tracking interpolation based on global window mouse
-            const targetX = (mouse.x * Math.PI) / 6;
-            const targetY = (mouse.y * Math.PI) / 8;
+            // Body slightly turns toward cursor (anywhere on page)
+            const targetBodyX = (x * Math.PI) / 4;
+            groupRef.current.rotation.y = THREE.MathUtils.lerp(
+                groupRef.current.rotation.y,
+                targetBodyX * 0.5,
+                0.06
+            );
 
-            // Body slightly turns
-            groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetX * 0.5, 0.1);
-
-            // Head turns more towards the mouse
+            // Head tracks cursor more aggressively
             if (headGroupRef.current) {
-                headGroupRef.current.rotation.y = THREE.MathUtils.lerp(headGroupRef.current.rotation.y, targetX * 0.8, 0.1);
-                headGroupRef.current.rotation.x = THREE.MathUtils.lerp(headGroupRef.current.rotation.x, -targetY, 0.1);
+                headGroupRef.current.rotation.y = THREE.MathUtils.lerp(
+                    headGroupRef.current.rotation.y,
+                    targetBodyX * 1.0,
+                    0.08
+                );
+                headGroupRef.current.rotation.x = THREE.MathUtils.lerp(
+                    headGroupRef.current.rotation.x,
+                    -(y * Math.PI) / 5,
+                    0.08
+                );
             }
         }
     });
