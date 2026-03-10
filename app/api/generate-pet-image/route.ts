@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // ✅ ERROR CHECK 1: The Edge Runtime is REQUIRED for public hosting
 // Image generation often exceeds the 10s timeout of standard serverless functions.
+export const maxDuration = 60;
 export const runtime = 'edge';
 
 export async function POST(req: NextRequest) {
