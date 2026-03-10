@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Sparkles, Wand2, RefreshCw, AlertCircle, Palette } from 'lucide-react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 
 interface Props {
     petType: string;
@@ -49,7 +50,11 @@ export function PetCustomizer({ petType, image, onImageChange }: Props) {
 
             onImageChange(data.imageUrl);
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+            if (err instanceof Error && err.message.includes('Unauthorized')) {
+                setError('You must be logged in to use the AI generator.');
+            } else {
+                setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+            }
         } finally {
             setIsGenerating(false);
         }
@@ -106,7 +111,14 @@ export function PetCustomizer({ petType, image, onImageChange }: Props) {
                             className="flex items-center gap-2 text-xs text-destructive font-medium p-2.5 bg-destructive/10 rounded-lg border border-destructive/20"
                         >
                             <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                            <span>{error}</span>
+                            <div className="flex-1 flex items-center justify-between">
+                                <span>{error}</span>
+                                {error.includes('logged in') && (
+                                    <Link href="/login" className="px-2 py-1 bg-destructive/20 hover:bg-destructive/30 rounded text-[10px] font-bold uppercase transition-colors shrink-0">
+                                        Log In
+                                    </Link>
+                                )}
+                            </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
