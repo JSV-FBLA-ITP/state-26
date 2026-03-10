@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// ✅ ERROR CHECK 1: The Edge Runtime is REQUIRED for public hosting
-// Image generation often exceeds the 10s timeout of standard serverless functions.
-export const maxDuration = 60;
+/** * 
+ * Public hosts (Vercel/Netlify) kill standard functions after 10s.
+ * Edge runtime allows longer streaming and is required for AI generation.
+ */
 export const runtime = 'edge';
+export const maxDuration = 60; // Sets max timeout to 60s (if your plan allows)
 
 export async function POST(req: NextRequest) {
     const { prompt } = await req.json();
@@ -12,11 +14,19 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Missing prompt' }, { status: 400 });
     }
 
-    const hfToken = process.env.HF_TOKEN;
+    // 
+    // .trim() is vital. Hidden spaces in environment variables cause 401 errors.
+    const hfToken = process.env.HF_TOKEN?.trim();
+
     if (!hfToken) {
         return NextResponse.json({ error: 'HuggingFace token not configured' }, { status: 500 });
     }
 
+    /**
+     * 
+     * The legacy 'api-inference.huggingface.co' is deprecated and often returns 401/404.
+     * Always use the 'router.huggingface.co' for newer models like FLUX.
+     */
     const model = 'black-forest-labs/FLUX.1-schnell';
     const url = `https://router.huggingface.co/hf-inference/models/${model}`;
 
@@ -24,16 +34,17 @@ export async function POST(req: NextRequest) {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                // ✅ ERROR CHECK 2: .trim() prevents hidden spaces from causing 401s
-                Authorization: `Bearer ${hfToken.trim()}`,
+                'Authorization': `Bearer ${hfToken}`,
                 'Content-Type': 'application/json',
-                // ✅ ERROR CHECK 3: Tell the router exactly what you expect back
+                // 
+                // Tells the router to return the actual image, not just metadata.
                 'Accept': 'image/png',
             },
             body: JSON.stringify({
                 inputs: prompt,
                 parameters: {
-                    // ✅ ERROR CHECK 4: Vital for preventing "Model Loading" 503 errors
+                    // ✅ CHECK 5: COLD START HANDLING
+                    // Prevents the 503 "Model is loading" error.
                     wait_for_model: true
                 }
             }),
@@ -41,19 +52,18 @@ export async function POST(req: NextRequest) {
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error('HuggingFace API error:', response.status, errorText);
+            console.error('HF API Error:', response.status, errorText);
 
-            // If status is 401 here, the Token Checkboxes in your screenshot were missed!
+            // This error usually means the Token permissions are still missing.
             return NextResponse.json(
-                { error: `Hugging Face returned ${response.status}. Check token permissions.` },
+                { error: `Hugging Face Access Denied (${response.status}). Check Token permissions.` },
                 { status: 502 }
             );
         }
 
+        // 'Buffer' is a Node.js specific global and doesn't exist in the Edge Runtime.
+        // We use Uint8Array + btoa to be safe on all public hosting environments.
         const imageBuffer = await response.arrayBuffer();
-
-        // ✅ ERROR CHECK 5: Node's 'Buffer' doesn't exist in Edge Runtime. 
-        // We use the browser-compatible btoa method to create the base64 string.
         const base64 = btoa(
             new Uint8Array(imageBuffer)
                 .reduce((data, byte) => data + String.fromCharCode(byte), '')
@@ -64,7 +74,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ imageUrl: dataUrl });
 
     } catch (err) {
-        console.error('Image generation failed:', err);
-        return NextResponse.json({ error: 'Internal Server Error. Please try again.' }, { status: 500 });
+        console.error('Route Crash:', err);
+        return NextResponse.json({ error: 'Generation failed. Please try again.' }, { status: 500 });
     }
 }
