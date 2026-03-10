@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { InferenceClient } from "@huggingface/inference";
 
 export async function POST(req: NextRequest) {
     const { prompt } = await req.json();
@@ -24,7 +25,12 @@ export async function POST(req: NextRequest) {
                 Authorization: `Bearer ${hfToken}`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ inputs: prompt }),
+            body: JSON.stringify({
+                inputs: prompt,
+                parameters: {
+                    wait_for_model: true
+                }
+            }),
         });
 
         if (!response.ok) {
