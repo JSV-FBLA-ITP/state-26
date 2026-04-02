@@ -15,6 +15,10 @@ import { OptionsOverlay } from '@/components/game/OptionsOverlay';
 import { createClient } from '@/utils/supabase/client';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import { BarChart3, PawPrint } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+type MobileTab = 'pet' | 'stats';
 
 export default function DashboardPage() {
     const [pet, setPet] = useState<PetData | null>(null);
@@ -25,12 +29,12 @@ export default function DashboardPage() {
     const [optionsOpen, setOptionsOpen] = useState(false);
     const [gameOver, setGameOver] = useState(false);
     const [feedback, setFeedback] = useState<{ message: string; type: 'success' | 'warn' | 'info' | null }>({ message: '', type: null });
+    const [mobileTab, setMobileTab] = useState<MobileTab>('pet');
 
     const loadData = useCallback(async () => {
         let petId = localStorage.getItem('currentPetId');
 
         if (!petId) {
-            // Check if user has pets in cloud before redirecting
             const { data: cloudPets } = await (await import('@/lib/storage')).fetchUserPets();
             if (cloudPets && cloudPets.length > 0) {
                 petId = cloudPets[0].id;
@@ -45,18 +49,15 @@ export default function DashboardPage() {
         if (!error && data) {
             setPet(data);
 
-            // Auto-migrate guest pet to cloud if user just logged in
             if (petId!.startsWith('guest_')) {
                 await savePetToCloud(data);
             }
 
-            // Check if pet is already dead on load
             if (data.stats.health <= 0) {
                 setGameOver(true);
             }
         } else {
             console.error('Error loading pet:', error);
-            // If local pet not found, clear and onboarding
             localStorage.removeItem('currentPetId');
             window.location.href = '/onboarding';
         }
@@ -73,18 +74,17 @@ export default function DashboardPage() {
         if (!error) {
             setFeedback({ message: 'Pet saved to account!', type: 'success' });
             setTimeout(() => setFeedback({ message: '', type: null }), 3000);
-            loadData(); // Reload to update ID states
+            loadData();
         } else {
             setFeedback({ message: 'Failed to save to cloud.', type: 'warn' });
         }
     };
 
-    // Auto-save logic
     useEffect(() => {
         if (!pet) return;
         const timeout = setTimeout(() => {
             savePetToCloud(pet);
-        }, 5000); // Save every 5 seconds of inactivity
+        }, 5000);
         return () => clearTimeout(timeout);
     }, [pet]);
 
@@ -109,7 +109,6 @@ export default function DashboardPage() {
 
         const targetStat = statMap[type];
 
-        // Use logic from gameLogic for consistency
         const { getDiminishedBoost, recordClickForStat } = require('@/lib/gameLogic');
         recordClickForStat(targetStat);
         const boost = getDiminishedBoost(targetStat, 15, newPet.stats[targetStat]);
@@ -119,12 +118,10 @@ export default function DashboardPage() {
         newPet.totalExpenses += cost;
         newPet.interactionCount += 1;
 
-        // Record action completion for the month
         newPet.monthData.actionsCompleted[type] = (newPet.monthData.actionsCompleted[type] || 0) + 1;
 
         setPet({ ...newPet });
 
-        // Check for game over
         if (newPet.stats.health <= 0) {
             setGameOver(true);
             return;
@@ -154,7 +151,6 @@ export default function DashboardPage() {
         const { processNextMonth } = require('@/lib/gameLogic');
         const nextPet = processNextMonth(pet);
 
-        // Check for game over after monthly decay
         if (nextPet.stats.health <= 0) {
             setPet(nextPet);
             setGameOver(true);
@@ -191,6 +187,7 @@ export default function DashboardPage() {
         setPet({ ...newPet });
         setFeedback({ message: `Excellence! Earned $${reward}`, type: 'success' });
     };
+
     const handleLogout = async () => {
         const supabase = createClient();
         await supabase.auth.signOut();
@@ -206,26 +203,91 @@ export default function DashboardPage() {
     if (!pet) return <div>Pet not found.</div>;
 
     const emotion = getEmotionData(pet.stats);
-
-    // Hide main game UI when game over
     const showGameUI = !gameOver;
 
     return (
-        <div className={`flex flex-col lg:flex-row min-h-screen lg:h-screen lg:max-h-screen overflow-y-auto lg:overflow-hidden bg-background ${gameOver ? 'pointer-events-none' : ''}`}>
-            {/* Left Column: Visuals */}
-            <div className="flex-1 relative flex flex-col items-center justify-center p-8 lg:p-12 bg-linear-to-br from-primary/5 to-transparent shrink-0">
-                <PetDisplay pet={pet} emotion={emotion} isGameOver={gameOver} />
+        <div className={cn(
+            "h-full flex flex-col lg:flex-row overflow-hidden",
+            gameOver && 'pointer-events-none'
+        )}>
+            {/* Mobile Tab Bar */}
+            <div className="lg:hidden flex items-center justify-center gap-2 p-2 bg-card/50 backdrop-blur-xl border-b border-border/50 shrink-0">
+                <button
+                    onClick={() => setMobileTab('pet')}
+                    className={cn(
+                        "flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all",
+                        mobileTab === 'pet'
+                            ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                    )}
+                >
+                    <PawPrint className="w-4 h-4" />
+                    Pet
+                </button>
+                <button
+                    onClick={() => setMobileTab('stats')}
+                    className={cn(
+                        "flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all",
+                        mobileTab === 'stats'
+                            ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                    )}
+                >
+                    <BarChart3 className="w-4 h-4" />
+                    Stats
+                </button>
+            </div>
 
-                <div className="h-6 mt-4 mb-2 flex items-center justify-center">
+            {/* Left Column: Pet & Actions (Desktop only - mobile uses separate view) */}
+            <div className="hidden lg:flex flex-1 lg:flex-[1.2] relative flex-col items-center justify-center p-8 bg-linear-to-br from-primary/5 to-transparent min-h-0 shrink-0">
+                <div className="w-full flex flex-col items-center justify-center flex-1 min-h-0">
+                    <div className="w-full max-w-[400px] flex items-center justify-center">
+                        <PetDisplay pet={pet} emotion={emotion} isGameOver={gameOver} />
+                    </div>
+
+                    <div className="h-6 mt-2 mb-3 flex items-center justify-center min-h-[24px]">
+                        <AnimatePresence>
+                            {feedback.message && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                    exit={{ opacity: 0, y: -10, scale: 0.9 }}
+                                    className={`px-4 py-1.5 rounded-full text-xs font-black shadow-lg border z-50 ${feedback.type === 'success' ? 'bg-emerald-500 text-white border-emerald-400' :
+                                            feedback.type === 'warn' ? 'bg-rose-500 text-white border-rose-400' :
+                                                'bg-primary text-white border-primary-foreground/20'
+                                        }`}
+                                >
+                                    {feedback.message}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
+
+                    <div className="w-full max-w-[400px]">
+                        <ActionGrid onAction={handleAction} />
+                    </div>
+                </div>
+            </div>
+
+            {/* Mobile Pet View Content (only on mobile when pet tab active) */}
+            <div className={cn(
+                "lg:hidden flex-1 flex flex-col items-center justify-center p-4 bg-linear-to-br from-primary/5 to-transparent min-h-0",
+                mobileTab === 'pet' ? 'flex' : 'hidden'
+            )}>
+                <div className="w-full max-w-[200px] sm:max-w-[240px] flex items-center justify-center">
+                    <PetDisplay pet={pet} emotion={emotion} isGameOver={gameOver} />
+                </div>
+
+                <div className="h-6 mt-2 mb-3 flex items-center justify-center min-h-[24px]">
                     <AnimatePresence>
                         {feedback.message && (
                             <motion.div
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
+                                initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: -10, scale: 0.9 }}
                                 className={`px-4 py-1.5 rounded-full text-xs font-black shadow-lg border z-50 ${feedback.type === 'success' ? 'bg-emerald-500 text-white border-emerald-400' :
-                                    feedback.type === 'warn' ? 'bg-rose-500 text-white border-rose-400' :
-                                        'bg-primary text-white border-primary-foreground/20'
+                                        feedback.type === 'warn' ? 'bg-rose-500 text-white border-rose-400' :
+                                            'bg-primary text-white border-primary-foreground/20'
                                     }`}
                             >
                                 {feedback.message}
@@ -234,12 +296,18 @@ export default function DashboardPage() {
                     </AnimatePresence>
                 </div>
 
-                {showGameUI && <ActionGrid onAction={handleAction} />}
+                <div className="w-full max-w-[280px]">
+                    <ActionGrid onAction={handleAction} />
+                </div>
             </div>
 
-            {/* Right Sidebar: Stats & Management */}
-            <div className="w-full lg:w-[30%] lg:min-w-[340px] lg:max-w-[480px] bg-card/30 backdrop-blur-xl border-t lg:border-t-0 lg:border-l border-border/50 flex flex-col shrink-0 lg:shrink">
-                <div className="p-8 flex-1 overflow-y-auto custom-scrollbar min-h-[400px] lg:min-h-0">
+            {/* Right Sidebar: Stats & Control Panel */}
+            <div className={cn(
+                "w-full lg:w-[30%] lg:min-w-[320px] lg:max-w-[420px] bg-card/30 backdrop-blur-xl border-t lg:border-t-0 lg:border-l border-border/50 flex flex-col shrink-0 min-h-0",
+                "hidden lg:flex",
+                mobileTab === 'stats' && 'hidden lg:flex'
+            )}>
+                <div className="flex-1 min-h-0 overflow-hidden">
                     <StatSidebar
                         stats={pet.stats}
                         monthData={pet.monthData}
@@ -251,7 +319,35 @@ export default function DashboardPage() {
                 </div>
 
                 {showGameUI && (
-                    <div className="p-4 pb-12 lg:pb-4 border-t border-border/50 bg-background/50 sticky bottom-0 z-50">
+                    <div className="p-3 lg:p-4 border-t border-border/50 bg-background/50 shrink-0">
+                        <ControlPanel
+                            onShopOpen={() => setShopOpen(true)}
+                            onQuizOpen={() => setQuizOpen(true)}
+                            onStatsOpen={() => setStatsOpen(true)}
+                            onOptionsOpen={() => setOptionsOpen(true)}
+                        />
+                    </div>
+                )}
+            </div>
+
+            {/* Mobile Stats View */}
+            <div className={cn(
+                "lg:hidden flex-1 flex flex-col min-h-0",
+                mobileTab === 'stats' ? 'flex' : 'hidden'
+            )}>
+                <div className="flex-1 min-h-0 overflow-y-auto">
+                    <StatSidebar
+                        stats={pet.stats}
+                        monthData={pet.monthData}
+                        income={pet.monthlyIncome}
+                        expenses={pet.monthlyExpenses}
+                        onNextMonth={handleNextMonth}
+                        onAction={handleAction}
+                    />
+                </div>
+
+                {showGameUI && (
+                    <div className="p-3 border-t border-border/50 bg-background/50 shrink-0">
                         <ControlPanel
                             onShopOpen={() => setShopOpen(true)}
                             onQuizOpen={() => setQuizOpen(true)}
@@ -288,7 +384,6 @@ export default function DashboardPage() {
                 onLogout={handleLogout}
             />
 
-            {/* Game Over Overlay */}
             <AnimatePresence>
                 {gameOver && (
                     <motion.div
@@ -332,7 +427,6 @@ export default function DashboardPage() {
                     </motion.div>
                 )}
             </AnimatePresence>
-
         </div>
     );
 }
