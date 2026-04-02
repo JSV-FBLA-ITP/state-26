@@ -7,55 +7,19 @@ import { motion } from 'framer-motion';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button } from '@/components/ui/button';
 import {
-    Sparkles, PawPrint, ShieldCheck, TrendingUp,
-    Heart, Zap, Star, ArrowRight, Github, LayoutDashboard
+    LayoutDashboard, ArrowRight, PlayCircle, Star, Zap, 
+    ShieldCheck, Heart, TrendingUp, Sparkles, CloudCheck,
+    CheckCircle2, Info, PawPrint
 } from 'lucide-react';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { HeroCanvas } from '@/components/HeroCanvas';
 import { fetchUserPets } from '@/lib/storage';
 
 const fadeUp = (delay = 0) => ({
     initial: { opacity: 0, y: 24 },
-    animate: { opacity: 1, y: 0 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
     transition: { duration: 0.6, ease: 'easeOut' as const, delay },
 });
-
-const features = [
-    {
-        icon: PawPrint,
-        title: 'AI Customization',
-        desc: 'Generate unique pet appearances powered by stable diffusion. Every companion is truly one of a kind.',
-        color: 'from-blue-500/20 to-blue-500/5',
-        border: 'hover:border-blue-500/50',
-        iconBg: 'bg-blue-500/15',
-        iconColor: 'text-blue-500',
-    },
-    {
-        icon: ShieldCheck,
-        title: 'Cloud Persistence',
-        desc: 'Your pet lives safely in our Supabase-powered cloud. Pick up right where you left off, any device.',
-        color: 'from-emerald-500/20 to-emerald-500/5',
-        border: 'hover:border-emerald-500/50',
-        iconBg: 'bg-emerald-500/15',
-        iconColor: 'text-emerald-500',
-    },
-    {
-        icon: TrendingUp,
-        title: 'Growth & Finance',
-        desc: 'Level up your companion while mastering real financial literacy skills that stay with you for life.',
-        color: 'from-sky-500/20 to-sky-500/5',
-        border: 'hover:border-sky-500/50',
-        iconBg: 'bg-sky-500/15',
-        iconColor: 'text-sky-500',
-    },
-];
-
-const stats = [
-    { label: 'Active pets', value: '12,400+', icon: PawPrint },
-    { label: 'Happy users', value: '8,900+', icon: Heart },
-    { label: 'Daily activities', value: '340k+', icon: Zap },
-    { label: '5-star reviews', value: '4.9 / 5', icon: Star },
-];
 
 export default function LandingPage() {
     const [hasPets, setHasPets] = useState(false);
@@ -72,245 +36,295 @@ export default function LandingPage() {
                     setFirstPetName(data[0]?.name || null);
                 }
             } catch {
-                // silently ignore — user simply has no pets yet
+                // silently ignore
             }
         }
         checkForPets();
     }, []);
 
     return (
-        <div className="min-h-screen bg-background flex flex-col overflow-x-hidden">
-
-            {/* ── Sticky glassmorphic nav ── */}
-            <nav className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/70 backdrop-blur-xl">
-                <div className="max-w-7xl mx-auto px-6 md:px-8 h-16 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/30">
-                            <PawPrint className="w-4 h-4 text-primary-foreground" />
-                        </div>
-                        <span className="font-black text-xl tracking-tighter">PetPal</span>
-                    </div>
-                    <div className="flex items-center gap-6">
-                        <Link href="/learn-more" className="text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
-                            How it Works
-                        </Link>
-                        <Link href="/login">
-                            <Button variant="ghost" size="sm" className="font-semibold">Login</Button>
-                        </Link>
-                        {hasPets ? (
-                            <Link href="/dashboard">
-                                <Button size="sm" className="font-semibold rounded-xl shadow-md shadow-primary/25 gap-1.5">
-                                    <LayoutDashboard className="w-3.5 h-3.5" />
-                                    My Pets
-                                    {petCount > 1 && (
-                                        <span className="ml-0.5 bg-primary-foreground/20 text-primary-foreground rounded-full text-[10px] font-black w-4 h-4 flex items-center justify-center">
-                                            {petCount}
-                                        </span>
-                                    )}
-                                </Button>
-                            </Link>
-                        ) : (
-                            <Link href="/onboarding">
-                                <Button size="sm" className="font-semibold rounded-xl shadow-md shadow-primary/25">
-                                    Get Started
-                                </Button>
-                            </Link>
-                        )}
-                        <ThemeToggle />
-                    </div>
-                </div>
-            </nav>
-
-            {/* ── Hero ── */}
-            <section className="relative flex flex-col md:flex-row items-center justify-between px-6 pt-24 pb-20 md:pb-32 overflow-hidden max-w-7xl mx-auto w-full min-h-[90vh]">
-
-                {/* Left Content Area */}
-                <div className="flex-1 flex flex-col items-start text-left z-20 md:pr-10 w-full">
-                    {/* pill badge */}
-                    <motion.div {...fadeUp(0)}>
-                        <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-primary/20 bg-primary/10 text-primary text-sm font-semibold mb-8 shadow-sm backdrop-blur-md">
-                            <ShieldCheck className="w-4 h-4" />
-                            Premier Financial Education
-                        </div>
-                    </motion.div>
-
-                    {/* headline */}
-                    <motion.h1
-                        {...fadeUp(0.1)}
-                        className="text-5xl sm:text-6xl md:text-7xl font-bold font-outfit tracking-tight leading-[1.05] mb-6 max-w-3xl text-foreground"
-                    >
-                        Nurture Your Pet, <span className="bg-linear-to-r from-blue-500 to-emerald-400 bg-clip-text text-transparent">Master Your Money.</span>
-                    </motion.h1>
-
-                    {/* sub */}
-                    <motion.p
-                        {...fadeUp(0.2)}
-                        className="text-lg md:text-xl text-muted-foreground/90 font-inter leading-relaxed max-w-xl mb-10"
-                    >
-                        PetPal is the first virtual pet simulator that turns financial literacy into a game. Earn, budget, and save to keep your digital companion happy and healthy.
-                    </motion.p>
-
-                    {/* CTAs */}
-                    <motion.div {...fadeUp(0.3)} className="flex flex-col sm:flex-row items-center gap-4 mb-16 w-full sm:w-auto">
-                        {hasPets ? (
-                            <>
-                                <Link href="/dashboard" className="w-full sm:w-auto">
-                                    <Button size="lg" className="w-full sm:w-auto h-14 rounded-full bg-blue-500 hover:bg-blue-600 text-white text-base font-bold px-8 shadow-xl shadow-blue-500/25 transition-all gap-2 group">
-                                        <LayoutDashboard className="w-5 h-5" />
-                                        Continue{firstPetName ? ` with ${firstPetName}` : ' Your Journey'}
-                                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                                    </Button>
-                                </Link>
-                                <Link href="/onboarding" className="w-full sm:w-auto">
-                                    <Button variant="outline" size="lg" className="w-full sm:w-auto h-14 rounded-full border-border/50 text-base font-bold px-8 backdrop-blur-sm bg-background/5 hover:bg-white/5 transition-all gap-2">
-                                        <PawPrint className="w-5 h-5" />
-                                        Add New Pet
-                                    </Button>
-                                </Link>
-                            </>
-                        ) : (
-                            <>
-                                <Link href="/onboarding" className="w-full sm:w-auto">
-                                    <Button size="lg" className="w-full sm:w-auto h-14 rounded-full bg-blue-500 hover:bg-blue-600 text-white text-base font-bold px-8 shadow-xl shadow-blue-500/25 transition-all gap-2 group">
-                                        Start Your Journey
-                                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+        <div className="min-h-screen bg-[#f8f9ff] dark:bg-slate-950 text-[#0b1c30] dark:text-slate-100 font-inter antialiased selection:bg-[#d8e2ff] selection:text-[#001a42] overflow-x-hidden">
+            <main>
+                {/* ── Hero Section ── */}
+                <section id="hero" className="relative px-8 py-20 lg:py-32 overflow-hidden min-h-[90vh] flex items-center">
+                    <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16 w-full">
+                        
+                        <div className="flex-1 text-center lg:text-left z-10">
+                            <motion.h1 
+                                {...fadeUp(0)}
+                                className="text-5xl lg:text-7xl font-extrabold font-outfit leading-[1.1] tracking-tight mb-8"
+                            >
+                                Nurture Your Pet, <br />
+                                <span className="text-transparent bg-clip-text bg-linear-to-r from-[#0058be] to-[#006c49]">Master Your Money.</span>
+                            </motion.h1>
+                            
+                            <motion.p 
+                                {...fadeUp(0.1)}
+                                className="text-lg text-slate-600 dark:text-slate-400 mb-12 max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium"
+                            >
+                                Step into a vibrant playground where your pet&apos;s happiness is the key to your financial future. Learn wealth management through play, not spreadsheets.
+                            </motion.p>
+                            
+                            <motion.div 
+                                {...fadeUp(0.2)}
+                                className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4"
+                            >
+                                <Link href={hasPets ? "/dashboard" : "/onboarding"} className="w-full sm:w-auto">
+                                    <Button className="w-full sm:w-auto bg-linear-to-br from-[#0058be] to-[#2170e4] text-white px-10 py-4 rounded-full text-lg font-bold shadow-2xl shadow-blue-500/30 hover:scale-105 transition-transform h-auto">
+                                        {hasPets ? `Continue with ${firstPetName || 'Pet'}` : "Start Your Journey"}
                                     </Button>
                                 </Link>
                                 <Link href="/demo" className="w-full sm:w-auto">
-                                    <Button variant="outline" size="lg" className="w-full sm:w-auto h-14 rounded-full border-border/50 text-base font-bold px-8 backdrop-blur-sm bg-background/5 hover:bg-white/5 transition-all">
+                                    <Button variant="ghost" className="w-full sm:w-auto bg-[#dce9ff] dark:bg-white/5 text-[#0058be] dark:text-blue-400 px-10 py-4 rounded-full text-lg font-bold hover:bg-[#d3e4fe] transition-colors flex items-center justify-center gap-2 h-auto">
+                                        <PlayCircle className="w-6 h-6" />
                                         Watch Demo
                                     </Button>
                                 </Link>
-                            </>
-                        )}
-                    </motion.div>
-
-
-                </div>
-
-                {/* Right 3D Area */}
-                <div className="flex-1 relative w-full h-[600px] md:min-h-[70vh] mt-16 md:mt-0 flex items-center justify-center">
-                    <HeroCanvas />
-                </div>
-            </section>
-
-            {/* ── Feature cards ── */}
-            <section className="px-6 pb-24 max-w-7xl mx-auto w-full relative z-10">
-                <motion.div {...fadeUp(0)} className="text-center mb-16">
-                    <p className="text-sm font-bold uppercase tracking-widest text-emerald-500 mb-3">Core Features</p>
-                    <h2 className="text-3xl md:text-5xl font-bold font-outfit tracking-tight text-foreground">
-                        Everything your pet needs
-                    </h2>
-                </motion.div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-                    {features.map(({ icon: Icon, title, desc, color, border, iconBg, iconColor }, i) => (
-                        <motion.div
-                            key={title}
-                            {...fadeUp(i * 0.1)}
-                            className={`relative p-8 rounded-[2rem] bg-card/40 backdrop-blur-xl border border-white/10 dark:border-white/5 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 overflow-hidden group`}
-                        >
-                            {/* Accent bottom glow on hover */}
-                            <div className={`absolute bottom-0 left-0 right-0 h-1 bg-linear-to-r ${color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-
-                            <div className={`w-14 h-14 rounded-2xl ${iconBg} flex items-center justify-center mb-6 shadow-inner`}>
-                                <Icon className={`w-7 h-7 ${iconColor}`} />
-                            </div>
-                            <h3 className="text-xl font-bold font-outfit mb-3 text-foreground">{title}</h3>
-                            <p className="text-muted-foreground font-inter text-sm leading-relaxed">{desc}</p>
-                        </motion.div>
-                    ))}
-                </div>
-            </section>
-
-            {/* ── Educational Bento Section ── */}
-            <section className="px-6 py-24 max-w-7xl mx-auto w-full border-t border-border/50">
-                <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
-
-                    {/* Left: Bento Image Grid */}
-                    <div className="flex-1 w-full grid grid-cols-2 grid-rows-2 gap-4">
-                        <div className="row-span-2 relative rounded-[2rem] overflow-hidden bg-muted group">
-                            <Image
-                                src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?q=80&w=800&auto=format&fit=crop"
-                                alt="Happy golden retriever"
-                                fill
-                                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                            />
+                            </motion.div>
                         </div>
-                        <div className="relative rounded-[2rem] bg-blue-500 p-8 flex flex-col justify-center overflow-hidden">
-                            {/* Decorative background circle */}
-                            <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl" />
-                            <ShieldCheck className="w-8 h-8 text-white mb-4" />
-                            <h4 className="text-white font-bold font-outfit text-xl mb-1">Certified Learning</h4>
-                            <p className="text-blue-100 text-sm font-inter">Curriculum aligned with national standards.</p>
-                        </div>
-                        <div className="relative rounded-[2rem] overflow-hidden bg-muted group">
-                            <Image
-                                src="https://images.unsplash.com/photo-1548366086-7f1b76106622?q=80&w=800&auto=format&fit=crop"
-                                alt="Cute rabbit"
-                                fill
-                                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                            />
-                        </div>
-                    </div>
 
-                    {/* Right: Checklist Area */}
-                    <div className="flex-1 w-full">
-                        <h2 className="text-4xl md:text-5xl font-bold font-outfit tracking-tight mb-6">
-                            Financial Literacy<br />Made Fun
-                        </h2>
-                        <p className="text-lg text-muted-foreground font-inter mb-10 leading-relaxed max-w-xl">
-                            We believe that financial education shouldn&apos;t be boring. By tying financial concepts to the well-being of a virtual pet, students develop an emotional connection to their financial decisions.
-                        </p>
-
-                        <div className="space-y-5 mb-10">
-                            {[
-                                "Understand the difference between needs and wants",
-                                "Learn the basics of interest and inflation",
-                                "Practice real-world budgeting scenarios",
-                                "Develop long-term financial planning skills",
-                            ].map((item, i) => (
-                                <motion.div
-                                    key={i}
-                                    initial={{ opacity: 0, x: -20 }}
-                                    whileInView={{ opacity: 1, x: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: i * 0.1 }}
-                                    className="flex items-center gap-4"
+                        <div className="flex-1 relative w-full aspect-square lg:aspect-auto h-[500px] lg:h-[600px]">
+                            {/* Decorative Background Elements */}
+                            <div className="absolute -top-20 -right-20 w-96 h-96 bg-[#6cf8bb]/20 blur-3xl rounded-full -z-10" />
+                            <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-[#2170e4]/10 blur-3xl rounded-full -z-10" />
+                            
+                            {/* 3D Canvas Box */}
+                            <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden shadow-2xl transition-transform duration-700 hover:rotate-1 group bg-white/50 dark:bg-black/5 flex items-center justify-center border border-white/20">
+                                <HeroCanvas />
+                                
+                                {/* Overlay Floating Card from Stitch Design */}
+                                <motion.div 
+                                    initial={{ opacity: 0, scale: 0.9, x: -20 }}
+                                    animate={{ opacity: 1, scale: 1, x: 0 }}
+                                    transition={{ delay: 0.8 }}
+                                    className="absolute bottom-10 left-10 z-20 lg:w-64 bg-white/70 dark:bg-slate-900/70 backdrop-blur-2xl p-6 rounded-3xl shadow-2xl border border-white/20 hidden md:block"
                                 >
-                                    <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
-                                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                                    <div className="flex items-center gap-4 mb-4">
+                                        <div className="w-12 h-12 bg-[#6cf8bb] rounded-2xl flex items-center justify-center text-[#005236]">
+                                            <TrendingUp className="w-6 h-6" />
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-[#424754] dark:text-slate-400 mb-0.5">Daily Savings</p>
+                                            <p className="text-xl font-black text-[#0b1c30] dark:text-white">+$24.50</p>
+                                        </div>
                                     </div>
-                                    <span className="font-semibold font-inter">{item}</span>
+                                    <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                        <motion.div 
+                                            initial={{ width: 0 }}
+                                            animate={{ width: "75%" }}
+                                            transition={{ delay: 1.2, duration: 1 }}
+                                            className="h-full bg-[#006c49] rounded-full" 
+                                        />
+                                    </div>
                                 </motion.div>
-                            ))}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* ── Feature Cards section (asymmetric grid) ── */}
+                <section id="features" className="bg-[#eff4ff] dark:bg-slate-900/50 py-24 px-8">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="text-center mb-20">
+                            <motion.span {...fadeUp(0)} className="text-[#0058be] font-black tracking-widest text-xs uppercase mb-4 block">Platform Excellence</motion.span>
+                            <motion.h2 {...fadeUp(0.1)} className="text-4xl lg:text-6xl font-extrabold font-outfit mb-6 tracking-tight">Everything your pet needs</motion.h2>
+                            <motion.p {...fadeUp(0.2)} className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed font-medium">Our features are designed to create a seamless loop between virtual care and real-world intelligence.</motion.p>
                         </div>
 
-                        <Link href="/learn-more">
-                            <Button size="lg" className="rounded-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-8 h-14 w-full sm:w-auto shadow-lg shadow-emerald-500/20">
-                                Learn More
-                            </Button>
-                        </Link>
+                        <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+                            {/* Feature 1: AI Customization */}
+                            <motion.div 
+                                {...fadeUp(0.3)}
+                                className="md:col-span-4 group p-10 rounded-3xl bg-white dark:bg-slate-800 shadow-xl shadow-blue-500/5 hover:shadow-blue-500/10 transition-all duration-300 border border-black/5 dark:border-white/5"
+                            >
+                                <div className="w-16 h-16 rounded-2xl bg-[#eff4ff] dark:bg-blue-500/10 flex items-center justify-center text-[#0058be] mb-8 group-hover:scale-110 group-hover:rotate-3 transition-transform">
+                                    <Sparkles className="w-8 h-8" />
+                                </div>
+                                <h3 className="text-2xl font-black font-outfit mb-4">AI Customization</h3>
+                                <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-8 font-medium italic">Create a pet as unique as your financial goals. Our AI adapts their personality to your learning style.</p>
+                                <div className="flex flex-wrap gap-2">
+                                    <span className="px-4 py-1.5 bg-[#dce9ff] dark:bg-blue-500/20 rounded-full text-[10px] font-black uppercase tracking-widest text-[#0058be] dark:text-blue-300">Dynamic EQ</span>
+                                    <span className="px-4 py-1.5 bg-[#dce9ff] dark:bg-blue-500/20 rounded-full text-[10px] font-black uppercase tracking-widest text-[#0058be] dark:text-blue-300">Custom Traits</span>
+                                </div>
+                            </motion.div>
+
+                            {/* Feature 2: Cloud Persistence */}
+                            <motion.div 
+                                {...fadeUp(0.4)}
+                                className="md:col-span-8 group p-10 rounded-3xl bg-[#d3e4fe] dark:bg-blue-900/30 shadow-xl transition-all duration-300 flex flex-col md:flex-row gap-10 items-center overflow-hidden border border-white/20"
+                            >
+                                <div className="flex-1">
+                                    <div className="w-16 h-16 rounded-2xl bg-[#0058be] text-white flex items-center justify-center mb-8 group-hover:rotate-12 transition-transform shadow-lg shadow-blue-500/30">
+                                        <CloudCheck className="w-8 h-8" />
+                                    </div>
+                                    <h3 className="text-2xl font-black font-outfit mb-4">Cloud Persistence</h3>
+                                    <p className="text-slate-700 dark:text-slate-300 leading-relaxed font-medium">Your progress and your pet&apos;s growth are synced across all devices. Never miss a feeding or a market update.</p>
+                                </div>
+                                <div className="flex-1 w-full translate-x-10 translate-y-10 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-700">
+                                    <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border-4 border-white/30 bg-slate-200">
+                                        <Image 
+                                            src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop" 
+                                            alt="Dashboard" 
+                                            fill 
+                                            className="object-cover"
+                                        />
+                                        <div className="absolute inset-0 bg-blue-500/20 backdrop-blur-[1px]" />
+                                    </div>
+                                </div>
+                            </motion.div>
+
+                            {/* Feature 3: Growth & Finance */}
+                            <motion.div 
+                                {...fadeUp(0.5)}
+                                className="md:col-span-12 group p-10 lg:p-16 rounded-[3rem] bg-linear-to-br from-[#006c49] to-[#002113] text-white flex flex-col md:flex-row items-center gap-12 shadow-2xl"
+                            >
+                                <div className="flex-1">
+                                    <h3 className="text-3xl lg:text-5xl font-black font-outfit mb-6">Growth & Finance</h3>
+                                    <p className="text-emerald-200/80 leading-relaxed mb-10 text-xl font-medium">As your pet grows, so does your financial portfolio. We tie virtual pet levels directly to your grasp of complex economic concepts.</p>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="bg-white/10 p-6 rounded-2xl backdrop-blur-md border border-white/10 hover:bg-white/15 transition-colors">
+                                            <TrendingUp className="w-6 h-6 mb-3 text-emerald-400" />
+                                            <p className="font-black text-sm uppercase tracking-wider">Portfolio Link</p>
+                                        </div>
+                                        <div className="bg-white/10 p-6 rounded-2xl backdrop-blur-md border border-white/10 hover:bg-white/15 transition-colors">
+                                            <Star className="w-6 h-6 mb-3 text-yellow-400" />
+                                            <p className="font-black text-sm uppercase tracking-wider">Growth Metrics</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex-1 relative w-full">
+                                    <div className="bg-white/5 p-10 rounded-[2.5rem] border border-white/10 backdrop-blur-3xl shadow-inner">
+                                        <div className="flex items-center justify-between mb-6">
+                                            <p className="font-black uppercase tracking-[0.2em] text-[10px] opacity-60">Investment Health</p>
+                                            <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+                                                <CheckCircle2 className="w-4 h-4 text-white" />
+                                            </div>
+                                        </div>
+                                        <div className="flex items-baseline gap-2 mb-2">
+                                            <span className="text-7xl font-black font-outfit leading-none">94</span>
+                                            <span className="text-3xl font-black opacity-60 font-outfit">%</span>
+                                        </div>
+                                        <div className="w-full h-4 bg-white/10 rounded-full mt-6 overflow-hidden">
+                                            <motion.div 
+                                                initial={{ width: 0 }}
+                                                whileInView={{ width: "94%" }}
+                                                transition={{ duration: 1.5, delay: 0.5 }}
+                                                className="h-full bg-linear-to-r from-emerald-500 to-teal-400 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.5)]" 
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
+                {/* ── Educational Section ── */}
+                <section id="education" className="py-24 px-8 bg-white dark:bg-slate-950 overflow-hidden">
+                    <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-20 items-center">
+                        <motion.div 
+                            initial={{ opacity: 0, x: -40 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            className="lg:w-1/2 relative"
+                        >
+                            <div className="absolute -inset-10 bg-emerald-500/10 blur-[100px] rounded-full" />
+                            <div className="relative rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.2)]">
+                                <Image 
+                                    src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=1200&auto=format&fit=crop" 
+                                    alt="Financial charts" 
+                                    width={800} 
+                                    height={1000} 
+                                    className="w-full h-auto"
+                                />
+                                <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
+                                <div className="absolute bottom-10 left-10 text-white">
+                                    <p className="text-sm font-black uppercase tracking-[0.3em] mb-2 opacity-80 font-outfit">Certified Learning</p>
+                                    <h4 className="text-2xl font-bold font-outfit">Financial Curriculum Pro</h4>
+                                </div>
+                            </div>
+                        </motion.div>
 
+                        <div className="lg:w-1/2">
+                            <motion.span {...fadeUp(0)} className="text-[#006c49] font-black tracking-widest text-xs uppercase mb-4 block">Learning Reimagined</motion.span>
+                            <motion.h2 {...fadeUp(0.1)} className="text-4xl lg:text-6xl font-extrabold font-outfit mb-8 leading-tight tracking-tight">Financial Literacy Made Fun</motion.h2>
+                            <motion.p {...fadeUp(0.2)} className="text-slate-600 dark:text-slate-400 mb-10 text-xl leading-relaxed font-medium">
+                                We transform abstract financial concepts into tangible pet needs. When you understand why your pet needs a &quot;reserve fund,&quot; you&apos;re learning the basics of emergency savings in the real world.
+                            </motion.p>
+                            
+                            <div className="space-y-8">
+                                {[
+                                    { title: "Understand needs vs wants", desc: "Prioritize pet medicine over premium cosmetics to learn essential budgeting.", icon: Heart },
+                                    { title: "Learn interest and inflation", desc: "Watch how the 'PetCoin' marketplace fluctuates based on simulator supply.", icon: TrendingUp },
+                                    { title: "Risk Management", desc: "Insure your pet against unexpected virtual 'accidents' to understand premiums.", icon: ShieldCheck }
+                                ].map((item, i) => (
+                                    <motion.div 
+                                        key={item.title} 
+                                        {...fadeUp(0.3 + i * 0.1)}
+                                        className="flex items-start gap-6 group"
+                                    >
+                                        <div className="mt-1 w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-500/10 flex items-center justify-center text-[#006c49] dark:text-emerald-400 group-hover:scale-110 transition-transform">
+                                            <item.icon className="w-6 h-6" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-black text-xl mb-1 font-outfit">{item.title}</h4>
+                                            <p className="text-slate-500 dark:text-slate-400 leading-relaxed font-medium">{item.desc}</p>
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* ── CTA Section ── */}
+                <section className="py-24 px-8">
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        className="max-w-5xl mx-auto rounded-[3rem] bg-linear-to-br from-[#0058be] to-[#2170e4] p-12 lg:p-24 text-center relative overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,88,190,0.5)]"
+                    >
+                        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full translate-x-20 -translate-y-20 blur-3xl" />
+                        <div className="relative z-10">
+                            <h2 className="text-4xl lg:text-7xl font-extrabold font-outfit text-white mb-8 tracking-tighter leading-none">Ready to grow together?</h2>
+                            <p className="text-blue-100 text-xl lg:text-2xl mb-12 max-w-2xl mx-auto font-medium">Join 50,000+ young earners who are mastering their finances while raising their best friends.</p>
+                            <Link href={hasPets ? "/dashboard" : "/onboarding"}>
+                                <Button className="bg-white text-[#0058be] px-12 py-8 rounded-full text-2xl font-black hover:scale-105 active:scale-95 transition-all shadow-2xl h-auto">
+                                    {hasPets ? "Open Dashboard" : "Create Your Pet Account"}
+                                </Button>
+                            </Link>
+                        </div>
+                    </motion.div>
+                </section>
+            </main>
 
             {/* ── Footer ── */}
-            <footer className="border-t border-border/50 px-6 py-12 mt-auto text-center flex flex-col items-center">
-                <div className="flex items-center gap-2 font-bold font-outfit text-foreground text-xl mb-6">
-                    <PawPrint className="w-6 h-6 text-blue-500" />
-                    PetPal
+            <footer className="w-full bg-[#f8f9ff] dark:bg-slate-950 border-t border-black/5 dark:border-white/5">
+                <div className="max-w-7xl mx-auto px-12 py-20 flex flex-col md:flex-row justify-between items-center gap-12">
+                    <div className="flex flex-col gap-6 text-center md:text-left items-center md:items-start">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-[#0058be] flex items-center justify-center">
+                                <PawPrint className="w-6 h-6 text-white" />
+                            </div>
+                            <span className="font-outfit font-black text-[#0b1c30] dark:text-white text-2xl">PetPal</span>
+                        </div>
+                        <p className="text-slate-500 dark:text-slate-400 font-medium text-sm max-w-xs leading-relaxed">
+                            Bridging the gap between financial responsibility and nurturing play.
+                        </p>
+                    </div>
+                    
+                    <div className="flex gap-10 flex-wrap justify-center">
+                        <Link href="/privacy" className="text-slate-500 dark:text-slate-400 text-sm font-black uppercase tracking-widest hover:text-[#0058be] transition-colors">Privacy</Link>
+                        <Link href="/terms" className="text-slate-500 dark:text-slate-400 text-sm font-black uppercase tracking-widest hover:text-[#0058be] transition-colors">Terms</Link>
+                        <Link href="/support" className="text-slate-500 dark:text-slate-400 text-sm font-black uppercase tracking-widest hover:text-[#0058be] transition-colors">Support</Link>
+                        <Link href="/careers" className="text-slate-500 dark:text-slate-400 text-sm font-black uppercase tracking-widest hover:text-[#0058be] transition-colors">Careers</Link>
+                    </div>
                 </div>
-                <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground font-semibold font-inter mb-8">
-                    <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
-                    <Link href="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link>
-                    <Link href="/contact" className="hover:text-foreground transition-colors">Contact</Link>
+                
+                <div className="px-12 pb-12 text-center text-slate-400 dark:text-slate-600 text-[10px] font-black uppercase tracking-[0.4em]">
+                    © {new Date().getFullYear()} PetPal. The Intellectual Playground.
                 </div>
-                <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} PetPal. All rights reserved.</p>
             </footer>
-
         </div>
     );
 }

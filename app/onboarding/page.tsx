@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ChevronLeft, Sparkles, PawPrint, ArrowRight, CheckCircle2, RefreshCw } from 'lucide-react';
 
-const STEPS = ['Choose Pet', 'Give Name', 'Create Home', 'Style'];
+const STEPS = ['Choose Pet', 'Create Home', 'Style', 'Give Name'];
 
 function OnboardingInner() {
     const [step, setStep] = useState(0); // 0-indexed
@@ -103,9 +103,9 @@ function OnboardingInner() {
 
     const canAdvance = () => {
         if (step === 0) return !!petType;
-        if (step === 1) return petName.trim().length >= 2;
-        if (step === 2) return householdName.trim().length >= 2;
-        if (step === 3) return true;
+        if (step === 1) return householdName.trim().length >= 2;
+        if (step === 2) return true;
+        if (step === 3) return petName.trim().length >= 2;
         return false;
     };
 
@@ -164,7 +164,7 @@ function OnboardingInner() {
                         <div className="absolute inset-0 flex items-center px-4" aria-hidden="true">
                             <div className="w-full h-2 bg-muted/30 rounded-full relative z-0 overflow-hidden">
                                 <motion.div
-                                    className="absolute left-0 top-0 h-full bg-gradient-to-r from-primary to-blue-500 rounded-full"
+                                    className="absolute left-0 top-0 h-full bg-linear-to-r from-primary to-blue-500 rounded-full"
                                     initial={{ width: '0%' }}
                                     animate={{ width: `${(step / (STEPS.length - 1)) * 100}%` }}
                                     transition={{ type: 'spring', damping: 20, stiffness: 100 }}
@@ -207,8 +207,7 @@ function OnboardingInner() {
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                         >
                             {step === 0 && <PetTypeSelector selected={petType} onSelect={setPetType} />}
-                            {step === 1 && <PetNaming name={petName} onNameChange={setPetName} />}
-                            {step === 2 && (
+                            {step === 1 && (
                                 <UserOnboarding
                                     householdName={householdName}
                                     onHouseholdChange={(name, owner, income, expenses) => {
@@ -220,13 +219,14 @@ function OnboardingInner() {
                                     preselectedHousehold={preselectedHousehold || undefined}
                                 />
                             )}
-                            {step === 3 && (
+                            {step === 2 && (
                                 <PetCustomizer
                                     petType={petType}
                                     image={petImage}
                                     onImageChange={setPetImage}
                                 />
                             )}
+                            {step === 3 && <PetNaming name={petName} onNameChange={setPetName} />}
                         </motion.div>
                     </AnimatePresence>
                 </Card>

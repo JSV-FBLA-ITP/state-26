@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import {
     BrainCircuit,
     ShieldCheck,
@@ -15,7 +14,7 @@ import {
 
 const fadeUp = (delay = 0) => ({
     initial: { opacity: 0, y: 24 },
-    animate: { opacity: 1, y: 0 },
+    whileInView: { opacity: 1, y: 0 },
     transition: { duration: 0.6, ease: 'easeOut' as const, delay },
 });
 
@@ -61,29 +60,9 @@ const features = [
 export default function LearnMorePage() {
     return (
         <div className="min-h-screen bg-background text-foreground flex flex-col overflow-x-hidden">
-            {/* Navbar */}
-            <nav className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/70 backdrop-blur-xl">
-                <div className="max-w-7xl mx-auto px-6 md:px-8 h-16 flex items-center justify-between">
-                    <Link href="/" className="flex items-center gap-2 group">
-                        <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-105 transition-transform">
-                            <PawPrint className="w-4 h-4 text-primary-foreground" />
-                        </div>
-                        <span className="font-black text-xl tracking-tighter">PetPal</span>
-                    </Link>
-                    <div className="flex items-center gap-4">
-                        <ThemeToggle />
-                        <Link href="/onboarding">
-                            <Button size="sm" className="font-semibold rounded-xl shadow-md shadow-primary/25">
-                                Get Started
-                            </Button>
-                        </Link>
-                    </div>
-                </div>
-            </nav>
-
             <main className="flex-1">
                 {/* Hero */}
-                <section className="relative px-6 pt-24 pb-20 text-center overflow-hidden">
+                <section className="relative px-6 pt-12 pb-20 text-center overflow-hidden">
                     <div className="pointer-events-none absolute inset-0 -z-10">
                         <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full bg-blue-500/20 blur-[120px] animate-blob" />
                         <div className="absolute top-20 -right-20 w-[300px] h-[300px] rounded-full bg-emerald-500/15 blur-[100px] animate-blob animation-delay-2000" />
@@ -100,7 +79,7 @@ export default function LearnMorePage() {
                             className="text-5xl md:text-7xl font-black tracking-tighter mb-6 leading-[1.05]"
                         >
                             The Future of{' '}
-                            <span className="bg-linear-to-r from-blue-500 via-emerald-400 to-sky-400 bg-[length:200%_200%] bg-clip-text text-transparent">Pet Ownership.</span>
+                            <span className="bg-linear-to-r from-blue-500 via-emerald-400 to-sky-400 bg-size-[200%_200%] bg-clip-text text-transparent">Pet Ownership.</span>
                         </motion.h1>
                         <motion.p
                             {...fadeUp(0.2)}

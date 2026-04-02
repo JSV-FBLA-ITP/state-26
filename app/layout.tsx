@@ -7,6 +7,8 @@ import { ChatbaseWidget } from '@/components/ChatbaseWidget';
 const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' });
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
+import { Navbar } from '@/components/Navbar';
+
 export const metadata: Metadata = {
   title: 'PetPal — Your Virtual Companion',
   description:
@@ -29,7 +31,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <Navbar />
+          <main className="pt-20">
+            {children}
+          </main>
           <ChatbaseWidget />
         </ThemeProvider>
       </body>
