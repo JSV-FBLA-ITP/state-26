@@ -1,0 +1,55 @@
+
+> state-26@0.1.0 lint
+> eslint
+
+
+/Users/jm/dev/webApps/state-26/app/dashboard/pets/page.tsx
+  12:10  warning  'cn' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/jm/dev/webApps/state-26/app/demo/page.tsx
+  15:18  warning  The ref value 'videoRef.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'videoRef.current' to a variable inside the effect, and use that variable in the cleanup function  react-hooks/exhaustive-deps
+
+/Users/jm/dev/webApps/state-26/app/login/page.tsx
+   17:5   warning  'PawPrint' is defined but never used                             @typescript-eslint/no-unused-vars
+   18:5   warning  'X' is defined but never used                                    @typescript-eslint/no-unused-vars
+   55:23  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+   71:23  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  125:39  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  255:55  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/jm/dev/webApps/state-26/app/page.tsx
+  16:10  warning  'Pricing' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/jm/dev/webApps/state-26/app/profile/page.tsx
+    9:5   warning  'Mail' is defined but never used                                                                                                                                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+   20:8   warning  'Image' is defined but never used                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+   23:38  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-explicit-any
+   34:8   warning  React Hook useEffect has a missing dependency: 'supabase.auth'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                           react-hooks/exhaustive-deps
+   50:9   error    Error: This value cannot be modified
+
+Modifying a variable defined outside a component or hook is not allowed. Consider using an effect.
+
+/Users/jm/dev/webApps/state-26/app/profile/page.tsx:50:9
+  48 |
+  49 |     if (!user) {
+> 50 |         window.location.href = '/login';
+     |         ^^^^^^^^^^^^^^^ value cannot be modified
+  51 |         return null;
+  52 |     }
+  53 |  react-hooks/immutability
+  121:47  warning  'i' is defined but never used                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  139:35  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                                                                                                                            react/no-unescaped-entities
+
+/Users/jm/dev/webApps/state-26/components/ChatbaseWidget.tsx
+  44:16  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  68:51  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/jm/dev/webApps/state-26/components/Navbar.tsx
+  15:38  error    Unexpected any. Specify a different type                                                                          @typescript-eslint/no-explicit-any
+  40:8   warning  React Hook useEffect has a missing dependency: 'supabase.auth'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/jm/dev/webApps/state-26/components/dashboard/StatSidebar.tsx
+  3:46  warning  'ACTION_COSTS' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 21 problems (10 errors, 11 warnings)
+

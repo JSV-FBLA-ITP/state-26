@@ -97,17 +97,17 @@ export function PetTypeSelector({ selected, onSelect }: Props) {
                     <p className="text-muted-foreground">Try a different search term.</p>
                 </div>
             ) : (
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 overflow-y-auto pr-2 pb-4 scrollbar-hide max-h-[50vh]">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-max overflow-y-auto pr-2 pb-6 scrollbar-hide max-h-[50vh]">
                     {filteredPets.map((type) => (
                     <Card
                         key={type.id}
                         onClick={() => onSelect(type.id)}
-                        className={`group cursor-pointer p-0 overflow-hidden relative border-2 transition-all duration-300 rounded-3xl aspect-square ${selected === type.id
+                        className={`group cursor-pointer p-0 overflow-hidden relative border-2 transition-all duration-300 rounded-3xl ${selected === type.id
                             ? 'border-primary ring-4 ring-primary/10 scale-[1.02]'
                             : 'border-border/50 hover:border-primary/30 hover:shadow-xl'
                             }`}
                     >
-                        <div className="w-full h-full relative flex items-center justify-center p-4">
+                        <div className="w-full aspect-square relative flex items-center justify-center p-4">
                             <Image
                                 src={type.icon}
                                 alt={type.name}

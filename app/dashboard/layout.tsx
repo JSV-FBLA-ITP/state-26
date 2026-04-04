@@ -15,9 +15,9 @@ export default function DashboardLayout({
 
             {/* Ambient background blobs */}
             <div className="fixed inset-0 pointer-events-none -z-10">
-                <div className="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-blue-500/5 rounded-full blur-[120px] animate-blob" />
-                <div className="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-emerald-500/5 rounded-full blur-[120px] animate-blob animation-delay-2000" />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/3 h-1/3 bg-sky-500/3 rounded-full blur-[100px] animate-blob animation-delay-4000" />
+                <div className="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-sage-500/5 rounded-full blur-[120px] animate-blob" />
+                <div className="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-coral-500/5 rounded-full blur-[120px] animate-blob animation-delay-2000" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/3 h-1/3 bg-coral-400/3 rounded-full blur-[100px] animate-blob animation-delay-4000" />
             </div>
 
             <main className="flex-1 relative z-10 flex flex-col">

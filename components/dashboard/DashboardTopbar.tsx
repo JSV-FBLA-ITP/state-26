@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { LayoutDashboard, PawPrint, BookOpen, Home, Save } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -8,6 +9,7 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { UserMenu } from '@/components/dashboard/DashboardUserMenu';
 import { Button } from '@/components/ui/button';
 import { savePetToCloud } from '@/lib/storage';
+import { motion } from 'framer-motion';
 import { useState } from 'react';
 
 const navItems = [
@@ -38,51 +40,66 @@ export function DashboardTopbar() {
             <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
                 {/* Logo & Home */}
                 <div className="flex items-center gap-2 shrink-0">
-                    <Link href="/" className="flex items-center gap-2 group">
-                        <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center shadow-md shadow-primary/30 group-hover:scale-105 transition-transform">
-                            <PawPrint className="w-4 h-4 text-primary-foreground" />
-                        </div>
-                        <span className="font-black text-lg tracking-tighter hidden sm:block">PetPal</span>
+                    <Link href="/" className="flex items-center gap-3 group">
+                        <Image 
+                            src="/favicon.svg" 
+                            alt="PetPal Logo" 
+                            width={32}
+                            height={32}
+                            className="group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 drop-shadow-md"
+                        />
+                        <span className="font-black text-2xl tracking-tighter hidden sm:block">PetPal</span>
                     </Link>
+                    <div className="h-6 w-px bg-border/40 mx-4 hidden sm:block" />
                     <Link
                         href="/"
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-bold text-muted-foreground hover:text-foreground hover:bg-background/60 transition-all"
+                        className="flex items-center justify-center w-10 h-10 rounded-full bg-muted/40 hover:bg-muted/80 text-muted-foreground hover:text-foreground transition-all group"
+                        title="Home"
                     >
-                        <Home className="w-4 h-4" />
-                        <span className="hidden sm:inline">Home</span>
+                        <Home className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />
                     </Link>
                 </div>
 
                 {/* Desktop nav pills */}
-                <div className="hidden md:flex items-center gap-1 bg-muted/50 rounded-2xl p-1">
-                    {navItems.map((item) => (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            className={cn(
-                                'flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all',
-                                pathname === item.href
-                                    ? 'bg-primary text-primary-foreground shadow-md shadow-primary/25'
-                                    : 'text-muted-foreground hover:text-foreground hover:bg-background/60'
-                            )}
-                        >
-                            <item.icon className="w-4 h-4" />
-                            {item.label}
-                        </Link>
-                    ))}
+                <div className="hidden md:flex items-center gap-1 bg-muted/60 rounded-full p-1 border border-border/20 h-10">
+                    {navItems.map((item) => {
+                        const isActive = pathname === item.href;
+                        return (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                className={cn(
+                                    'relative flex items-center gap-2 px-5 h-full rounded-full text-sm font-black transition-colors duration-300',
+                                    isActive ? 'text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
+                                )}
+                            >
+                                {isActive && (
+                                    <motion.div
+                                        layoutId="desktop-nav-pill"
+                                        className="absolute inset-0 bg-primary rounded-full shadow-md shadow-primary/25 z-0"
+                                        transition={{ type: 'spring', bounce: 0.25, duration: 0.5 }}
+                                    />
+                                )}
+                                <span className="relative z-10 flex items-center gap-2">
+                                    <item.icon className={cn("w-4 h-4 transition-transform", isActive && "scale-110")} />
+                                    {item.label}
+                                </span>
+                            </Link>
+                        );
+                    })}
                 </div>
 
                 {/* Right slot – Save, Theme, User */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                     <Button
                         variant="secondary"
                         size="sm"
                         onClick={handleSave}
                         disabled={isSaving}
-                        className="rounded-xl font-bold border-2 bg-card/80 backdrop-blur-xl hover:bg-primary/20 hover:border-primary/50"
+                        className="rounded-xl font-black text-xs uppercase tracking-wider border-2 border-border/50 bg-card/80 backdrop-blur-xl hover:bg-primary/10 hover:border-primary/50 transition-all px-4 h-10"
                     >
-                        <Save className={cn("w-4 h-4 mr-1.5", isSaving && "animate-pulse")} />
-                        {isSaving ? 'Saving...' : 'Save'}
+                        <Save className={cn("w-4 h-4 mr-2", isSaving && "animate-spin")} />
+                        {isSaving ? 'Cloud...' : 'Save Pet'}
                     </Button>
                     <ThemeToggle />
                     <UserMenu />
@@ -90,22 +107,30 @@ export function DashboardTopbar() {
             </div>
 
             {/* Mobile bottom bar */}
-            <div className="flex md:hidden items-center justify-around px-6 pb-2 pt-1 border-t border-border/10">
-                {navItems.map((item) => (
-                    <Link
-                        key={item.href}
-                        href={item.href}
-                        className={cn(
-                            'flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl text-[10px] font-bold transition-all',
-                            pathname === item.href
-                                ? 'text-primary bg-primary/10'
-                                : 'text-muted-foreground hover:text-foreground'
-                        )}
-                    >
-                        <item.icon className="w-5 h-5" />
-                        {item.label}
-                    </Link>
-                ))}
+            <div className="flex md:hidden items-center justify-around px-4 pb-3 pt-2 border-t border-border/10 bg-muted/20 backdrop-blur-md">
+                {navItems.map((item) => {
+                    const isActive = pathname === item.href;
+                    return (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={cn(
+                                'relative flex flex-col items-center gap-1.5 px-6 py-2.5 rounded-2xl transition-all duration-300',
+                                isActive ? 'text-primary' : 'text-muted-foreground'
+                            )}
+                        >
+                            {isActive && (
+                                <motion.div
+                                    layoutId="mobile-nav-pill"
+                                    className="absolute inset-x-1 inset-y-1 bg-primary/10 rounded-xl z-0"
+                                    transition={{ type: 'spring', bounce: 0.2, duration: 0.5 }}
+                                />
+                            )}
+                            <item.icon className={cn("relative z-10 w-5 h-5", isActive && "scale-110")} />
+                            <span className="relative z-10 text-[9px] font-black uppercase tracking-wider">{item.label}</span>
+                        </Link>
+                    );
+                })}
             </div>
         </nav>
     );

@@ -4,12 +4,11 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchUserPets, deletePet, savePetToCloud } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
-import { PawPrint, Plus, Heart, Zap, Coins, ArrowRight, ReceiptText, Settings2, Edit2, Trash2, Check, RotateCcw, Home } from 'lucide-react';
+import { PawPrint, Plus, Heart, Zap, Coins, ArrowRight, ReceiptText, Settings2, Edit2, Trash2, Check, RotateCcw, Home, ChevronLeft, Users } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PetData } from '@/lib/gameLogic';
-
 export default function MyPetsPage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [pets, setPets] = useState<any[]>([]);
@@ -19,6 +18,7 @@ export default function MyPetsPage() {
     const [showMenuId, setShowMenuId] = useState<string | null>(null);
     const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [selectedHousehold, setSelectedHousehold] = useState<string | null>(null);
 
     const loadPets = async () => {
         const { data } = await fetchUserPets();
@@ -85,40 +85,55 @@ export default function MyPetsPage() {
         <div className="p-8 max-w-7xl mx-auto pb-32">
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-16">
                 <div>
-                    <h1 className="text-4xl font-black tracking-tight mb-2 flex items-center gap-3">
-                        Household Hub
-                        <Home className="w-8 h-8 text-primary" />
-                    </h1>
+                    <div className="flex items-center gap-4 mb-2">
+                        {selectedHousehold && (
+                            <Button 
+                                variant="ghost" 
+                                size="icon"
+                                onClick={() => setSelectedHousehold(null)}
+                                className="rounded-full bg-background/80 shadow-sm border border-border/40 hover:bg-muted"
+                            >
+                                <ChevronLeft className="w-5 h-5" />
+                            </Button>
+                        )}
+                        <h1 className="text-4xl font-black tracking-tight flex items-center gap-3">
+                            {selectedHousehold ? selectedHousehold : "Household Hub"}
+                            <Home className="w-8 h-8 text-primary" />
+                        </h1>
+                    </div>
+                    
                     <div className="flex items-center gap-4 mt-2">
-                        <Link href="/" className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-bold text-muted-foreground hover:text-foreground hover:bg-background/60 transition-all">
+                        <Link href="/" className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-bold text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all">
                             <Home className="w-4 h-4" />
-                            Home
+                            Dashboard
                         </Link>
+                        {selectedHousehold && (
+                             <>
+                                <div className="w-1 h-1 rounded-full bg-border" />
+                                <span className="text-sm font-bold text-muted-foreground px-3 py-1.5">{selectedHousehold}</span>
+                             </>
+                        )}
                     </div>
                     <p className="text-muted-foreground text-lg leading-relaxed max-w-2xl mt-4">
-                        Manage your family companions across all your active households.
-                        Each household can grow its own unique legacy.
+                        {selectedHousehold 
+                            ? `Managing ${petsByHousehold[selectedHousehold].length} beloved companion${petsByHousehold[selectedHousehold].length === 1 ? '' : 's'} in this household.`
+                            : "Select a household to view and manage its family companions."}
                     </p>
                 </div>
-                <Link href="/onboarding">
-                    <Button className="rounded-2xl h-14 px-8 font-extrabold shadow-xl shadow-primary/25 bg-linear-to-r from-primary to-blue-600 border-0 hover:scale-[1.02] active:scale-95 transition-all">
-                        <Plus className="w-6 h-6 mr-2" />
-                        Create New Household
-                    </Button>
-                </Link>
+                {!selectedHousehold && (
+                    <Link href="/onboarding">
+                        <Button className="rounded-2xl h-14 px-8 font-extrabold shadow-xl shadow-coral-500/20 bg-linear-to-r from-coral-400 to-orange-100 text-black border-0 hover:scale-[1.02] active:scale-95 transition-all">
+                            <Plus className="w-6 h-6 mr-2" />
+                            Create New Household
+                        </Button>
+                    </Link>
+                )}
             </header>
 
             {loading ? (
-                <div className="space-y-16">
-                    {[1, 2].map(h => (
-                        <div key={h} className="space-y-8">
-                            <div className="h-10 w-48 bg-muted rounded-xl animate-pulse" />
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                {[1, 2, 3].map((i) => (
-                                    <div key={i} className="h-64 rounded-[2.5rem] bg-card animate-pulse border-2 border-border/50" />
-                                ))}
-                            </div>
-                        </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {[1, 2, 3].map((i) => (
+                        <div key={i} className="h-64 rounded-[2.5rem] bg-card animate-pulse border-2 border-border/50" />
                     ))}
                 </div>
             ) : householdNames.length === 0 ? (
@@ -133,35 +148,120 @@ export default function MyPetsPage() {
                     </Link>
                 </div>
             ) : (
-                <div className="space-y-20">
-                    {householdNames.map((hh) => (
-                        <section key={hh} className="space-y-8">
-                            <div className="flex items-center justify-between border-b border-border/50 pb-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2 rounded-xl bg-blue-500/10">
-                                        <Home className="w-6 h-6 text-blue-500" />
-                                    </div>
-                                    <h2 className="text-3xl font-black tracking-tight">{hh}</h2>
-                                    <span className="bg-muted px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest text-muted-foreground">
-                                        {petsByHousehold[hh].length} {petsByHousehold[hh].length === 1 ? 'Pet' : 'Pets'}
+                <AnimatePresence mode="wait">
+                    {!selectedHousehold ? (
+                        <motion.div 
+                            key="grid"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                        >
+                            {householdNames.map((hh, index) => {
+                                const householdPets = petsByHousehold[hh];
+                                const avgHappy = householdPets.reduce((sum, p) => sum + p.stats.happy, 0) / householdPets.length;
+                                const totalMoney = householdPets.reduce((sum, p) => sum + p.stats.money, 0);
+
+                                return (
+                                    <motion.div
+                                        key={hh}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: index * 0.05 }}
+                                        onClick={() => setSelectedHousehold(hh)}
+                                        className="group relative bg-card border-2 border-border/40 rounded-[2.5rem] p-8 cursor-pointer hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/5 transition-all"
+                                    >
+                                        <div className="flex items-start justify-between mb-8">
+                                            <div className="p-4 rounded-3xl bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors">
+                                                <Home className="w-8 h-8 text-blue-500" />
+                                            </div>
+                                            <div className="flex -space-x-3">
+                                                {householdPets.slice(0, 3).map((p, i) => (
+                                                    <div 
+                                                        key={p.id} 
+                                                        className="w-10 h-10 rounded-full border-2 border-card overflow-hidden bg-muted"
+                                                        style={{ zIndex: 10 - i }}
+                                                    >
+                                                        {p.image_url ? (
+                                                            <Image src={p.image_url} alt={p.name} width={40} height={40} className="object-cover" unoptimized />
+                                                        ) : (
+                                                            <div className="w-full h-full flex items-center justify-center">
+                                                                <PawPrint className="w-4 h-4 text-muted-foreground" />
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                                {householdPets.length > 3 && (
+                                                    <div className="w-10 h-10 rounded-full border-2 border-card bg-muted flex items-center justify-center text-[10px] font-black z-0">
+                                                        +{householdPets.length - 3}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <h3 className="text-3xl font-black mb-2 group-hover:text-primary transition-colors">{hh}</h3>
+                                        <div className="flex items-center gap-2 mb-8">
+                                            <Users className="w-4 h-4 text-muted-foreground" />
+                                            <span className="text-sm font-bold text-muted-foreground">
+                                                {householdPets.length} {householdPets.length === 1 ? 'Companion' : 'Companions'}
+                                            </span>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-4 pt-6 border-t border-border/40">
+                                            <div className="space-y-1">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Happiness</p>
+                                                <div className="flex items-center gap-1.5">
+                                                    <Heart className="w-4 h-4 text-rose-500" />
+                                                    <span className="font-black">{Math.round(avgHappy)}%</span>
+                                                </div>
+                                            </div>
+                                            <div className="space-y-1">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Budget</p>
+                                                <div className="flex items-center gap-1.5">
+                                                    <Coins className="w-4 h-4 text-yellow" />
+                                                    <span className="font-black">${totalMoney}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="absolute bottom-8 right-8 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all">
+                                            <ArrowRight className="w-6 h-6 text-primary" />
+                                        </div>
+                                    </motion.div>
+                                );
+                            })}
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            key="household-detail"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            className="space-y-12"
+                        >
+                             <div className="flex items-center justify-between">
+                                <h2 className="text-2xl font-black flex items-center gap-3">
+                                    <span className="p-2 rounded-xl bg-primary/10">
+                                        <PawPrint className="w-5 h-5 text-primary" />
                                     </span>
-                                </div>
-                                <Link href={`/onboarding?household=${encodeURIComponent(hh)}`}>
-                                    <Button variant="outline" className="rounded-xl font-bold border-2 hover:bg-primary/10 hover:text-primary transition-all">
-                                        <Plus className="w-4 h-4 mr-2" />
-                                        Adopt to {hh}
+                                    Companion Registry
+                                </h2>
+                                <Link href={`/onboarding?household=${encodeURIComponent(selectedHousehold)}`}>
+                                    <Button className="rounded-2xl h-12 px-6 font-bold bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 transition-all active:scale-95">
+                                        <Plus className="w-5 h-5 mr-2" />
+                                        Adopt New Companion
                                     </Button>
                                 </Link>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                {petsByHousehold[hh].map((p, i) => (
+                                {petsByHousehold[selectedHousehold].map((p, i) => (
                                     <motion.div
                                         key={p.id}
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: i * 0.1 }}
-                                        className="group relative bg-card rounded-[2.5rem] border-2 overflow-hidden hover:border-primary/50 transition-colors hover:shadow-2xl hover:shadow-primary/5"
+                                        transition={{ delay: i * 0.05 }}
+                                        className="group relative bg-card rounded-[2.5rem] border-2 border-border/40 overflow-hidden hover:border-primary/50 transition-colors hover:shadow-2xl hover:shadow-primary/5"
                                     >
                                         {/* Manage Menu Trigger */}
                                         <div className="absolute top-4 right-4 z-30">
@@ -195,13 +295,13 @@ export default function MyPetsPage() {
                                                                 <button
                                                                     disabled={isDeleting}
                                                                     onClick={() => handleDelete(p.id)}
-                                                                    className="flex-1 text-xs font-black py-1.5 rounded-lg bg-rose-500 text-white hover:bg-rose-600 disabled:opacity-50 transition-colors"
+                                                                    className="flex-1 text-xs font-black py-1.5 rounded-lg bg-rose-500 text-white hover:bg-rose-600 border-0 disabled:opacity-50 transition-colors"
                                                                 >
                                                                     {isDeleting ? '…' : 'Yes'}
                                                                 </button>
                                                                 <button
                                                                     onClick={() => setConfirmDeleteId(null)}
-                                                                    className="flex-1 text-xs font-bold py-1.5 rounded-lg bg-muted text-muted-foreground hover:bg-muted/80 transition-colors"
+                                                                    className="flex-1 text-xs font-bold py-1.5 rounded-lg bg-muted text-muted-foreground hover:bg-muted/80 transition-colors border-0"
                                                                 >
                                                                     No
                                                                 </button>
@@ -215,16 +315,16 @@ export default function MyPetsPage() {
                                                                     setEditingName(p.name);
                                                                     setShowMenuId(null);
                                                                 }}
-                                                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold hover:bg-primary/10 hover:text-primary transition-colors"
+                                                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold hover:bg-primary/10 hover:text-primary transition-colors border-0 bg-transparent text-left cursor-pointer"
                                                             >
                                                                 <Edit2 className="w-4 h-4" /> Rename
                                                             </button>
                                                             <button
                                                                 onClick={() => setConfirmDeleteId(p.id)}
-                                                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-rose-500 hover:bg-rose-500/10 transition-colors"
+                                                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-rose-500 hover:bg-rose-500/10 transition-colors border-0 bg-transparent text-left cursor-pointer"
                                                             >
                                                                 <Trash2 className="w-4 h-4" /> Release
-                                                            </button>
+                              </button>
                                                         </>
                                                     )}
                                                 </motion.div>
@@ -312,9 +412,9 @@ export default function MyPetsPage() {
                                     </motion.div>
                                 ))}
                             </div>
-                        </section>
-                    ))}
-                </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             )}
         </div>
     );

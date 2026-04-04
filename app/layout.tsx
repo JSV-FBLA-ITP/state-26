@@ -1,22 +1,39 @@
-import type { Metadata } from 'next';
-import { Outfit, Inter } from 'next/font/google';
+import type { Metadata, Viewport } from 'next';
+import { Nunito, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { ChatbaseWidget } from '@/components/ChatbaseWidget';
 
-const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' });
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-
-import { Navbar } from '@/components/Navbar';
+const nunito = Nunito({ subsets: ['latin'], variable: '--font-nunito', weight: ['400', '500', '600', '700', '800', '900'] });
+const plusJakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-jakarta', weight: ['400', '500', '600', '700', '800'] });
 
 export const metadata: Metadata = {
-  title: 'PetPal — Your Virtual Companion',
+  title: 'PetPal — Happy Pets. Smart Money.',
   description:
-    'Adopt, customize, and grow with your AI-powered virtual pet. PetPal blends retro nostalgia with modern cloud technology and financial literacy.',
+    'Raise your dream virtual pet while mastering real-world money skills. PetPal makes financial literacy fun, interactive, and rewarding for a new generation.',
   icons: {
-    icon: '/logo.png',
-    apple: '/logo.png',
+    icon: [
+      { url: '/favicon.ico', sizes: '32x32' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    apple: '/apple-touch-icon.png',
   },
+  manifest: '/manifest.json',
+  openGraph: {
+    title: 'PetPal — Happy Pets. Smart Money. One App.',
+    description: 'Raise your dream pet while mastering real-world money skills. It\'s like a game — but the lessons stick.',
+    siteName: 'PetPal',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'PetPal — Happy Pets. Smart Money.',
+    description: 'Raise your dream pet while mastering real-world money skills.',
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#FF6B47',
 };
 
 export default function RootLayout({
@@ -27,7 +44,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${outfit.variable} font-sans antialiased`}
+        className={`${nunito.variable} ${plusJakarta.variable} font-(--font-jakarta) antialiased`}
       >
         <ThemeProvider
           attribute="class"
@@ -35,8 +52,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar />
-          <main className="pt-20">
+          <main>
             {children}
           </main>
           <ChatbaseWidget />

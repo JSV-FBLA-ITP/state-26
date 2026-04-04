@@ -277,7 +277,7 @@ export default function DashboardPage() {
                             <Button
                                 onClick={handleNextMonth}
                                 size="sm"
-                                className="rounded-xl font-bold gap-1.5 px-4 h-9 text-xs shadow-md shadow-primary/15 bg-linear-to-r from-blue-600 to-primary hover:from-blue-700 hover:to-primary/90 border-0"
+                                className="rounded-xl font-bold gap-1.5 px-4 h-9 text-xs shadow-md shadow-primary/15 bg-linear-to-r from-coral-600 to-primary hover:from-coral-700 hover:to-primary/90 border-0"
                             >
                                 Next <ArrowRight className="w-4 h-4" />
                             </Button>
@@ -290,6 +290,47 @@ export default function DashboardPage() {
 
                         <div className="pet-display-wrap">
                             <PetDisplay pet={pet} emotion={emotion} isGameOver={gameOver} />
+                        </div>
+
+                        {/* Floating Side Controls */}
+                        <div className="absolute left-6 top-1/2 -translate-y-1/2 z-10 hidden xl:block">
+                            <ControlPanel
+                                side="left"
+                                onShopOpen={() => setShopOpen(true)}
+                                onQuizOpen={() => setQuizOpen(true)}
+                                onStatsOpen={() => setStatsOpen(true)}
+                                onOptionsOpen={() => setOptionsOpen(true)}
+                            />
+                        </div>
+
+                        <div className="absolute right-6 top-1/2 -translate-y-1/2 z-10 hidden xl:block">
+                            <ControlPanel
+                                side="right"
+                                onShopOpen={() => setShopOpen(true)}
+                                onQuizOpen={() => setQuizOpen(true)}
+                                onStatsOpen={() => setStatsOpen(true)}
+                                onOptionsOpen={() => setOptionsOpen(true)}
+                            />
+                        </div>
+
+                        {/* Smaller Screens / Tablet: Move to edges but keep layout */}
+                        <div className="absolute bottom-6 left-6 z-10 xl:hidden">
+                            <ControlPanel
+                                side="left"
+                                onShopOpen={() => setShopOpen(true)}
+                                onQuizOpen={() => setQuizOpen(true)}
+                                onStatsOpen={() => setStatsOpen(true)}
+                                onOptionsOpen={() => setOptionsOpen(true)}
+                            />
+                        </div>
+                        <div className="absolute bottom-6 right-6 z-10 xl:hidden">
+                            <ControlPanel
+                                side="right"
+                                onShopOpen={() => setShopOpen(true)}
+                                onQuizOpen={() => setQuizOpen(true)}
+                                onStatsOpen={() => setStatsOpen(true)}
+                                onOptionsOpen={() => setOptionsOpen(true)}
+                            />
                         </div>
 
                         {/* Feedback toast floating over hero */}
@@ -329,14 +370,6 @@ export default function DashboardPage() {
 
                             {/* Action buttons */}
                             <ActionGrid onAction={handleAction} />
-
-                            {/* Control tools */}
-                            <ControlPanel
-                                onShopOpen={() => setShopOpen(true)}
-                                onQuizOpen={() => setQuizOpen(true)}
-                                onStatsOpen={() => setStatsOpen(true)}
-                                onOptionsOpen={() => setOptionsOpen(true)}
-                            />
                         </div>
                     )}
                 </div>
@@ -438,12 +471,22 @@ export default function DashboardPage() {
                                             onAction={handleAction}
                                         />
                                         <ActionGrid onAction={handleAction} />
-                                        <ControlPanel
-                                            onShopOpen={() => setShopOpen(true)}
-                                            onQuizOpen={() => setQuizOpen(true)}
-                                            onStatsOpen={() => setStatsOpen(true)}
-                                            onOptionsOpen={() => setOptionsOpen(true)}
-                                        />
+                                        <div className="flex justify-between px-2 pb-2">
+                                            <ControlPanel
+                                                side="left"
+                                                onShopOpen={() => setShopOpen(true)}
+                                                onQuizOpen={() => setQuizOpen(true)}
+                                                onStatsOpen={() => setStatsOpen(true)}
+                                                onOptionsOpen={() => setOptionsOpen(true)}
+                                            />
+                                            <ControlPanel
+                                                side="right"
+                                                onShopOpen={() => setShopOpen(true)}
+                                                onQuizOpen={() => setQuizOpen(true)}
+                                                onStatsOpen={() => setStatsOpen(true)}
+                                                onOptionsOpen={() => setOptionsOpen(true)}
+                                            />
+                                        </div>
                                     </div>
                                 )}
                             </motion.div>
@@ -460,7 +503,7 @@ export default function DashboardPage() {
                             >
                                 <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4 space-y-4">
                                     {/* Wallet card */}
-                                    <div className="bg-linear-to-br from-blue-500 to-indigo-600 rounded-2xl p-4 text-white shadow-xl shadow-blue-500/20 relative overflow-hidden">
+                                    <div className="bg-linear-to-br from-coral-500 to-coral-600 rounded-2xl p-4 text-white shadow-xl shadow-coral-500/20 relative overflow-hidden">
                                         <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12 blur-2xl" />
                                         <div className="relative z-10 flex flex-col items-center">
                                             <p className="text-[8px] font-black uppercase tracking-[0.25em] opacity-70 mb-1">Liquidity</p>
@@ -473,19 +516,19 @@ export default function DashboardPage() {
 
                                     {/* Budget */}
                                     <div className="grid grid-cols-2 gap-2">
-                                        <div className="bg-emerald-500/5 border border-emerald-500/10 p-3 rounded-xl">
+                                        <div className="bg-sage-500/5 border border-sage-500/10 p-3 rounded-xl">
                                             <div className="flex items-center gap-1.5 mb-0.5">
-                                                <TrendingUp className="w-2.5 h-2.5 text-emerald-500" />
+                                                <TrendingUp className="w-2.5 h-2.5 text-sage-500" />
                                                 <span className="text-[8px] font-bold text-muted-foreground uppercase">Income</span>
                                             </div>
-                                            <p className="font-black text-emerald-500 text-sm">${income}</p>
+                                            <p className="font-black text-sage-500 text-sm">${income}</p>
                                         </div>
-                                        <div className="bg-rose-500/5 border border-rose-500/10 p-3 rounded-xl">
+                                        <div className="bg-coral-600/5 border border-coral-600/10 p-3 rounded-xl">
                                             <div className="flex items-center gap-1.5 mb-0.5">
-                                                <TrendingDown className="w-2.5 h-2.5 text-rose-500" />
+                                                <TrendingDown className="w-2.5 h-2.5 text-coral-600" />
                                                 <span className="text-[8px] font-bold text-muted-foreground uppercase">Expenses</span>
                                             </div>
-                                            <p className="font-black text-rose-500 text-sm">${expenses}</p>
+                                            <p className="font-black text-coral-600 text-sm">${expenses}</p>
                                         </div>
                                     </div>
 
@@ -493,10 +536,10 @@ export default function DashboardPage() {
                                     <div className="space-y-2">
                                         <h3 className="text-[9px] font-black uppercase tracking-[0.15em] text-muted-foreground">Vital Signs</h3>
                                         {[
-                                            { label: 'Hunger', value: pet.stats.hunger, color: 'bg-orange-500', icon: '🍖' },
-                                            { label: 'Happy', value: pet.stats.happy, color: 'bg-emerald-500', icon: '💚' },
-                                            { label: 'Energy', value: pet.stats.energy, color: 'bg-sky-400', icon: '⚡' },
-                                            { label: 'Health', value: pet.stats.health, color: 'bg-indigo-400', icon: '💊' },
+                                            { label: 'Hunger', value: pet.stats.hunger, color: 'bg-coral-400', icon: '🍖' },
+                                            { label: 'Happy', value: pet.stats.happy, color: 'bg-sage-400', icon: '💚' },
+                                            { label: 'Energy', value: pet.stats.energy, color: 'bg-coral-500', icon: '⚡' },
+                                            { label: 'Health', value: pet.stats.health, color: 'bg-sage-500', icon: '💊' },
                                         ].map(s => (
                                             <div key={s.label} className="flex items-center gap-2">
                                                 <span className="text-sm">{s.icon}</span>
@@ -521,12 +564,22 @@ export default function DashboardPage() {
 
                                 {showGameUI && (
                                     <div className="game-command-zone">
-                                        <ControlPanel
-                                            onShopOpen={() => setShopOpen(true)}
-                                            onQuizOpen={() => setQuizOpen(true)}
-                                            onStatsOpen={() => setStatsOpen(true)}
-                                            onOptionsOpen={() => setOptionsOpen(true)}
-                                        />
+                                <div className="flex justify-between px-2 pb-2">
+                                            <ControlPanel
+                                                side="left"
+                                                onShopOpen={() => setShopOpen(true)}
+                                                onQuizOpen={() => setQuizOpen(true)}
+                                                onStatsOpen={() => setStatsOpen(true)}
+                                                onOptionsOpen={() => setOptionsOpen(true)}
+                                            />
+                                            <ControlPanel
+                                                side="right"
+                                                onShopOpen={() => setShopOpen(true)}
+                                                onQuizOpen={() => setQuizOpen(true)}
+                                                onStatsOpen={() => setStatsOpen(true)}
+                                                onOptionsOpen={() => setOptionsOpen(true)}
+                                            />
+                                        </div>
                                     </div>
                                 )}
                             </motion.div>

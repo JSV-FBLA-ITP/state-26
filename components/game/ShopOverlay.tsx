@@ -15,22 +15,22 @@ const UPGRADES = [
     {
         id: 'hunger', name: 'Auto-Feeder', cost: 150, icon: Utensils,
         desc: 'Slows down hunger decay significantly.',
-        bg: 'bg-orange-500/10', border: 'hover:border-orange-500/50', iconColor: 'text-orange-500', iconBg: 'bg-orange-500/15',
+        bg: 'bg-coral-400/10', border: 'hover:border-coral-400/50', iconColor: 'text-coral-400', iconBg: 'bg-coral-400/15',
     },
     {
         id: 'happy', name: 'Toy Box', cost: 200, icon: Heart,
         desc: 'Increases happiness gain from play sessions.',
-        bg: 'bg-emerald-500/10', border: 'hover:border-emerald-500/50', iconColor: 'text-emerald-500', iconBg: 'bg-emerald-500/15',
+        bg: 'bg-sage-400/10', border: 'hover:border-sage-400/50', iconColor: 'text-sage-400', iconBg: 'bg-sage-400/15',
     },
     {
         id: 'energy', name: 'Premium Bed', cost: 250, icon: Zap,
         desc: 'Restores energy faster while your pet sleeps.',
-        bg: 'bg-yellow/10', border: 'hover:border-yellow/50', iconColor: 'text-yellow', iconBg: 'bg-yellow/15',
+        bg: 'bg-coral-500/10', border: 'hover:border-coral-500/50', iconColor: 'text-coral-500', iconBg: 'bg-coral-500/15',
     },
     {
         id: 'health', name: 'Vitamin Pack', cost: 300, icon: Coffee,
         desc: 'Boosts base health recovery rate permanently.',
-        bg: 'bg-rose-500/10', border: 'hover:border-rose-500/50', iconColor: 'text-rose-500', iconBg: 'bg-rose-500/15',
+        bg: 'bg-sage-500/10', border: 'hover:border-sage-500/50', iconColor: 'text-sage-500', iconBg: 'bg-sage-500/15',
     },
 ];
 
@@ -55,10 +55,10 @@ export function ShopOverlay({ isOpen, onClose, money, onPurchase }: Props) {
                         className="relative w-full max-w-2xl bg-card/90 backdrop-blur-2xl rounded-[2.5rem] shadow-2xl overflow-hidden border border-border/50"
                     >
                         {/* Header */}
-                        <div className="px-8 py-6 border-b border-border/50 flex items-center justify-between bg-linear-to-r from-blue-500/10 to-transparent">
+                        <div className="px-8 py-6 border-b border-border/50 flex items-center justify-between bg-linear-to-r from-coral-500/10 to-transparent">
                             <div className="flex items-center gap-4">
-                                <div className="p-3 rounded-2xl bg-blue-500/15">
-                                    <ShoppingCart className="w-6 h-6 text-blue-500" />
+                                <div className="p-3 rounded-2xl bg-coral-500/15">
+                                    <ShoppingCart className="w-6 h-6 text-coral-500" />
                                 </div>
                                 <div>
                                     <h2 className="text-2xl font-black tracking-tight">Supply Store</h2>
@@ -109,12 +109,12 @@ export function ShopOverlay({ isOpen, onClose, money, onPurchase }: Props) {
                         {/* Footer balance */}
                         <div className="px-8 py-5 bg-muted/30 border-t border-border/50 flex justify-between items-center">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 rounded-xl bg-yellow/10">
-                                    <Coins className="w-5 h-5 text-yellow" />
+                                <div className="p-2 rounded-xl bg-sage-500/10">
+                                    <Coins className="w-5 h-5 text-sage-500" />
                                 </div>
                                 <div>
                                     <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Balance</p>
-                                    <p className="text-xl font-black text-yellow">${money}</p>
+                                    <p className="text-xl font-black text-sage-500">${money}</p>
                                 </div>
                             </div>
                             <Button variant="outline" onClick={onClose} className="rounded-xl font-bold">Done</Button>

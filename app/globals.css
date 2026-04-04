@@ -45,76 +45,115 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
-  --color-emerald: var(--emerald);
-  --color-rose: var(--rose);
-  --color-indigo: var(--indigo);
-  --color-yellow: var(--yellow);
-  --color-fuchsia: var(--fuchsia);
-  --color-violet: var(--violet);
-  --color-cyan: var(--cyan);
+
+  /* ── PetPal Warm Palette ── */
+  --color-coral-50: var(--coral-50);
+  --color-coral-100: var(--coral-100);
+  --color-coral-400: var(--coral-400);
+  --color-coral-500: var(--coral-500);
+  --color-coral-600: var(--coral-600);
+  --color-coral-700: var(--coral-700);
+  --color-sage-50: var(--sage-50);
+  --color-sage-100: var(--sage-100);
+  --color-sage-400: var(--sage-400);
+  --color-sage-500: var(--sage-500);
+  --color-warm-cream: var(--warm-cream);
+  --color-warm-white: var(--warm-white);
 }
 
 :root {
-  --background: oklch(0.99 0 0);
-  --foreground: oklch(0.15 0.02 280);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.02 280);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0.02 280);
+  /* ── Warm Cream Base ── */
+  --background: #FFF8F3;
+  --foreground: #2D2319;
+  --card: #FEFCFA;
+  --card-foreground: #2D2319;
+  --popover: #FEFCFA;
+  --popover-foreground: #2D2319;
 
-  /* Electric Blue Primary */
-  --primary: oklch(0.6 0.18 250);
-  --primary-foreground: oklch(0.99 0 0);
-  /* Emerald Green Secondary */
-  --secondary: oklch(0.7 0.15 160);
-  --secondary-foreground: oklch(0.99 0 0);
+  /* Coral Primary */
+  --primary: #FF6B47;
+  --primary-foreground: #FFFFFF;
+  /* Sage Green Secondary */
+  --secondary: #5A9A5A;
+  --secondary-foreground: #FFFFFF;
 
-  --muted: oklch(0.96 0.01 250);
-  --muted-foreground: oklch(0.52 0.06 250);
-  --accent: oklch(0.93 0.03 250);
-  --accent-foreground: oklch(0.2 0.04 250);
-  --destructive: oklch(0.6 0.2 25);
-  --border: oklch(0.91 0.03 250);
-  --input: oklch(0.91 0.03 250);
-  --ring: oklch(0.6 0.18 250);
+  --muted: #F5EDE5;
+  --muted-foreground: #7A6B5D;
+  --accent: #FFF1EC;
+  --accent-foreground: #2D2319;
+  --destructive: #E53E3E;
+  --border: #E8DDD3;
+  --input: #E8DDD3;
+  --ring: #FF6B47;
 
-  /* Large rounded corners base */
-  --radius: 1.5rem;
+  /* Rounded corners */
+  --radius: 1rem;
 
-  /* Custom Accents */
-  --emerald: oklch(0.7 0.15 160);
-  --rose: oklch(0.66 0.22 10);
-  --indigo: oklch(0.58 0.22 260);
-  --yellow: oklch(0.85 0.15 85);
-  --fuchsia: oklch(0.65 0.28 330);
-  --violet: oklch(0.6 0.24 290);
-  --cyan: oklch(0.72 0.18 200);
+  /* ── PetPal Custom Tokens ── */
+  --coral-50: #FFF1EC;
+  --coral-100: #FFD9CC;
+  --coral-400: #FF8C6B;
+  --coral-500: #FF6B47;
+  --coral-600: #E85A3A;
+  --coral-700: #CC4A2E;
+  --sage-50: #F0F5F0;
+  --sage-100: #D4E5D4;
+  --sage-400: #7CB07C;
+  --sage-500: #5A9A5A;
+  --warm-cream: #FFF8F3;
+  --warm-white: #FEFCFA;
+
+  /* Charts */
+  --chart-1: #FF6B47;
+  --chart-2: #5A9A5A;
+  --chart-3: #FFB088;
+  --chart-4: #7CB07C;
+  --chart-5: #CC4A2E;
 }
 
 .dark {
-  /* Deep Slate Dark Mode */
-  --background: oklch(0.15 0.02 260);
-  --foreground: oklch(0.96 0.01 260);
-  --card: oklch(0.2 0.02 260);
-  --card-foreground: oklch(0.96 0.01 260);
-  --popover: oklch(0.2 0.02 260);
-  --popover-foreground: oklch(0.96 0.01 260);
+  /* ── Warm Dark Mode ── */
+  --background: #1A1614;
+  --foreground: #F5EDE5;
+  --card: #252220;
+  --card-foreground: #F5EDE5;
+  --popover: #252220;
+  --popover-foreground: #F5EDE5;
 
-  /* Electric Blue Primary */
-  --primary: oklch(0.6 0.18 250);
-  --primary-foreground: oklch(0.1 0.015 260);
-  /* Emerald Green Secondary */
-  --secondary: oklch(0.7 0.15 160);
-  --secondary-foreground: oklch(0.96 0.01 260);
+  /* Coral Primary (slightly brighter in dark) */
+  --primary: #FF8C6B;
+  --primary-foreground: #1A1614;
+  /* Sage Secondary */
+  --secondary: #7CB07C;
+  --secondary-foreground: #1A1614;
 
-  --muted: oklch(0.25 0.03 260);
-  --muted-foreground: oklch(0.65 0.06 260);
-  --accent: oklch(0.28 0.04 260);
-  --accent-foreground: oklch(0.96 0.01 260);
-  --destructive: oklch(0.5 0.22 25);
-  --border: oklch(0.3 0.04 260);
-  --input: oklch(0.3 0.04 260);
-  --ring: oklch(0.6 0.18 250);
+  --muted: #2E2A27;
+  --muted-foreground: #8A7D72;
+  --accent: #352E29;
+  --accent-foreground: #F5EDE5;
+  --destructive: #FC5050;
+  --border: #3A3532;
+  --input: #3A3532;
+  --ring: #FF8C6B;
+
+  --coral-50: #352220;
+  --coral-100: #4A2E28;
+  --coral-400: #FF8C6B;
+  --coral-500: #FF6B47;
+  --coral-600: #E85A3A;
+  --coral-700: #CC4A2E;
+  --sage-50: #1E2A1E;
+  --sage-100: #2A3D2A;
+  --sage-400: #7CB07C;
+  --sage-500: #5A9A5A;
+  --warm-cream: #1A1614;
+  --warm-white: #252220;
+
+  --chart-1: #FF8C6B;
+  --chart-2: #7CB07C;
+  --chart-3: #FFB088;
+  --chart-4: #5A9A5A;
+  --chart-5: #FF6B47;
 }
 
 @layer base {
@@ -128,43 +167,62 @@
   }
 }
 
-/* ── Landing page animations ── */
-@keyframes blob {
+/* ══════════════════════════════════════════════════════
+   PETPAL REDESIGN — Landing page styles
+   ══════════════════════════════════════════════════════ */
 
-  0%,
+/* ── Floating paw prints ── */
+@keyframes float-paw {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.15;
+  }
+  90% {
+    opacity: 0.15;
+  }
   100% {
-    transform: translate(0, 0) scale(1);
+    transform: translateY(-20vh) rotate(360deg);
+    opacity: 0;
   }
+}
 
-  33% {
-    transform: translate(30px, -50px) scale(1.1);
-  }
+.paw-float {
+  position: absolute;
+  pointer-events: none;
+  animation: float-paw linear infinite;
+  z-index: 0;
+  color: var(--primary);
+  opacity: 0;
+}
 
-  66% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
+/* ── Smooth gradient blob animation ── */
+@keyframes blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
 }
 
 @keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-14px);
-  }
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-14px); }
 }
 
 @keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
 
-  100% {
-    transform: translateX(200%);
-  }
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+@keyframes counter-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-blob {
@@ -173,6 +231,10 @@
 
 .animate-float {
   animation: float 5s ease-in-out infinite;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 3s ease-in-out infinite;
 }
 
 .animation-delay-2000 {
@@ -185,6 +247,108 @@
 
 .animation-delay-6000 {
   animation-delay: 6s;
+}
+
+/* ── Card hover lift ── */
+.card-lift {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+.card-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px -12px rgba(45, 35, 25, 0.12);
+}
+
+/* ── Accordion animation ── */
+.accordion-content {
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+}
+
+.accordion-chevron {
+  transition: transform 0.3s ease;
+}
+.accordion-open .accordion-chevron {
+  transform: rotate(180deg);
+}
+
+/* ── Pricing toggle ── */
+.pricing-toggle {
+  position: relative;
+  width: 56px;
+  height: 28px;
+  border-radius: 9999px;
+  background: var(--border);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.pricing-toggle.active {
+  background: var(--primary);
+}
+.pricing-toggle-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 24px;
+  height: 24px;
+  border-radius: 9999px;
+  background: white;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+.pricing-toggle.active .pricing-toggle-knob {
+  transform: translateX(28px);
+}
+
+/* ── Testimonial carousel ── */
+.testimonial-track {
+  display: flex;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Frosted glass navbar ── */
+.navbar-glass {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* ── Mobile drawer ── */
+.mobile-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.mobile-drawer-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mobile-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 280px;
+  max-width: 80vw;
+  background: var(--card);
+  z-index: 101;
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: -8px 0 30px rgba(0,0,0,0.1);
+  overflow-y: auto;
+}
+.mobile-drawer.open {
+  transform: translateX(0);
+}
+
+/* ── Focus states (WCAG) ── */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 /* Hide scrollbar utility */
@@ -205,7 +369,7 @@
 /* ── Custom scrollbar ── */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: oklch(0.4 0.04 260 / 0.4) transparent;
+  scrollbar-color: rgba(122, 107, 93, 0.3) transparent;
 }
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
@@ -214,12 +378,17 @@
   background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: oklch(0.4 0.04 260 / 0.4);
+  background: rgba(122, 107, 93, 0.3);
   border-radius: 9999px;
 }
 
+/* ── Smooth scroll ── */
+html {
+  scroll-behavior: smooth;
+}
+
 /* ══════════════════════════════════════════════════════
-   GAME SCREEN — Hero-centered layout
+   GAME SCREEN — Hero-centered layout (PRESERVED)
    ══════════════════════════════════════════════════════ */
 
 /* Outer wrapper: fills the <main> area below the dashboard topbar */
@@ -529,7 +698,7 @@
   color: oklch(0.8 0.12 160);
 }
 
-/* ── LIGHT MODE overrides ── */
+/* ── LIGHT MODE overrides for game screens ── */
 :root:not(.dark) .game-window {
   background: oklch(0.97 0.008 250 / 0.92);
   border-color: oklch(0.88 0.04 250 / 0.45);

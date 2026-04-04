@@ -41,6 +41,7 @@ export function ChatbaseWidget() {
     if (existingScript) {
       existingScript.remove();
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).chatbase = undefined;
 
     if (!isAuthenticated) {
@@ -65,6 +66,7 @@ export function ChatbaseWidget() {
         if (prop === 'q') {
           return target.q;
         }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return (...args: unknown[]) => (target as any)(prop as string, ...args);
       },
     });

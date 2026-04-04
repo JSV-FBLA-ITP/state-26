@@ -59,7 +59,7 @@ export type ActionType = 'feed' | 'play' | 'sleep' | 'clean' | 'healthCheck';
 export const TRICK_LEARNING_DELAY = 10000;
 export const TRICK_COOLDOWN_DURATION = 10000;
 export const HAPPINESS_INCREMENT = 10;
-export const ALL_ACTIONS: ActionType[] = ['feed', 'play', 'sleep', 'clean', 'healthCheck'];
+export const ALL_ACTIONS: ActionType[] = ['feed', 'play', 'healthCheck', 'sleep', 'clean'];
 
 export const ACTION_LABELS: Record<ActionType, string> = {
     feed: 'Utensils Feed',

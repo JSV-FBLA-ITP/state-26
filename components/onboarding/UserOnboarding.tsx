@@ -12,6 +12,7 @@ interface Props {
     householdName: string;
     onHouseholdChange: (name: string, ownerName: string, monthlyIncome?: number, monthlyExpenses?: number) => void;
     preselectedHousehold?: string;
+    selectedHousehold?: string;
     initialIncome?: number;
     initialExpenses?: number;
 }
@@ -193,14 +194,19 @@ export function UserOnboarding({ householdName, onHouseholdChange, preselectedHo
             {/* New household toggle */}
             <div>
                 <button
-                    onClick={() => setMode(m => m === 'new' ? 'pick' : 'new')}
-                    className={`w-full flex items-center gap-3 px-5 py-4 rounded-2xl border-2 font-bold transition-all ${mode === 'new'
-                        ? 'border-blue-500/60 bg-blue-500/10 text-blue-500'
+                    onClick={() => {
+                        setMode(m => m === 'new' ? 'pick' : 'new');
+                        if (mode !== 'new') {
+                             setNewName('');
+                        }
+                    }}
+                    className={`w-full flex items-center gap-3 px-5 py-4 rounded-2xl border-2 font-black transition-all ${mode === 'new'
+                        ? 'border-primary bg-primary/10 text-primary'
                         : 'border-dashed border-border/60 text-muted-foreground hover:border-primary/40 hover:text-primary'
                         }`}
                 >
-                    <PlusCircle className="w-4 h-4 shrink-0" />
-                    New Household
+                    {mode === 'new' ? <ChevronUp className="w-4 h-4 shrink-0" /> : <PlusCircle className="w-4 h-4 shrink-0" />}
+                    {mode === 'new' ? 'Cancel New Household' : 'Create Another Household'}
                 </button>
 
                 <AnimatePresence>

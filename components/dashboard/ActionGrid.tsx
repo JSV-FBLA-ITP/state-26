@@ -12,34 +12,34 @@ interface Props {
 
 const ACTION_COLORS: Record<ActionType, { bg: string; activeBg: string; text: string; glow: string }> = {
     feed: {
-        bg: 'bg-orange-500/10 hover:bg-orange-500/20 border-orange-500/20 hover:border-orange-500/50',
-        activeBg: 'bg-orange-500 border-orange-500 ring-4 ring-orange-500/25',
-        text: 'text-orange-500',
-        glow: 'shadow-orange-500/30',
+        bg: 'bg-amber-500/10 hover:bg-amber-500/20 border-amber-500/20 hover:border-amber-500/50',
+        activeBg: 'bg-amber-500 border-amber-500 ring-4 ring-amber-500/25',
+        text: 'text-amber-500',
+        glow: 'shadow-amber-500/30',
     },
     play: {
-        bg: 'bg-emerald-500/10 hover:bg-emerald-500/20 border-emerald-500/20 hover:border-emerald-500/50',
-        activeBg: 'bg-emerald-500 border-emerald-500 ring-4 ring-emerald-500/25',
-        text: 'text-emerald-500',
-        glow: 'shadow-emerald-500/30',
-    },
-    sleep: {
-        bg: 'bg-violet-500/10 hover:bg-violet-500/20 border-violet-500/20 hover:border-violet-500/50',
-        activeBg: 'bg-violet-500 border-violet-500 ring-4 ring-violet-500/25',
-        text: 'text-violet-500',
-        glow: 'shadow-violet-500/30',
-    },
-    clean: {
-        bg: 'bg-cyan-500/10 hover:bg-cyan-500/20 border-cyan-500/20 hover:border-cyan-500/50',
-        activeBg: 'bg-cyan-500 border-cyan-500 ring-4 ring-cyan-500/25',
-        text: 'text-cyan-500',
-        glow: 'shadow-cyan-500/30',
+        bg: 'bg-sky-500/10 hover:bg-sky-500/20 border-sky-500/20 hover:border-sky-500/50',
+        activeBg: 'bg-sky-500 border-sky-500 ring-4 ring-sky-500/25',
+        text: 'text-sky-500',
+        glow: 'shadow-sky-500/30',
     },
     healthCheck: {
         bg: 'bg-rose-500/10 hover:bg-rose-500/20 border-rose-500/20 hover:border-rose-500/50',
         activeBg: 'bg-rose-500 border-rose-500 ring-4 ring-rose-500/25',
         text: 'text-rose-500',
         glow: 'shadow-rose-500/30',
+    },
+    sleep: {
+        bg: 'bg-indigo-500/10 hover:bg-indigo-500/20 border-indigo-500/20 hover:border-indigo-500/50',
+        activeBg: 'bg-indigo-500 border-indigo-500 ring-4 ring-indigo-500/25',
+        text: 'text-indigo-500',
+        glow: 'shadow-indigo-500/30',
+    },
+    clean: {
+        bg: 'bg-emerald-500/10 hover:bg-emerald-500/20 border-emerald-500/20 hover:border-emerald-500/50',
+        activeBg: 'bg-emerald-500 border-emerald-500 ring-4 ring-emerald-500/25',
+        text: 'text-emerald-500',
+        glow: 'shadow-emerald-500/30',
     },
 };
 
@@ -99,7 +99,7 @@ export function ActionGrid({ onAction }: Props) {
                         {/* Cost */}
                         <span className={cn(
                             "text-[10px] font-black tracking-wide",
-                            isActive ? 'text-white/70' : 'text-amber-500/70'
+                            isActive ? 'text-white/70' : 'text-coral-500/70'
                         )}>
                             ${ACTION_COSTS[action]}
                         </span>

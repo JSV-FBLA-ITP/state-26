@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { PetTypeSelector, PET_TYPES } from '@/components/onboarding/PetTypeSelector';
 import { PetCustomizer } from '@/components/onboarding/PetCustomizer';
 import { PetNaming } from '@/components/onboarding/PetNaming';
@@ -59,6 +60,7 @@ function OnboardingInner() {
         const finalPetImage = petImage || PET_TYPES.find(p => p.id === petType)?.icon || '';
 
         const newPet: PetData = {
+            id: undefined, // Force new pet creation
             type: petType,
             name: petName,
             ownerName: ownerName || householdName,
@@ -80,8 +82,11 @@ function OnboardingInner() {
 
         try {
             if (user && !isGuest) {
-                const { data, error } = await savePetToCloud(newPet);
-                if (error) throw error;
+                const { data, error } = await savePetToCloud(newPet, user.id);
+                if (error) {
+                    console.error('Finalize save error:', error);
+                    throw new Error(error.message || JSON.stringify(error) || 'Cloud save failed');
+                }
                 if (data) localStorage.setItem('currentPetId', data.id);
             } else {
                 const guestId = `guest_${Math.random().toString(36).substr(2, 9)}`;
@@ -93,9 +98,12 @@ function OnboardingInner() {
             setIsFinishing(true);
             await new Promise(resolve => setTimeout(resolve, 3000));
             router.push('/dashboard');
-        } catch (err) {
-            console.error('Error saving pet:', err);
-            alert('Something went wrong saving your pet. Please try again.');
+        } catch (err: unknown) {
+            console.error('Final handleFinalize error structure:', err);
+            const errMsg = err instanceof Error ? err.message : 
+                          (typeof err === 'string' ? err : 'Unknown error');
+            console.error('Error saving pet (detailed):', errMsg);
+            alert(`Something went wrong saving your pet: ${errMsg}`);
         } finally {
             setIsSubmitting(false);
         }
@@ -110,33 +118,117 @@ function OnboardingInner() {
     };
 
     if (isFinishing) {
+        const selectedPetTypeIcon = PET_TYPES.find(p => p.id === petType)?.icon || '';
+        const displayImage = petImage || selectedPetTypeIcon;
+
         return (
-            <div className="fixed inset-0 z-50 bg-background flex items-center justify-center overflow-hidden">
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative text-center space-y-8 p-8 max-w-lg">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] -z-10 animate-pulse" />
+            <div className="fixed inset-0 z-50 bg-linear-to-br from-background via-muted/20 to-primary/5 flex items-center justify-center overflow-hidden">
+                {/* Background Sparkles / Ambient Glow */}
+                <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[150px] animate-pulse" />
+                <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-sage-500/10 rounded-full blur-[150px] animate-pulse delay-1000" />
+                
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }} 
+                    animate={{ opacity: 1, y: 0 }} 
+                    className="relative text-center space-y-10 p-8 max-w-2xl w-full"
+                >
+                    {/* Celebration Banner Effect */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-20 flex gap-4">
+                        {[...Array(6)].map((_, i) => (
+                            <motion.div
+                                key={i}
+                                initial={{ y: -100, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                transition={{ delay: 0.1 * i, type: 'spring' }}
+                                className={`w-3 h-12 rounded-full ${i % 2 === 0 ? 'bg-primary/40' : 'bg-sage-400/40'}`}
+                            />
+                        ))}
+                    </div>
 
-                    <motion.div
-                        initial={{ scale: 0, rotate: -20 }}
-                        animate={{ scale: 1, rotate: 0 }}
-                        transition={{ type: 'spring', damping: 12, stiffness: 100, delay: 0.2 }}
-                        className="w-32 h-32 bg-primary rounded-[2.5rem] flex items-center justify-center mx-auto shadow-2xl shadow-primary/40 relative"
-                    >
-                        <Sparkles className="w-16 h-16 text-primary-foreground" />
-                    </motion.div>
+                    {/* Pet Portrait Frame */}
+                    <div className="relative mx-auto">
+                        {/* Decorative Rings */}
+                        <motion.div 
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1.1, opacity: 1 }}
+                            transition={{ duration: 1.5, repeat: Infinity, repeatType: 'reverse' }}
+                            className="absolute inset-0 border-2 border-primary/20 rounded-[3rem] -m-4" 
+                        />
+                        <motion.div 
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1.05, opacity: 1 }}
+                            transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse', delay: 0.5 }}
+                            className="absolute inset-0 border border-sage-500/30 rounded-[3.5rem] -m-8" 
+                        />
 
-                    <div className="space-y-4">
-                        <motion.h2 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4 }} className="text-5xl md:text-6xl font-black tracking-tight">
+                        <motion.div
+                            initial={{ scale: 0, rotate: -15, y: 50 }}
+                            animate={{ scale: 1, rotate: 0, y: 0 }}
+                            transition={{ type: 'spring', damping: 15, stiffness: 80, delay: 0.2 }}
+                            className="w-56 h-56 bg-card border-8 border-white rounded-[3rem] overflow-hidden mx-auto shadow-2xl shadow-primary/30 relative z-10 group"
+                        >
+                            {displayImage ? (
+                                <Image 
+                                    src={displayImage} 
+                                    alt={petName} 
+                                    fill 
+                                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                                />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-muted">
+                                    <PawPrint className="w-20 h-20 text-muted-foreground/30" />
+                                </div>
+                            )}
+                            
+                            {/* Overlay Sparkle */}
+                            <motion.div
+                                animate={{ opacity: [0, 1, 0], scale: [0.5, 1.2, 0.5] }}
+                                transition={{ duration: 2, repeat: Infinity }}
+                                className="absolute top-4 right-4"
+                            >
+                                <Sparkles className="w-8 h-8 text-white drop-shadow-lg" />
+                            </motion.div>
+                        </motion.div>
+                        
+                        {/* Name Badge */}
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.8 }}
+                            className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-8 py-2 rounded-full font-black text-xl shadow-xl z-20 border-4 border-white whitespace-nowrap"
+                        >
+                            {petName}
+                        </motion.div>
+                    </div>
+
+                    <div className="space-y-4 pt-4">
+                        <motion.h2 
+                            initial={{ y: 20, opacity: 0 }} 
+                            animate={{ y: 0, opacity: 1 }} 
+                            transition={{ delay: 1 }} 
+                            className="text-5xl md:text-6xl font-black tracking-tight text-foreground"
+                        >
                             It&apos;s Official!
                         </motion.h2>
-                        <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.6 }} className="text-xl md:text-2xl text-muted-foreground font-medium">
-                            Welcome home, <span className="text-primary font-black uppercase tracking-wide">{petName}</span>.
+                        <motion.p 
+                            initial={{ y: 20, opacity: 0 }} 
+                            animate={{ y: 0, opacity: 1 }} 
+                            transition={{ delay: 1.2 }} 
+                            className="text-xl md:text-2xl text-muted-foreground font-medium max-w-md mx-auto leading-relaxed"
+                        >
+                            A new journey begins with your best friend. Get ready to explore together!
                         </motion.p>
                     </div>
 
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }} className="flex flex-col items-center gap-4 pt-8">
-                        <div className="flex items-center gap-3 text-primary font-bold">
+                    <motion.div 
+                        initial={{ opacity: 0 }} 
+                        animate={{ opacity: 1 }} 
+                        transition={{ delay: 1.8 }} 
+                        className="flex flex-col items-center gap-4 pt-12"
+                    >
+                        <div className="flex items-center gap-4 bg-sage-500/10 text-sage-600 px-6 py-3 rounded-2xl font-bold border border-sage-500/20">
                             <RefreshCw className="w-5 h-5 animate-spin" />
-                            <span>Moving into the dashboard...</span>
+                            <span>Preparing your cozy home...</span>
                         </div>
                     </motion.div>
                 </motion.div>
@@ -148,7 +240,7 @@ function OnboardingInner() {
         <div className="min-h-screen bg-linear-to-b from-background via-background/95 to-muted/30 flex flex-col items-center py-12 px-4 relative overflow-x-hidden">
             {/* Ambient background */}
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-sage-500/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
 
             <div className="w-full max-w-4xl mx-auto space-y-12 relative z-10">
                 {/* Header & Steps */}
@@ -160,11 +252,11 @@ function OnboardingInner() {
                         <span className="font-black tracking-widest uppercase text-xs">Pet Onboarding</span>
                     </motion.div>
 
-                    <div className="relative w-full max-w-2xl px-4">
+                    <div className="relative w-full max-w-2xl px-4 mx-auto text-center">
                         <div className="absolute inset-0 flex items-center px-4" aria-hidden="true">
                             <div className="w-full h-2 bg-muted/30 rounded-full relative z-0 overflow-hidden">
                                 <motion.div
-                                    className="absolute left-0 top-0 h-full bg-linear-to-r from-primary to-blue-500 rounded-full"
+                                    className="absolute left-0 top-0 h-full bg-linear-to-r from-coral-500 to-coral-400 rounded-full"
                                     initial={{ width: '0%' }}
                                     animate={{ width: `${(step / (STEPS.length - 1)) * 100}%` }}
                                     transition={{ type: 'spring', damping: 20, stiffness: 100 }}
@@ -196,66 +288,68 @@ function OnboardingInner() {
                     </div>
                 </div>
 
-                {/* Main Content */}
-                <Card className="p-8 md:p-12 min-h-[550px] flex flex-col justify-center relative overflow-hidden bg-card/40 backdrop-blur-xl border-border/50 rounded-[3rem] shadow-2xl">
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={step}
-                            initial={{ x: 20, opacity: 0 }}
-                            animate={{ x: 0, opacity: 1 }}
-                            exit={{ x: -20, opacity: 0 }}
-                            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                {/* Main Content Card (Modal) */}
+                <Card className="p-8 md:p-12 min-h-[600px] flex flex-col relative overflow-hidden bg-card/40 backdrop-blur-xl border-border/50 rounded-[3rem] shadow-2xl">
+                    <div className="flex-1 flex flex-col justify-center">
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={step}
+                                initial={{ x: 20, opacity: 0 }}
+                                animate={{ x: 0, opacity: 1 }}
+                                exit={{ x: -20, opacity: 0 }}
+                                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                            >
+                                {step === 0 && <PetTypeSelector selected={petType} onSelect={setPetType} />}
+                                {step === 1 && (
+                                    <UserOnboarding
+                                        householdName={householdName}
+                                        onHouseholdChange={(name, owner, income, expenses) => {
+                                            setHouseholdName(name);
+                                            setOwnerName(owner);
+                                            setMonthlyIncome(income);
+                                            setMonthlyExpenses(expenses);
+                                        }}
+                                        preselectedHousehold={preselectedHousehold || undefined}
+                                    />
+                                )}
+                                {step === 2 && (
+                                    <PetCustomizer
+                                        petType={petType}
+                                        image={petImage}
+                                        onImageChange={setPetImage}
+                                    />
+                                )}
+                                {step === 3 && <PetNaming name={petName} onNameChange={setPetName} />}
+                            </motion.div>
+                        </AnimatePresence>
+                    </div>
+
+                    {/* Navigation Buttons - Now Inside Modal */}
+                    <div className="flex items-center justify-between mt-12 pt-8 border-t border-border/10 shrink-0">
+                        <Button
+                            variant="ghost"
+                            onClick={handleBack}
+                            disabled={step === 0 || isSubmitting}
+                            className="rounded-2xl h-14 px-8 font-black gap-2 hover:bg-muted"
                         >
-                            {step === 0 && <PetTypeSelector selected={petType} onSelect={setPetType} />}
-                            {step === 1 && (
-                                <UserOnboarding
-                                    householdName={householdName}
-                                    onHouseholdChange={(name, owner, income, expenses) => {
-                                        setHouseholdName(name);
-                                        setOwnerName(owner);
-                                        setMonthlyIncome(income);
-                                        setMonthlyExpenses(expenses);
-                                    }}
-                                    preselectedHousehold={preselectedHousehold || undefined}
-                                />
+                            <ChevronLeft className="w-5 h-5" /> Back
+                        </Button>
+
+                        <Button
+                            onClick={handleNext}
+                            disabled={!canAdvance() || isSubmitting}
+                            className={`rounded-2xl h-14 px-10 font-black gap-2 transition-all transform hover:scale-105 active:scale-95 shadow-xl ${canAdvance() ? 'bg-primary shadow-primary/30' : 'bg-muted'}`}
+                        >
+                            {isSubmitting ? (
+                                <>Creating Magic... <RefreshCw className="w-5 h-5 animate-spin" /></>
+                            ) : step === STEPS.length - 1 ? (
+                                <>Finish & Start <CheckCircle2 className="w-5 h-5" /></>
+                            ) : (
+                                <>Continue <ArrowRight className="w-5 h-5" /></>
                             )}
-                            {step === 2 && (
-                                <PetCustomizer
-                                    petType={petType}
-                                    image={petImage}
-                                    onImageChange={setPetImage}
-                                />
-                            )}
-                            {step === 3 && <PetNaming name={petName} onNameChange={setPetName} />}
-                        </motion.div>
-                    </AnimatePresence>
+                        </Button>
+                    </div>
                 </Card>
-
-                {/* Footer */}
-                <div className="flex items-center justify-between w-full max-w-2xl mx-auto pt-4">
-                    <Button
-                        variant="ghost"
-                        onClick={handleBack}
-                        disabled={step === 0 || isSubmitting}
-                        className="rounded-2xl h-14 px-8 font-black gap-2 hover:bg-muted"
-                    >
-                        <ChevronLeft className="w-5 h-5" /> Back
-                    </Button>
-
-                    <Button
-                        onClick={handleNext}
-                        disabled={!canAdvance() || isSubmitting}
-                        className={`rounded-2xl h-14 px-10 font-black gap-2 transition-all transform hover:scale-105 active:scale-95 shadow-xl ${canAdvance() ? 'bg-primary shadow-primary/30' : 'bg-muted'}`}
-                    >
-                        {isSubmitting ? (
-                            <>Creating Magic... <RefreshCw className="w-5 h-5 animate-spin" /></>
-                        ) : step === STEPS.length - 1 ? (
-                            <>Finish & Start Journey <CheckCircle2 className="w-5 h-5" /></>
-                        ) : (
-                            <>Continue <ArrowRight className="w-5 h-5" /></>
-                        )}
-                    </Button>
-                </div>
             </div>
 
             {/* Login Prompt Tray */}

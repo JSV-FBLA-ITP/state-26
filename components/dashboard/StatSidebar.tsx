@@ -1,6 +1,6 @@
 'use client';
 
-import { PetStats, MonthData, ACTION_LABELS, ACTION_COSTS, ActionType } from '@/lib/gameLogic';
+import { PetStats, MonthData, ACTION_LABELS, ActionType } from '@/lib/gameLogic';
 import { Heart, Zap, Coffee, Utensils } from 'lucide-react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
@@ -32,7 +32,7 @@ export function StatSidebar({ stats, monthData, onAction }: Props) {
                     const isLow = value < 30;
                     return (
                         <div key={s.key} className="stat-strip-item">
-                            <s.icon className={cn("w-4 h-4 flex-shrink-0", s.textColor, isLow && "animate-pulse")} />
+                            <s.icon className={cn("w-4 h-4 shrink-0", s.textColor, isLow && "animate-pulse")} />
                             <div className="stat-strip-bar">
                                 <motion.div
                                     initial={{ width: 0 }}

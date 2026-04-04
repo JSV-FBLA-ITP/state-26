@@ -9,10 +9,11 @@ export default function DemoPage() {
   const videoRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
+    const video = videoRef.current
     return () => {
-      if (videoRef.current) {
-        videoRef.current.pause()
-        videoRef.current.currentTime = 0
+      if (video) {
+        video.pause()
+        video.currentTime = 0
       }
     }
   }, [])

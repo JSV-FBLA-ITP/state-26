@@ -1,58 +1,91 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { PetData } from '@/lib/gameLogic';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/utils/supabase/client';
+const supabase = createClient();
 
 /**
  * Storage utility to handle data persistence via Supabase.
  * Includes fallback patterns and type safety.
  */
 
-export async function savePetToCloud(petData: PetData): Promise<{ data: any; error: any }> {
-    const petId = (petData as any).id || localStorage.getItem('currentPetId');
-    const { data: sessionData } = await supabase.auth.getUser();
-    const userId = sessionData?.user?.id;
+export async function savePetToCloud(petData: PetData, explicitlyProvidedUserId?: string): Promise<{ data: any; error: any }> {
+    const providedId = (petData as any).id;
+    const isForceNew = (petData as any).id === undefined && 'id' in petData;
+    const petId = isForceNew ? undefined : (providedId || localStorage.getItem('currentPetId'));
+    
+    // Get userId...
+    let userId = explicitlyProvidedUserId;
+    if (!userId) {
+        const { data: sessionData } = await supabase.auth.getUser();
+        userId = sessionData?.user?.id;
+    }
+    if (!userId) userId = (petData as any).user_id;
 
-    // Guest fallback (only if NOT logged in)
-    if (!userId && petId?.startsWith('guest_')) {
-        localStorage.setItem(`pet_${petId}`, JSON.stringify(petData));
-        return { data: { id: petId }, error: null };
+    const isNewPet = isForceNew || !petId || petId?.startsWith('guest_');
+    const isMigration = !isForceNew && petId?.startsWith('guest_');
+
+    // Guest fallback: ONLY if no userId is found AND pet is marked as guest/new
+    if (!userId && isNewPet) {
+        const fallbackId = (isForceNew || !petId) ? `guest_${Math.random().toString(36).substr(2, 9)}` : petId;
+        localStorage.setItem(`pet_${fallbackId}`, JSON.stringify(petData));
+        return { data: { id: fallbackId }, error: null };
     }
 
     try {
-        // If we have a user and it was a guest pet, we generate a new ID (or let Postgres do it)
-        const isMigration = petId?.startsWith('guest_');
+        // Prepare the payload
+        const payload: any = {
+            user_id: userId,
+            name: petData.name,
+            owner_name: petData.ownerName,
+            household_name: petData.householdName,
+            type: petData.type,
+            image_url: petData.petImage,
+            stats: petData.stats,
+            month_data: petData.monthData,
+            learned_tricks: petData.learnedTricks,
+            shop_upgrades: petData.shop_upgrades,
+            shop_multipliers: petData.shop_multipliers,
+            total_expenses: petData.totalExpenses,
+            savings_goal: petData.savingsGoal,
+            savings_current: petData.savingsCurrent || 0,
+            monthly_income: petData.monthlyIncome,
+            monthly_expenses: petData.monthlyExpenses,
+        };
 
-        const { data, error } = await supabase
-            .from('pets')
-            .upsert({
-                id: isMigration ? undefined : petId,
-                user_id: userId,
-                name: petData.name,
-                owner_name: petData.ownerName,
-                household_name: petData.householdName,
-                type: petData.type,
-                image_url: petData.petImage,
-                stats: petData.stats,
-                month_data: petData.monthData,
-                learned_tricks: petData.learnedTricks,
-                shop_upgrades: petData.shop_upgrades,
-                shop_multipliers: petData.shop_multipliers,
-                total_expenses: petData.totalExpenses,
-                savings_goal: petData.savingsGoal,
-                monthly_income: petData.monthlyIncome,
-                monthly_expenses: petData.monthlyExpenses,
-            })
-            .select()
-            .single();
+        let result;
+        if (isNewPet) {
+            // Truly new pet or migrating guest -> INSERT
+            result = await supabase
+                .from('pets')
+                .insert(payload)
+                .select()
+                .single();
+        } else {
+            // Existing cloud pet -> UPDATE
+            result = await supabase
+                .from('pets')
+                .update(payload)
+                .eq('id', petId)
+                .select()
+                .single();
+        }
 
-        if (!error && isMigration && data) {
+        const { data, error } = result;
+
+        if (error) {
+            console.error('Supabase error during savePetToCloud:', error.message, error.details, error.hint);
+            return { data: null, error };
+        }
+
+        if (isMigration && data) {
             localStorage.removeItem(`pet_${petId}`);
             localStorage.setItem('currentPetId', data.id);
         }
 
-        return { data, error };
-    } catch (err) {
+        return { data, error: null };
+    } catch (err: any) {
+        console.error('Catch-all save error:', err.message || err);
         return { data: null, error: err };
     }
 }
@@ -126,6 +159,7 @@ export async function loadPetFromCloud(petId: string): Promise<{ data: PetData |
 
         // Map back to PetData interface
         const mappedData: PetData = {
+            id: data.id,
             name: data.name,
             ownerName: data.owner_name,
             householdName: data.household_name,
@@ -138,9 +172,9 @@ export async function loadPetFromCloud(petId: string): Promise<{ data: PetData |
             shop_multipliers: data.shop_multipliers,
             totalExpenses: data.total_expenses,
             savingsGoal: data.savings_goal,
-            savingsCurrent: (data.stats.money || 0) - (data.total_expenses || 0),
+            savingsCurrent: data.savings_current || 0,
             lastInteraction: Date.now(),
-            interactionCount: 0,
+            interactionCount: data.interaction_count || 0,
             monthlyIncome: data.monthly_income,
             monthlyExpenses: data.monthly_expenses,
         };
@@ -152,8 +186,12 @@ export async function loadPetFromCloud(petId: string): Promise<{ data: PetData |
 }
 
 export async function saveExpense(petId: string, item: string, cost: number): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
     await supabase.from('expenses').insert({
         pet_id: petId,
+        user_id: user.id,
         item,
         cost
     });

@@ -5,7 +5,8 @@ import { Label } from '@/components/ui/label';
 import { Sparkles, Wand2, RefreshCw, AlertCircle, Palette } from 'lucide-react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import Link from 'next/link';
+import { createClient } from '@/utils/supabase/client';
+import { AuthModal } from '@/components/auth/AuthModal';
 
 interface Props {
     petType: string;
@@ -26,10 +27,19 @@ export function PetCustomizer({ petType, image, onImageChange }: Props) {
     const [prompt, setPrompt] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
     const generateImage = async () => {
         const trimmedPrompt = prompt.trim();
         if (!trimmedPrompt) return;
+
+        // Check auth before generation
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            setIsAuthModalOpen(true);
+            return;
+        }
 
         setIsGenerating(true);
         setError(null);
@@ -50,11 +60,7 @@ export function PetCustomizer({ petType, image, onImageChange }: Props) {
 
             onImageChange(data.imageUrl);
         } catch (err) {
-            if (err instanceof Error && err.message.includes('Unauthorized')) {
-                setError('You must be logged in to use the AI generator.');
-            } else {
-                setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
-            }
+            setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
         } finally {
             setIsGenerating(false);
         }
@@ -114,9 +120,12 @@ export function PetCustomizer({ petType, image, onImageChange }: Props) {
                             <div className="flex-1 flex items-center justify-between">
                                 <span>{error}</span>
                                 {error.includes('logged in') && (
-                                    <Link href="/login" className="px-2 py-1 bg-destructive/20 hover:bg-destructive/30 rounded text-[10px] font-bold uppercase transition-colors shrink-0">
+                                    <button 
+                                        onClick={() => setIsAuthModalOpen(true)}
+                                        className="px-2 py-1 bg-destructive/20 hover:bg-destructive/30 rounded text-[10px] font-bold uppercase transition-colors shrink-0"
+                                    >
                                         Log In
-                                    </Link>
+                                    </button>
                                 )}
                             </div>
                         </motion.div>
@@ -142,6 +151,13 @@ export function PetCustomizer({ petType, image, onImageChange }: Props) {
                     ))}
                 </div>
             </div>
+
+            {/* Auth Modal for restricted AI generation */}
+            <AuthModal 
+                isOpen={isAuthModalOpen} 
+                onClose={() => setIsAuthModalOpen(false)} 
+                featureName="AI Pet Image Mirror"
+            />
 
             {/* Image preview */}
             <div className="h-52 rounded-2xl bg-card/30 border border-dashed border-border/50 flex items-center justify-center relative overflow-hidden group">
