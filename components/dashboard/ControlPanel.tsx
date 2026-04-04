@@ -1,7 +1,8 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
 import { ShoppingBag, GraduationCap, History, Settings2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface Props {
     onShopOpen: () => void;
@@ -11,29 +12,34 @@ interface Props {
 }
 
 const tools = [
-    { label: 'Shop', icon: ShoppingBag, bg: 'bg-blue-500/10 group-hover:bg-blue-500/20', color: 'text-blue-500', glow: 'hover:shadow-blue-500/20' },
-    { label: 'Quiz', icon: GraduationCap, bg: 'bg-amber-500/10 group-hover:bg-amber-500/20', color: 'text-amber-500', glow: 'hover:shadow-amber-500/20' },
-    { label: 'Stats', icon: History, bg: 'bg-emerald-500/10 group-hover:bg-emerald-500/20', color: 'text-emerald-500', glow: 'hover:shadow-emerald-500/20' },
-    { label: 'Settings', icon: Settings2, bg: 'bg-muted/50 group-hover:bg-muted', color: 'text-muted-foreground', glow: '' },
+    { label: 'Shop', icon: ShoppingBag, color: 'text-blue-500', hoverBg: 'hover:bg-blue-500/15', activeBg: 'active:bg-blue-500/25' },
+    { label: 'Quiz', icon: GraduationCap, color: 'text-amber-500', hoverBg: 'hover:bg-amber-500/15', activeBg: 'active:bg-amber-500/25' },
+    { label: 'Stats', icon: History, color: 'text-emerald-500', hoverBg: 'hover:bg-emerald-500/15', activeBg: 'active:bg-emerald-500/25' },
+    { label: 'Settings', icon: Settings2, color: 'text-muted-foreground', hoverBg: 'hover:bg-muted/50', activeBg: 'active:bg-muted' },
 ];
 
 export function ControlPanel({ onShopOpen, onQuizOpen, onStatsOpen, onOptionsOpen }: Props) {
     const handlers = [onShopOpen, onQuizOpen, onStatsOpen, onOptionsOpen];
 
     return (
-        <div className="grid grid-cols-4 gap-2">
+        <div className="control-row">
             {tools.map((tool, i) => (
-                <Button
+                <motion.button
                     key={tool.label}
-                    variant="ghost"
+                    whileHover={{ scale: 1.08 }}
+                    whileTap={{ scale: 0.92 }}
                     onClick={handlers[i]}
-                    className={`group flex flex-col items-center justify-center py-3 px-2 h-auto rounded-2xl gap-1.5 transition-all active:scale-95 hover:shadow-lg ${tool.glow}`}
+                    className={cn(
+                        "flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all",
+                        tool.hoverBg,
+                        tool.activeBg
+                    )}
                 >
-                    <div className={`w-11 h-11 rounded-xl ${tool.bg} flex items-center justify-center transition-all`}>
-                        <tool.icon className={`w-5 h-5 ${tool.color}`} />
-                    </div>
-                    <span className={`text-[9px] font-black uppercase tracking-wider ${tool.color}`}>{tool.label}</span>
-                </Button>
+                    <tool.icon className={cn("w-4 h-4", tool.color)} />
+                    <span className={cn("text-[9px] font-black uppercase tracking-wider", tool.color)}>
+                        {tool.label}
+                    </span>
+                </motion.button>
             ))}
         </div>
     );

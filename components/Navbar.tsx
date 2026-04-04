@@ -100,6 +100,9 @@ export function Navbar() {
         { name: 'Education', href: '/#education', id: 'education' },
     ];
 
+    // Hide landing Navbar on dashboard routes (DashboardTopbar handles navigation there)
+    if (pathname?.startsWith('/dashboard')) return null;
+
     return (
         <nav className="fixed top-0 w-full z-50 bg-[#f8f9ff]/80 dark:bg-slate-900/80 backdrop-blur-xl transition-all duration-300 border-b border-black/5 dark:border-white/5">
             <div className="max-w-7xl mx-auto px-8 h-20 flex items-center justify-between">

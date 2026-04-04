@@ -124,6 +124,7 @@
 
   body {
     @apply bg-background text-foreground;
+    min-height: 100dvh;
   }
 }
 
@@ -184,4 +185,414 @@
 
 .animation-delay-6000 {
   animation-delay: 6s;
+}
+
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Safe area padding for mobile devices with notches */
+.safe-area-bottom {
+  padding-bottom: max(env(safe-area-inset-bottom), 0.5rem);
+}
+
+/* ── Custom scrollbar ── */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: oklch(0.4 0.04 260 / 0.4) transparent;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: oklch(0.4 0.04 260 / 0.4);
+  border-radius: 9999px;
+}
+
+/* ══════════════════════════════════════════════════════
+   GAME SCREEN — Hero-centered layout
+   ══════════════════════════════════════════════════════ */
+
+/* Outer wrapper: fills the <main> area below the dashboard topbar */
+.game-screen-wrapper {
+  min-height: 100%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 0.75rem;
+  box-sizing: border-box;
+}
+
+/* The "game window" card */
+.game-window {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  min-height: 820px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 1.75rem;
+  overflow: hidden;
+  background: oklch(0.16 0.02 260 / 0.92);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1.5px solid oklch(0.5 0.08 260 / 0.18);
+  box-shadow:
+    0 0 0 1px oklch(0.6 0.18 250 / 0.05) inset,
+    0 4px 8px -2px oklch(0 0 0 / 0.3),
+    0 12px 48px -10px oklch(0 0 0 / 0.45),
+    0 0 100px -30px oklch(0.6 0.18 250 / 0.1);
+}
+
+/* Subtle dot-grid texture overlay */
+.game-window-grid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    circle,
+    oklch(0.6 0.18 250 / 0.04) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── TOP INFO BAR inside game window ── */
+.game-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem 1.25rem;
+  border-bottom: 1px solid oklch(0.5 0.08 260 / 0.12);
+  background: oklch(0.14 0.02 260 / 0.5);
+  backdrop-filter: blur(12px);
+  flex-shrink: 0;
+  z-index: 2;
+  gap: 0.5rem;
+}
+
+.game-topbar-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* ── HERO ZONE (top area — pet display) ── */
+.game-hero-zone {
+  flex: 1;
+  min-height: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Ambient glow behind pet */
+.pet-zone-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -55%);
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(
+    circle,
+    oklch(0.6 0.18 250 / 0.14) 0%,
+    oklch(0.55 0.15 280 / 0.06) 40%,
+    transparent 70%
+  );
+  border-radius: 9999px;
+  pointer-events: none;
+  filter: blur(50px);
+  animation: breathe-glow 6s ease-in-out infinite;
+}
+
+@keyframes breathe-glow {
+  0%, 100% { opacity: 0.7; transform: translate(-50%, -55%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -55%) scale(1.08); }
+}
+
+.pet-display-wrap {
+  width: 100%;
+  max-width: 240px;
+  position: relative;
+  z-index: 1;
+}
+
+@media (min-height: 700px) {
+  .pet-display-wrap {
+    max-width: 280px;
+  }
+}
+@media (min-height: 850px) {
+  .pet-display-wrap {
+    max-width: 320px;
+  }
+}
+
+/* Feedback toast area floating over the hero */
+.feedback-area {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── COMMAND ZONE (bottom area — stats + actions + controls) ── */
+.game-command-zone {
+  flex-shrink: 0;
+  border-top: 1px solid oklch(0.5 0.08 260 / 0.12);
+  background: oklch(0.14 0.02 260 / 0.6);
+  backdrop-filter: blur(16px);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Stat strip — horizontal row of stats */
+.stat-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  border-bottom: 1px solid oklch(0.5 0.08 260 / 0.08);
+}
+
+.stat-strip-item {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: 0.75rem;
+  background: oklch(0.22 0.03 260 / 0.6);
+  border: 1px solid oklch(0.4 0.06 260 / 0.2);
+  transition: all 0.2s ease;
+  min-width: 0;
+}
+
+.stat-strip-item:hover {
+  border-color: oklch(0.5 0.08 260 / 0.4);
+  background: oklch(0.25 0.03 260 / 0.7);
+}
+
+.stat-strip-bar {
+  width: 60px;
+  height: 6px;
+  border-radius: 9999px;
+  background: oklch(0.25 0.03 260 / 0.5);
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px oklch(0 0 0 / 0.2);
+}
+
+.stat-strip-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 8px oklch(0 0 0 / 0.2);
+}
+
+/* Action row */
+.action-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+}
+
+/* Control tools row */
+.control-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.375rem 1rem 0.5rem;
+  border-top: 1px solid oklch(0.5 0.08 260 / 0.08);
+}
+
+/* ── FEEDBACK TOASTS ── */
+.feedback-toast {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  border: 1.5px solid transparent;
+  box-shadow: 0 4px 16px oklch(0 0 0 / 0.3);
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+}
+.feedback-success {
+  background: oklch(0.55 0.15 160 / 0.9);
+  color: white;
+  border-color: oklch(0.65 0.16 160 / 0.6);
+  box-shadow: 0 4px 16px oklch(0.6 0.15 160 / 0.3);
+}
+.feedback-warn {
+  background: oklch(0.55 0.2 25 / 0.9);
+  color: white;
+  border-color: oklch(0.65 0.22 25 / 0.6);
+  box-shadow: 0 4px 16px oklch(0.55 0.2 25 / 0.3);
+}
+.feedback-info {
+  background: oklch(0.55 0.18 250 / 0.9);
+  color: white;
+  border-color: oklch(0.65 0.18 250 / 0.6);
+  box-shadow: 0 4px 16px oklch(0.55 0.18 250 / 0.3);
+}
+
+/* ── MOBILE TAB BAR ── */
+.mobile-tab-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid oklch(0.5 0.08 260 / 0.12);
+  background: oklch(0.14 0.02 260 / 0.5);
+  backdrop-filter: blur(8px);
+  flex-shrink: 0;
+}
+
+.mobile-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.4rem 1.25rem;
+  border-radius: 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: oklch(0.65 0.06 260);
+  transition: all 0.2s ease;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+.mobile-tab:hover {
+  color: white;
+  background: oklch(0.3 0.04 260 / 0.5);
+}
+.mobile-tab-active {
+  background: oklch(0.6 0.18 250);
+  color: white;
+  box-shadow: 0 4px 12px oklch(0.6 0.18 250 / 0.35);
+}
+
+/* ── REQUIRED ACTION CHIPS ── */
+.required-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.3rem 0.625rem;
+  border-radius: 0.625rem;
+  font-size: 0.625rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border: 1.5px solid oklch(0.4 0.06 260 / 0.3);
+  background: oklch(0.22 0.03 260 / 0.5);
+  color: oklch(0.7 0.06 260);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.required-chip:hover {
+  border-color: oklch(0.6 0.18 250 / 0.5);
+  background: oklch(0.28 0.04 260 / 0.6);
+}
+.required-chip-done {
+  border-color: oklch(0.6 0.15 160 / 0.5);
+  background: oklch(0.3 0.08 160 / 0.3);
+  color: oklch(0.8 0.12 160);
+}
+
+/* ── LIGHT MODE overrides ── */
+:root:not(.dark) .game-window {
+  background: oklch(0.97 0.008 250 / 0.92);
+  border-color: oklch(0.88 0.04 250 / 0.45);
+  box-shadow:
+    0 0 0 1px oklch(0.6 0.18 250 / 0.06) inset,
+    0 4px 8px -2px oklch(0 0 0 / 0.06),
+    0 12px 48px -10px oklch(0 0 0 / 0.1),
+    0 0 100px -30px oklch(0.6 0.18 250 / 0.08);
+}
+:root:not(.dark) .game-topbar {
+  background: oklch(0.95 0.01 250 / 0.7);
+  border-color: oklch(0.88 0.04 250 / 0.3);
+}
+:root:not(.dark) .game-command-zone {
+  background: oklch(0.95 0.01 250 / 0.75);
+  border-color: oklch(0.88 0.04 250 / 0.3);
+}
+:root:not(.dark) .stat-strip {
+  border-color: oklch(0.88 0.04 250 / 0.2);
+}
+:root:not(.dark) .stat-strip-item {
+  background: oklch(0.92 0.02 250 / 0.7);
+  border-color: oklch(0.85 0.04 250 / 0.3);
+}
+:root:not(.dark) .stat-strip-item:hover {
+  background: oklch(0.9 0.02 250 / 0.8);
+  border-color: oklch(0.8 0.06 250 / 0.4);
+}
+:root:not(.dark) .stat-strip-bar {
+  background: oklch(0.88 0.02 250 / 0.5);
+}
+:root:not(.dark) .control-row {
+  border-color: oklch(0.88 0.04 250 / 0.2);
+}
+:root:not(.dark) .pet-zone-glow {
+  background: radial-gradient(
+    circle,
+    oklch(0.6 0.18 250 / 0.07) 0%,
+    oklch(0.55 0.15 280 / 0.03) 40%,
+    transparent 70%
+  );
+}
+:root:not(.dark) .mobile-tab-bar {
+  background: oklch(0.94 0.01 250 / 0.7);
+  border-color: oklch(0.88 0.04 250 / 0.2);
+}
+:root:not(.dark) .mobile-tab {
+  color: oklch(0.52 0.06 250);
+}
+:root:not(.dark) .mobile-tab:hover {
+  color: oklch(0.2 0.04 250);
+  background: oklch(0.88 0.04 250 / 0.5);
+}
+:root:not(.dark) .required-chip {
+  background: oklch(0.94 0.01 250 / 0.6);
+  border-color: oklch(0.85 0.04 250 / 0.4);
+  color: oklch(0.45 0.06 250);
+}
+:root:not(.dark) .required-chip:hover {
+  background: oklch(0.9 0.02 250 / 0.7);
+}
+:root:not(.dark) .required-chip-done {
+  background: oklch(0.92 0.06 160 / 0.4);
+  border-color: oklch(0.7 0.12 160 / 0.4);
+  color: oklch(0.4 0.12 160);
 }

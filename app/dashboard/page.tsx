@@ -15,7 +15,7 @@ import { OptionsOverlay } from '@/components/game/OptionsOverlay';
 import { createClient } from '@/utils/supabase/client';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { BarChart3, PawPrint } from 'lucide-react';
+import { BarChart3, PawPrint, Calendar, ArrowRight, Wallet, TrendingUp, TrendingDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type MobileTab = 'pet' | 'stats';
@@ -204,160 +204,339 @@ export default function DashboardPage() {
 
     const emotion = getEmotionData(pet.stats);
     const showGameUI = !gameOver;
+    const income = pet.monthlyIncome || 0;
+    const expenses = pet.monthlyExpenses || 0;
+    const netSavings = income - expenses;
 
     return (
-        <div className={cn(
-            "h-full flex flex-col lg:flex-row overflow-hidden",
-            gameOver && 'pointer-events-none'
-        )}>
-            {/* Mobile Tab Bar */}
-            <div className="lg:hidden flex items-center justify-center gap-2 p-2 bg-card/50 backdrop-blur-xl border-b border-border/50 shrink-0">
-                <button
-                    onClick={() => setMobileTab('pet')}
-                    className={cn(
-                        "flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all",
-                        mobileTab === 'pet'
-                            ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
-                            : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                    )}
-                >
-                    <PawPrint className="w-4 h-4" />
-                    Pet
-                </button>
-                <button
-                    onClick={() => setMobileTab('stats')}
-                    className={cn(
-                        "flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all",
-                        mobileTab === 'stats'
-                            ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
-                            : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                    )}
-                >
-                    <BarChart3 className="w-4 h-4" />
-                    Stats
-                </button>
-            </div>
+        <div className="game-screen-wrapper">
+            <div className={cn("game-window", gameOver && 'pointer-events-none')}>
 
-            {/* Left Column: Pet & Actions (Desktop only - mobile uses separate view) */}
-            <div className="hidden lg:flex flex-1 lg:flex-[1.2] relative flex-col items-center justify-center p-8 bg-linear-to-br from-primary/5 to-transparent min-h-0 shrink-0">
-                <div className="w-full flex flex-col items-center justify-center flex-1 min-h-0">
-                    <div className="w-full max-w-[400px] flex items-center justify-center">
-                        <PetDisplay pet={pet} emotion={emotion} isGameOver={gameOver} />
-                    </div>
+                {/* Dot grid texture */}
+                <div className="game-window-grid" aria-hidden />
 
-                    <div className="h-6 mt-2 mb-3 flex items-center justify-center min-h-[24px]">
-                        <AnimatePresence>
-                            {feedback.message && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10, scale: 0.9 }}
-                                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                                    exit={{ opacity: 0, y: -10, scale: 0.9 }}
-                                    className={`px-4 py-1.5 rounded-full text-xs font-black shadow-lg border z-50 ${feedback.type === 'success' ? 'bg-emerald-500 text-white border-emerald-400' :
-                                            feedback.type === 'warn' ? 'bg-rose-500 text-white border-rose-400' :
-                                                'bg-primary text-white border-primary-foreground/20'
-                                        }`}
-                                >
-                                    {feedback.message}
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    </div>
+                {/* ── DESKTOP LAYOUT ─────────────────────────── */}
+                <div className="hidden lg:flex flex-col h-full">
 
-                    <div className="w-full max-w-[400px]">
-                        <ActionGrid onAction={handleAction} />
-                    </div>
-                </div>
-            </div>
+                    {/* Top info bar: Pet name | Month | Wallet | Next Month */}
+                    <div className="game-topbar">
+                        <div className="game-topbar-section">
+                            <div className="flex items-center gap-2">
+                                <div className="w-7 h-7 rounded-lg bg-primary/15 flex items-center justify-center">
+                                    <PawPrint className="w-3.5 h-3.5 text-primary" />
+                                </div>
+                                <div>
+                                    <p className="font-black text-sm tracking-tight leading-none">{pet.name}</p>
+                                    <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-muted-foreground">Companion</p>
+                                </div>
+                            </div>
 
-            {/* Mobile Pet View Content (only on mobile when pet tab active) */}
-            <div className={cn(
-                "lg:hidden flex-1 flex flex-col items-center justify-center p-4 bg-linear-to-br from-primary/5 to-transparent min-h-0",
-                mobileTab === 'pet' ? 'flex' : 'hidden'
-            )}>
-                <div className="w-full max-w-[200px] sm:max-w-[240px] flex items-center justify-center">
-                    <PetDisplay pet={pet} emotion={emotion} isGameOver={gameOver} />
-                </div>
+                            <div className="h-5 w-px bg-border/30" />
 
-                <div className="h-6 mt-2 mb-3 flex items-center justify-center min-h-[24px]">
-                    <AnimatePresence>
-                        {feedback.message && (
-                            <motion.div
-                                initial={{ opacity: 0, y: 10, scale: 0.9 }}
-                                animate={{ opacity: 1, y: 0, scale: 1 }}
-                                exit={{ opacity: 0, y: -10, scale: 0.9 }}
-                                className={`px-4 py-1.5 rounded-full text-xs font-black shadow-lg border z-50 ${feedback.type === 'success' ? 'bg-emerald-500 text-white border-emerald-400' :
-                                        feedback.type === 'warn' ? 'bg-rose-500 text-white border-rose-400' :
-                                            'bg-primary text-white border-primary-foreground/20'
-                                    }`}
+                            <div className="flex items-center gap-1.5">
+                                <Calendar className="w-3 h-3 text-primary/60" />
+                                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">Month</span>
+                                <span className="text-sm font-black">{pet.monthData.currentMonth}</span>
+                            </div>
+                        </div>
+
+                        <div className="game-topbar-section">
+                            {/* Budget indicators */}
+                            <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-1">
+                                    <TrendingUp className="w-2.5 h-2.5 text-emerald-500" />
+                                    <span className="text-[9px] font-black text-emerald-500">${income}</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                    <TrendingDown className="w-2.5 h-2.5 text-rose-500" />
+                                    <span className="text-[9px] font-black text-rose-500">${expenses}</span>
+                                </div>
+                                {netSavings !== 0 && (
+                                    <span className={cn(
+                                        "text-[8px] font-black px-1.5 py-0.5 rounded-full",
+                                        netSavings > 0
+                                            ? 'bg-emerald-500/15 text-emerald-500'
+                                            : 'bg-rose-500/15 text-rose-500'
+                                    )}>
+                                        {netSavings > 0 ? `+$${netSavings}` : `-$${Math.abs(netSavings)}`}
+                                    </span>
+                                )}
+                            </div>
+
+                            <div className="h-5 w-px bg-border/30" />
+
+                            {/* Wallet */}
+                            <div className="flex items-center gap-1.5 bg-primary/10 px-2.5 py-1 rounded-lg">
+                                <Wallet className="w-3.5 h-3.5 text-primary" />
+                                <span className="text-sm font-black text-primary">${pet.stats.money || 0}</span>
+                            </div>
+
+                            <div className="h-5 w-px bg-border/30" />
+
+                            {/* Next Month button */}
+                            <Button
+                                onClick={handleNextMonth}
+                                size="sm"
+                                className="rounded-lg font-bold gap-1 px-3 h-7 text-[10px] shadow-md shadow-primary/15 bg-linear-to-r from-blue-600 to-primary hover:from-blue-700 hover:to-primary/90 border-0"
                             >
-                                {feedback.message}
+                                Next <ArrowRight className="w-3 h-3" />
+                            </Button>
+                        </div>
+                    </div>
+
+                    {/* Hero zone — the pet takes center stage */}
+                    <div className="game-hero-zone">
+                        <div className="pet-zone-glow" aria-hidden />
+
+                        <div className="pet-display-wrap">
+                            <PetDisplay pet={pet} emotion={emotion} isGameOver={gameOver} />
+                        </div>
+
+                        {/* Feedback toast floating over hero */}
+                        <div className="feedback-area">
+                            <AnimatePresence>
+                                {feedback.message && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: -10, scale: 0.9 }}
+                                        className={cn(
+                                            "feedback-toast",
+                                            feedback.type === 'success' && 'feedback-success',
+                                            feedback.type === 'warn' && 'feedback-warn',
+                                            feedback.type === 'info' && 'feedback-info',
+                                        )}
+                                    >
+                                        {feedback.message}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                    </div>
+
+                    {/* Command zone — stats, actions, controls */}
+                    {showGameUI && (
+                        <div className="game-command-zone">
+                            {/* Stat strip + required actions */}
+                            <StatSidebar
+                                stats={pet.stats}
+                                monthData={pet.monthData}
+                                income={income}
+                                expenses={expenses}
+                                onNextMonth={handleNextMonth}
+                                onAction={handleAction}
+                            />
+
+                            {/* Action buttons */}
+                            <ActionGrid onAction={handleAction} />
+
+                            {/* Control tools */}
+                            <ControlPanel
+                                onShopOpen={() => setShopOpen(true)}
+                                onQuizOpen={() => setQuizOpen(true)}
+                                onStatsOpen={() => setStatsOpen(true)}
+                                onOptionsOpen={() => setOptionsOpen(true)}
+                            />
+                        </div>
+                    )}
+                </div>
+
+                {/* ── MOBILE LAYOUT ─────────────────────────── */}
+                <div className="flex lg:hidden h-full flex-col">
+
+                    {/* Mobile top info bar */}
+                    <div className="game-topbar">
+                        <div className="game-topbar-section">
+                            <div className="flex items-center gap-1.5">
+                                <PawPrint className="w-3 h-3 text-primary" />
+                                <span className="text-xs font-black">{pet.name}</span>
+                            </div>
+                            <span className="text-[9px] font-bold text-muted-foreground">M{pet.monthData.currentMonth}</span>
+                        </div>
+                        <div className="game-topbar-section">
+                            <div className="flex items-center gap-1 bg-primary/10 px-2 py-0.5 rounded-md">
+                                <Wallet className="w-3 h-3 text-primary" />
+                                <span className="text-xs font-black text-primary">${pet.stats.money || 0}</span>
+                            </div>
+                            <Button
+                                onClick={handleNextMonth}
+                                size="sm"
+                                className="rounded-md font-bold gap-1 px-2 h-6 text-[9px] bg-primary border-0"
+                            >
+                                Next <ArrowRight className="w-2.5 h-2.5" />
+                            </Button>
+                        </div>
+                    </div>
+
+                    {/* Mobile tab bar */}
+                    <div className="mobile-tab-bar">
+                        <button
+                            onClick={() => setMobileTab('pet')}
+                            className={cn("mobile-tab", mobileTab === 'pet' && 'mobile-tab-active')}
+                        >
+                            <PawPrint className="w-3.5 h-3.5" />
+                            Pet
+                        </button>
+                        <button
+                            onClick={() => setMobileTab('stats')}
+                            className={cn("mobile-tab", mobileTab === 'stats' && 'mobile-tab-active')}
+                        >
+                            <BarChart3 className="w-3.5 h-3.5" />
+                            Stats
+                        </button>
+                    </div>
+
+                    {/* Mobile content */}
+                    <AnimatePresence mode="wait">
+                        {mobileTab === 'pet' && (
+                            <motion.div
+                                key="pet"
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
+                                transition={{ duration: 0.2 }}
+                                className="flex-1 min-h-0 flex flex-col"
+                            >
+                                {/* Pet hero area */}
+                                <div className="flex-1 min-h-0 flex items-center justify-center relative overflow-hidden p-3">
+                                    <div className="pet-zone-glow" aria-hidden />
+                                    <div className="w-full max-w-[180px] relative z-1">
+                                        <PetDisplay pet={pet} emotion={emotion} isGameOver={gameOver} />
+                                    </div>
+
+                                    {/* Feedback toast */}
+                                    <div className="feedback-area">
+                                        <AnimatePresence>
+                                            {feedback.message && (
+                                                <motion.div
+                                                    initial={{ opacity: 0, scale: 0.9 }}
+                                                    animate={{ opacity: 1, scale: 1 }}
+                                                    exit={{ opacity: 0, scale: 0.9 }}
+                                                    className={cn(
+                                                        "feedback-toast text-[10px]",
+                                                        feedback.type === 'success' && 'feedback-success',
+                                                        feedback.type === 'warn' && 'feedback-warn',
+                                                        feedback.type === 'info' && 'feedback-info',
+                                                    )}
+                                                >
+                                                    {feedback.message}
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
+                                    </div>
+                                </div>
+
+                                {/* Mobile command zone */}
+                                {showGameUI && (
+                                    <div className="game-command-zone">
+                                        <StatSidebar
+                                            stats={pet.stats}
+                                            monthData={pet.monthData}
+                                            income={income}
+                                            expenses={expenses}
+                                            onNextMonth={handleNextMonth}
+                                            onAction={handleAction}
+                                        />
+                                        <ActionGrid onAction={handleAction} />
+                                        <ControlPanel
+                                            onShopOpen={() => setShopOpen(true)}
+                                            onQuizOpen={() => setQuizOpen(true)}
+                                            onStatsOpen={() => setStatsOpen(true)}
+                                            onOptionsOpen={() => setOptionsOpen(true)}
+                                        />
+                                    </div>
+                                )}
+                            </motion.div>
+                        )}
+
+                        {mobileTab === 'stats' && (
+                            <motion.div
+                                key="stats"
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 20 }}
+                                transition={{ duration: 0.2 }}
+                                className="flex-1 min-h-0 flex flex-col"
+                            >
+                                <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4 space-y-4">
+                                    {/* Wallet card */}
+                                    <div className="bg-linear-to-br from-blue-500 to-indigo-600 rounded-2xl p-4 text-white shadow-xl shadow-blue-500/20 relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12 blur-2xl" />
+                                        <div className="relative z-10 flex flex-col items-center">
+                                            <p className="text-[8px] font-black uppercase tracking-[0.25em] opacity-70 mb-1">Liquidity</p>
+                                            <div className="flex items-baseline gap-1">
+                                                <span className="text-base font-bold opacity-80">$</span>
+                                                <h2 className="text-3xl font-black tracking-tighter">{pet.stats.money || 0}</h2>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Budget */}
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <div className="bg-emerald-500/5 border border-emerald-500/10 p-3 rounded-xl">
+                                            <div className="flex items-center gap-1.5 mb-0.5">
+                                                <TrendingUp className="w-2.5 h-2.5 text-emerald-500" />
+                                                <span className="text-[8px] font-bold text-muted-foreground uppercase">Income</span>
+                                            </div>
+                                            <p className="font-black text-emerald-500 text-sm">${income}</p>
+                                        </div>
+                                        <div className="bg-rose-500/5 border border-rose-500/10 p-3 rounded-xl">
+                                            <div className="flex items-center gap-1.5 mb-0.5">
+                                                <TrendingDown className="w-2.5 h-2.5 text-rose-500" />
+                                                <span className="text-[8px] font-bold text-muted-foreground uppercase">Expenses</span>
+                                            </div>
+                                            <p className="font-black text-rose-500 text-sm">${expenses}</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Detailed stats */}
+                                    <div className="space-y-2">
+                                        <h3 className="text-[9px] font-black uppercase tracking-[0.15em] text-muted-foreground">Vital Signs</h3>
+                                        {[
+                                            { label: 'Hunger', value: pet.stats.hunger, color: 'bg-orange-500', icon: '🍖' },
+                                            { label: 'Happy', value: pet.stats.happy, color: 'bg-emerald-500', icon: '💚' },
+                                            { label: 'Energy', value: pet.stats.energy, color: 'bg-sky-400', icon: '⚡' },
+                                            { label: 'Health', value: pet.stats.health, color: 'bg-indigo-400', icon: '💊' },
+                                        ].map(s => (
+                                            <div key={s.label} className="flex items-center gap-2">
+                                                <span className="text-sm">{s.icon}</span>
+                                                <span className="text-[10px] font-bold w-12 text-muted-foreground">{s.label}</span>
+                                                <div className="flex-1 h-2 bg-muted/40 rounded-full overflow-hidden">
+                                                    <motion.div
+                                                        initial={{ width: 0 }}
+                                                        animate={{ width: `${s.value}%` }}
+                                                        className={cn("h-full rounded-full", s.color)}
+                                                    />
+                                                </div>
+                                                <span className={cn(
+                                                    "text-[10px] font-black w-8 text-right tabular-nums",
+                                                    s.value < 30 ? 'text-rose-500' : 'text-muted-foreground'
+                                                )}>
+                                                    {Math.round(s.value)}%
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {showGameUI && (
+                                    <div className="game-command-zone">
+                                        <ControlPanel
+                                            onShopOpen={() => setShopOpen(true)}
+                                            onQuizOpen={() => setQuizOpen(true)}
+                                            onStatsOpen={() => setStatsOpen(true)}
+                                            onOptionsOpen={() => setOptionsOpen(true)}
+                                        />
+                                    </div>
+                                )}
                             </motion.div>
                         )}
                     </AnimatePresence>
                 </div>
 
-                <div className="w-full max-w-[280px]">
-                    <ActionGrid onAction={handleAction} />
-                </div>
-            </div>
+            </div>{/* /game-window */}
 
-            {/* Right Sidebar: Stats & Control Panel */}
-            <div className={cn(
-                "w-full lg:w-[30%] lg:min-w-[320px] lg:max-w-[420px] bg-card/30 backdrop-blur-xl border-t lg:border-t-0 lg:border-l border-border/50 flex flex-col shrink-0 min-h-0",
-                "hidden lg:flex",
-                mobileTab === 'stats' && 'hidden lg:flex'
-            )}>
-                <div className="flex-1 min-h-0 overflow-hidden">
-                    <StatSidebar
-                        stats={pet.stats}
-                        monthData={pet.monthData}
-                        income={pet.monthlyIncome}
-                        expenses={pet.monthlyExpenses}
-                        onNextMonth={handleNextMonth}
-                        onAction={handleAction}
-                    />
-                </div>
-
-                {showGameUI && (
-                    <div className="p-3 lg:p-4 border-t border-border/50 bg-background/50 shrink-0">
-                        <ControlPanel
-                            onShopOpen={() => setShopOpen(true)}
-                            onQuizOpen={() => setQuizOpen(true)}
-                            onStatsOpen={() => setStatsOpen(true)}
-                            onOptionsOpen={() => setOptionsOpen(true)}
-                        />
-                    </div>
-                )}
-            </div>
-
-            {/* Mobile Stats View */}
-            <div className={cn(
-                "lg:hidden flex-1 flex flex-col min-h-0",
-                mobileTab === 'stats' ? 'flex' : 'hidden'
-            )}>
-                <div className="flex-1 min-h-0 overflow-y-auto">
-                    <StatSidebar
-                        stats={pet.stats}
-                        monthData={pet.monthData}
-                        income={pet.monthlyIncome}
-                        expenses={pet.monthlyExpenses}
-                        onNextMonth={handleNextMonth}
-                        onAction={handleAction}
-                    />
-                </div>
-
-                {showGameUI && (
-                    <div className="p-3 border-t border-border/50 bg-background/50 shrink-0">
-                        <ControlPanel
-                            onShopOpen={() => setShopOpen(true)}
-                            onQuizOpen={() => setQuizOpen(true)}
-                            onStatsOpen={() => setStatsOpen(true)}
-                            onOptionsOpen={() => setOptionsOpen(true)}
-                        />
-                    </div>
-                )}
-            </div>
-
+            {/* ─── Overlays ─────────────────────── */}
             <ShopOverlay
                 isOpen={shopOpen}
                 onClose={() => setShopOpen(false)}
@@ -384,6 +563,7 @@ export default function DashboardPage() {
                 onLogout={handleLogout}
             />
 
+            {/* ─── Game Over Modal ─────────────────────── */}
             <AnimatePresence>
                 {gameOver && (
                     <motion.div
@@ -395,31 +575,31 @@ export default function DashboardPage() {
                         <motion.div
                             initial={{ scale: 0.8, y: 20 }}
                             animate={{ scale: 1, y: 0 }}
-                            className="bg-card border-2 border-rose-500/50 rounded-[2rem] p-8 max-w-md mx-4 text-center shadow-2xl shadow-rose-500/20"
+                            className="bg-card border-2 border-rose-500/50 rounded-[2rem] p-6 max-w-sm mx-4 text-center shadow-2xl shadow-rose-500/20"
                         >
-                            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-rose-500/20 flex items-center justify-center">
-                                <span className="text-5xl">💀</span>
+                            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-rose-500/20 flex items-center justify-center">
+                                <span className="text-4xl">💀</span>
                             </div>
-                            <h2 className="text-3xl font-black text-rose-500 mb-2">GAME OVER</h2>
-                            <p className="text-muted-foreground mb-6">
-                                Your pet&apos;s health reached 0. Your pet has passed away after {pet.monthData.currentMonth} months together.
+                            <h2 className="text-2xl font-black text-rose-500 mb-2">GAME OVER</h2>
+                            <p className="text-sm text-muted-foreground mb-4">
+                                Your pet has passed away after {pet.monthData.currentMonth} months together.
                             </p>
-                            <div className="bg-muted/50 rounded-xl p-4 mb-6">
-                                <p className="text-sm text-muted-foreground">Final Statistics</p>
-                                <div className="grid grid-cols-2 gap-4 mt-2 text-sm">
+                            <div className="bg-muted/50 rounded-xl p-3 mb-4">
+                                <p className="text-xs text-muted-foreground">Final Statistics</p>
+                                <div className="grid grid-cols-2 gap-3 mt-2 text-xs">
                                     <div>
-                                        <span className="text-muted-foreground">Months Survived:</span>
+                                        <span className="text-muted-foreground">Months:</span>
                                         <p className="font-black">{pet.monthData.currentMonth}</p>
                                     </div>
                                     <div>
-                                        <span className="text-muted-foreground">Money Saved:</span>
+                                        <span className="text-muted-foreground">Saved:</span>
                                         <p className="font-black text-emerald-500">${pet.stats.money || 0}</p>
                                     </div>
                                 </div>
                             </div>
                             <Button
                                 onClick={handleGameOver}
-                                className="w-full py-6 text-lg font-bold bg-rose-500 hover:bg-rose-600 text-white rounded-xl"
+                                className="w-full py-4 text-base font-bold bg-rose-500 hover:bg-rose-600 text-white rounded-xl"
                             >
                                 Return to Pet Selection
                             </Button>
