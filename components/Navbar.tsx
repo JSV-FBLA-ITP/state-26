@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { PawPrint } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { fetchUserPets } from '@/lib/storage';
@@ -104,8 +104,13 @@ export function Navbar() {
         <nav className="fixed top-0 w-full z-50 bg-[#f8f9ff]/80 dark:bg-slate-900/80 backdrop-blur-xl transition-all duration-300 border-b border-black/5 dark:border-white/5">
             <div className="max-w-7xl mx-auto px-8 h-20 flex items-center justify-between">
                 <Link href="/" onClick={(e) => handleClick(e, '/')} className="flex items-center gap-2 group transition-all shrink-0">
-                    <div className="w-10 h-10 rounded-xl bg-linear-to-br from-[#0058be] to-[#2170e4] flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
-                        <PawPrint className="w-5 h-5 text-white" />
+                    <div className="w-12 h-12 flex items-center justify-center group-hover:scale-110 transition-transform relative bg-white rounded-xl shadow-sm border border-black/[0.03] overflow-hidden overflow-hidden p-1.5">
+                        <Image 
+                            src="/logo.png" 
+                            alt="PetPal Logo" 
+                            fill
+                            className="object-contain"
+                        />
                     </div>
                     <span className="text-2xl font-bold tracking-tight text-[#0058be] dark:text-blue-400 font-outfit">PetPal</span>
                 </Link>
