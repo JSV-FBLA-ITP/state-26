@@ -13,6 +13,10 @@ export const metadata: Metadata = {
   title: 'PetPal — Your Virtual Companion',
   description:
     'Adopt, customize, and grow with your AI-powered virtual pet. PetPal blends retro nostalgia with modern cloud technology and financial literacy.',
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+  },
 };
 
 export default function RootLayout({

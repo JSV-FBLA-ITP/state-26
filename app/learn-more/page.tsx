@@ -3,13 +3,13 @@
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 import {
     BrainCircuit,
     ShieldCheck,
     TrendingUp,
     Globe,
     ArrowRight,
-    PawPrint,
 } from 'lucide-react';
 
 const fadeUp = (delay = 0) => ({
@@ -70,7 +70,14 @@ export default function LearnMorePage() {
                     <div className="max-w-4xl mx-auto">
                         <motion.div {...fadeUp(0)}>
                             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-semibold mb-8">
-                                <PawPrint className="w-3.5 h-3.5" />
+                                <div className="relative w-3.5 h-3.5">
+                                    <Image 
+                                        src="/logo.png" 
+                                        alt="PetPal Logo" 
+                                        fill
+                                        className="object-contain"
+                                    />
+                                </div>
                                 Deep Dive
                             </div>
                         </motion.div>
@@ -164,7 +171,14 @@ export default function LearnMorePage() {
             <footer className="border-t border-border/50 px-6 py-8">
                 <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2 font-bold text-foreground">
-                        <PawPrint className="w-4 h-4 text-primary" />
+                        <div className="relative w-5 h-5">
+                            <Image 
+                                src="/logo.png" 
+                                alt="PetPal Logo" 
+                                fill
+                                className="object-contain"
+                            />
+                        </div>
                         PetPal
                     </div>
                     <p>© {new Date().getFullYear()} PetPal. All rights reserved.</p>

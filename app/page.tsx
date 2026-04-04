@@ -303,8 +303,13 @@ export default function LandingPage() {
                 <div className="max-w-7xl mx-auto px-12 py-20 flex flex-col md:flex-row justify-between items-center gap-12">
                     <div className="flex flex-col gap-6 text-center md:text-left items-center md:items-start">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-[#0058be] flex items-center justify-center">
-                                <PawPrint className="w-6 h-6 text-white" />
+                            <div className="relative w-10 h-10">
+                                <Image 
+                                    src="/logo.png" 
+                                    alt="PetPal Logo" 
+                                    fill
+                                    className="object-contain"
+                                />
                             </div>
                             <span className="font-outfit font-black text-[#0b1c30] dark:text-white text-2xl">PetPal</span>
                         </div>
