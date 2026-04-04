@@ -69,7 +69,7 @@ export function ActionGrid({ onAction }: Props) {
                         whileHover={{ y: -2, scale: 1.06 }}
                         whileTap={{ scale: 0.92 }}
                         className={cn(
-                            "group relative flex flex-col items-center justify-center rounded-xl border-[1.5px] transition-all duration-200 p-2.5 min-w-[72px] gap-1",
+                            "group relative flex flex-col items-center justify-center rounded-2xl border-[1.5px] transition-all duration-200 p-4 min-w-[96px] gap-2",
                             isActive
                                 ? `${colors.activeBg} shadow-lg ${colors.glow}`
                                 : colors.bg
@@ -77,20 +77,20 @@ export function ActionGrid({ onAction }: Props) {
                     >
                         {/* Icon */}
                         <div className={cn(
-                            "w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200",
+                            "w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200",
                             isActive
                                 ? 'bg-white/20 text-white'
                                 : `bg-transparent ${colors.text}`
                         )}>
                             <Icon className={cn(
-                                "w-5 h-5 transition-transform duration-200",
+                                "w-7 h-7 transition-transform duration-200",
                                 isActive && "scale-110 rotate-3"
                             )} />
                         </div>
 
                         {/* Label */}
                         <span className={cn(
-                            "text-[9px] font-bold uppercase tracking-wider leading-none transition-colors",
+                            "text-[11px] font-bold uppercase tracking-wider leading-none transition-colors",
                             isActive ? 'text-white' : 'text-foreground/70'
                         )}>
                             {label}
@@ -98,7 +98,7 @@ export function ActionGrid({ onAction }: Props) {
 
                         {/* Cost */}
                         <span className={cn(
-                            "text-[8px] font-black tracking-wide",
+                            "text-[10px] font-black tracking-wide",
                             isActive ? 'text-white/70' : 'text-amber-500/70'
                         )}>
                             ${ACTION_COSTS[action]}

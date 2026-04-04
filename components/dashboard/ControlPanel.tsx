@@ -30,13 +30,13 @@ export function ControlPanel({ onShopOpen, onQuizOpen, onStatsOpen, onOptionsOpe
                     whileTap={{ scale: 0.92 }}
                     onClick={handlers[i]}
                     className={cn(
-                        "flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all",
+                        "flex items-center gap-2 px-4 py-2 rounded-xl transition-all",
                         tool.hoverBg,
                         tool.activeBg
                     )}
                 >
-                    <tool.icon className={cn("w-4 h-4", tool.color)} />
-                    <span className={cn("text-[9px] font-black uppercase tracking-wider", tool.color)}>
+                    <tool.icon className={cn("w-5 h-5", tool.color)} />
+                    <span className={cn("text-xs font-black uppercase tracking-wider", tool.color)}>
                         {tool.label}
                     </span>
                 </motion.button>

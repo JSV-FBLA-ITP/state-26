@@ -221,39 +221,39 @@ export default function DashboardPage() {
                     {/* Top info bar: Pet name | Month | Wallet | Next Month */}
                     <div className="game-topbar">
                         <div className="game-topbar-section">
-                            <div className="flex items-center gap-2">
-                                <div className="w-7 h-7 rounded-lg bg-primary/15 flex items-center justify-center">
-                                    <PawPrint className="w-3.5 h-3.5 text-primary" />
+                            <div className="flex items-center gap-3">
+                                <div className="w-9 h-9 rounded-xl bg-primary/15 flex items-center justify-center">
+                                    <PawPrint className="w-5 h-5 text-primary" />
                                 </div>
                                 <div>
-                                    <p className="font-black text-sm tracking-tight leading-none">{pet.name}</p>
-                                    <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-muted-foreground">Companion</p>
+                                    <p className="font-black text-base tracking-tight leading-none">{pet.name}</p>
+                                    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground mt-0.5">Companion</p>
                                 </div>
                             </div>
 
-                            <div className="h-5 w-px bg-border/30" />
+                            <div className="h-6 w-px bg-border/30" />
 
-                            <div className="flex items-center gap-1.5">
-                                <Calendar className="w-3 h-3 text-primary/60" />
-                                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">Month</span>
-                                <span className="text-sm font-black">{pet.monthData.currentMonth}</span>
+                            <div className="flex items-center gap-2">
+                                <Calendar className="w-4 h-4 text-primary/60" />
+                                <span className="text-xs font-black text-muted-foreground uppercase tracking-wider">Month</span>
+                                <span className="text-base font-black">{pet.monthData.currentMonth}</span>
                             </div>
                         </div>
 
                         <div className="game-topbar-section">
                             {/* Budget indicators */}
-                            <div className="flex items-center gap-2">
-                                <div className="flex items-center gap-1">
-                                    <TrendingUp className="w-2.5 h-2.5 text-emerald-500" />
-                                    <span className="text-[9px] font-black text-emerald-500">${income}</span>
+                            <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-1.5">
+                                    <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
+                                    <span className="text-xs font-black text-emerald-500">${income}</span>
                                 </div>
-                                <div className="flex items-center gap-1">
-                                    <TrendingDown className="w-2.5 h-2.5 text-rose-500" />
-                                    <span className="text-[9px] font-black text-rose-500">${expenses}</span>
+                                <div className="flex items-center gap-1.5">
+                                    <TrendingDown className="w-3.5 h-3.5 text-rose-500" />
+                                    <span className="text-xs font-black text-rose-500">${expenses}</span>
                                 </div>
                                 {netSavings !== 0 && (
                                     <span className={cn(
-                                        "text-[8px] font-black px-1.5 py-0.5 rounded-full",
+                                        "text-[10px] font-black px-2 py-1 rounded-full",
                                         netSavings > 0
                                             ? 'bg-emerald-500/15 text-emerald-500'
                                             : 'bg-rose-500/15 text-rose-500'
@@ -263,23 +263,23 @@ export default function DashboardPage() {
                                 )}
                             </div>
 
-                            <div className="h-5 w-px bg-border/30" />
+                            <div className="h-6 w-px bg-border/30" />
 
                             {/* Wallet */}
-                            <div className="flex items-center gap-1.5 bg-primary/10 px-2.5 py-1 rounded-lg">
-                                <Wallet className="w-3.5 h-3.5 text-primary" />
-                                <span className="text-sm font-black text-primary">${pet.stats.money || 0}</span>
+                            <div className="flex items-center gap-2 bg-primary/10 px-3 py-1.5 rounded-xl">
+                                <Wallet className="w-5 h-5 text-primary" />
+                                <span className="text-base font-black text-primary">${pet.stats.money || 0}</span>
                             </div>
 
-                            <div className="h-5 w-px bg-border/30" />
+                            <div className="h-6 w-px bg-border/30" />
 
                             {/* Next Month button */}
                             <Button
                                 onClick={handleNextMonth}
                                 size="sm"
-                                className="rounded-lg font-bold gap-1 px-3 h-7 text-[10px] shadow-md shadow-primary/15 bg-linear-to-r from-blue-600 to-primary hover:from-blue-700 hover:to-primary/90 border-0"
+                                className="rounded-xl font-bold gap-1.5 px-4 h-9 text-xs shadow-md shadow-primary/15 bg-linear-to-r from-blue-600 to-primary hover:from-blue-700 hover:to-primary/90 border-0"
                             >
-                                Next <ArrowRight className="w-3 h-3" />
+                                Next <ArrowRight className="w-4 h-4" />
                             </Button>
                         </div>
                     </div>

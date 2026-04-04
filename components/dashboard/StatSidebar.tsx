@@ -32,7 +32,7 @@ export function StatSidebar({ stats, monthData, onAction }: Props) {
                     const isLow = value < 30;
                     return (
                         <div key={s.key} className="stat-strip-item">
-                            <s.icon className={cn("w-3 h-3 flex-shrink-0", s.textColor, isLow && "animate-pulse")} />
+                            <s.icon className={cn("w-4 h-4 flex-shrink-0", s.textColor, isLow && "animate-pulse")} />
                             <div className="stat-strip-bar">
                                 <motion.div
                                     initial={{ width: 0 }}
@@ -41,7 +41,7 @@ export function StatSidebar({ stats, monthData, onAction }: Props) {
                                 />
                             </div>
                             <span className={cn(
-                                "text-[10px] font-black tabular-nums min-w-[28px] text-right",
+                                "text-xs font-black tabular-nums min-w-[32px] text-right",
                                 isLow ? 'text-rose-500' : 'text-muted-foreground'
                             )}>
                                 {value}%
@@ -53,8 +53,8 @@ export function StatSidebar({ stats, monthData, onAction }: Props) {
 
             {/* Required actions row */}
             {monthData.requiredActions && monthData.requiredActions.length > 0 && (
-                <div className="flex items-center justify-center gap-1.5 px-3 py-1.5">
-                    <span className="text-[8px] font-black uppercase tracking-[0.15em] text-muted-foreground mr-1">Tasks:</span>
+                <div className="flex items-center justify-center gap-2 px-4 py-2.5">
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground mr-2">Tasks:</span>
                     {monthData.requiredActions.map((action) => {
                         const isCompleted = (monthData.actionsCompleted[action] || 0) > 0;
                         const [iconName, ...labelParts] = ACTION_LABELS[action].split(' ');
@@ -73,9 +73,9 @@ export function StatSidebar({ stats, monthData, onAction }: Props) {
                                     isCompleted && "required-chip-done"
                                 )}
                             >
-                                <Icon className="w-2.5 h-2.5" />
+                                <Icon className="w-3.5 h-3.5" />
                                 <span>{label}</span>
-                                {isCompleted && <Icons.Check className="w-2.5 h-2.5" />}
+                                {isCompleted && <Icons.Check className="w-3.5 h-3.5" />}
                             </motion.button>
                         );
                     })}
