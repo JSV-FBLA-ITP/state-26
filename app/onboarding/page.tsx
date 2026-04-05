@@ -172,7 +172,7 @@ function OnboardingInner() {
                                     src={displayImage} 
                                     alt={petName} 
                                     fill 
-                                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                                    className="object-contain group-hover:scale-110 transition-transform duration-700"
                                 />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-card p-12">

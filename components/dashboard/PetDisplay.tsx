@@ -40,7 +40,7 @@ export function PetDisplay({ pet, emotion, isGameOver }: Props) {
                         src={pet.petImage}
                         alt={pet.name}
                         fill
-                        className="object-cover"
+                        className="object-contain"
                         priority
                         unoptimized
                     />

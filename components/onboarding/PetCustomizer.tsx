@@ -160,7 +160,7 @@ export function PetCustomizer({ petType, image, onImageChange }: Props) {
             />
 
             {/* Image preview */}
-            <div className="h-52 rounded-2xl bg-card/30 border border-dashed border-border/50 flex items-center justify-center relative overflow-hidden group">
+            <div className="aspect-square w-full max-w-md mx-auto rounded-3xl bg-card/30 border-2 border-dashed border-border/30 flex items-center justify-center relative overflow-hidden group transition-all duration-500 hover:border-primary/30">
                 <AnimatePresence mode="wait">
                     {image ? (
                         <motion.div
@@ -170,8 +170,8 @@ export function PetCustomizer({ petType, image, onImageChange }: Props) {
                             className="w-full h-full"
                         >
                             <div className="w-full h-full overflow-hidden relative">
-                                <Image src={image} alt="Generated pet" fill className="object-cover" unoptimized />
-                                <div className="absolute inset-0 ring-1 ring-inset ring-black/10" />
+                                <Image src={image} alt="Generated pet" fill className="object-contain" unoptimized />
+                                <div className="absolute inset-0 ring-1 ring-inset ring-black/5" />
                             </div>
                         </motion.div>
                     ) : (

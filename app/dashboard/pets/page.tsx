@@ -331,9 +331,9 @@ export default function MyPetsPage() {
                                             )}
                                         </AnimatePresence>
 
-                                        <div className="aspect-4/3 relative overflow-hidden">
+                                        <div className="aspect-square relative overflow-hidden bg-muted/20">
                                             {p.image_url ? (
-                                                <Image src={p.image_url} alt={p.name} fill className="object-cover group-hover:scale-110 transition-transform duration-700" unoptimized />
+                                                <Image src={p.image_url} alt={p.name} fill className="object-contain group-hover:scale-105 transition-transform duration-700" unoptimized />
                                             ) : (
                                                 <div className="w-full h-full bg-muted flex items-center justify-center">
                                                     <PawPrint className="w-12 h-12 text-muted-foreground/30" />
