@@ -211,7 +211,8 @@ export default function LandingPage() {
                                 className="text-4xl sm:text-5xl lg:text-[3.5rem] xl:text-[4rem] font-black font-[var(--font-nunito)] leading-[1.1] tracking-tight mb-6"
                             >
                                 Happy Pets.{' '}
-                                <span className="text-[var(--primary)]">Smart Money.</span>{' '}
+                                <span className="text-[var(--primary)]">
+                                    Smart Money.</span>{' '}
                                 <br className="hidden sm:block" />
                                 One App.
                             </motion.h1>
