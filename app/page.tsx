@@ -100,6 +100,10 @@ const faqs = [
         question: 'Is PetPal suitable for kids?',
         answer: 'Absolutely! PetPal is designed for ages 8+, with content that adapts to the user\'s level. It includes interactive tools and progress dashboards so parents can track what their kids are learning.',
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+>>>>>>> b035757c813082b4720f11dff4ede5a4ae551130
+>>>>>>> Stashed changes
 =======
 >>>>>>> b035757c813082b4720f11dff4ede5a4ae551130
 >>>>>>> Stashed changes
@@ -110,10 +114,16 @@ const faqs = [
     },
     {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 <<<<<<< HEAD
         question: 'Is there a free version?',
         answer: 'Absolutely. The free version includes one pet, basic lessons, and core features. Premium unlocks additional pets, advanced lessons, and exclusive rewards.',
+=======
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
         question: 'How do I adopt my first pet?',
@@ -404,7 +414,10 @@ export default function LandingPage() {
                 </section>
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 <<<<<<< HEAD
                 {/* Testimonials */}
                 <section className="py-20 lg:py-32 px-6 lg:px-8">
@@ -422,6 +435,9 @@ export default function LandingPage() {
                         </motion.div>
 =======
 >>>>>>> b035757c813082b4720f11dff4ede5a4ae551130
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
