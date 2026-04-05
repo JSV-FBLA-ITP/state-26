@@ -1,5 +1,5 @@
 'use client';
-
+// cool
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -193,7 +193,7 @@ export default function LandingPage() {
                    ══════════════════════════════════════════ */}
                 <section id="hero" className="relative px-6 lg:px-8 py-16 lg:py-24 overflow-hidden min-h-[85vh] flex items-center">
                     <FloatingPaws />
-                    
+
                     {/* Gradient blobs */}
                     <div className="absolute top-20 -right-32 w-[500px] h-[500px] bg-[var(--coral-100)] rounded-full blur-[120px] opacity-40 animate-blob" />
                     <div className="absolute -bottom-20 -left-20 w-[400px] h-[400px] bg-[var(--sage-100)] rounded-full blur-[100px] opacity-30 animate-blob animation-delay-4000" />
@@ -206,7 +206,7 @@ export default function LandingPage() {
                                 <span>A new way to learn finance</span>
                             </motion.div>
 
-                            <motion.h1 
+                            <motion.h1
                                 {...fadeUp(0.1)}
                                 className="text-4xl sm:text-5xl lg:text-[3.5rem] xl:text-[4rem] font-black font-[var(--font-nunito)] leading-[1.1] tracking-tight mb-6"
                             >
@@ -215,15 +215,15 @@ export default function LandingPage() {
                                 <br className="hidden sm:block" />
                                 One App.
                             </motion.h1>
-                            
-                            <motion.p 
+
+                            <motion.p
                                 {...fadeUp(0.2)}
                                 className="text-lg text-[var(--muted-foreground)] mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed"
                             >
                                 Raise your dream pet while mastering real-world money skills. It&apos;s like a game — but the lessons stick.
                             </motion.p>
-                            
-                            <motion.div 
+
+                            <motion.div
                                 {...fadeUp(0.3)}
                                 className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4"
                             >
@@ -243,7 +243,7 @@ export default function LandingPage() {
                         </div>
 
                         {/* Hero Illustration */}
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 0.8, delay: 0.3 }}
@@ -252,7 +252,7 @@ export default function LandingPage() {
                             <div className="relative">
                                 {/* Glow behind illustration */}
                                 <div className="absolute inset-0 bg-[var(--coral-100)] rounded-full blur-[80px] opacity-40 scale-75" />
-                                
+
                                 <motion.div
                                     animate={{ y: [0, -12, 0] }}
                                     transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
@@ -268,7 +268,7 @@ export default function LandingPage() {
                                 </motion.div>
 
                                 {/* Floating savings card */}
-                                <motion.div 
+                                <motion.div
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: 1 }}
@@ -293,7 +293,7 @@ export default function LandingPage() {
                     SOCIAL PROOF BAR
                    ══════════════════════════════════════════ */}
                 <section className="py-8 px-6 lg:px-8 border-y border-[var(--border)]">
-                    <motion.div 
+                    <motion.div
                         {...fadeIn(0.2)}
                         className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-8 lg:gap-16"
                     >
@@ -329,12 +329,12 @@ export default function LandingPage() {
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
                             {features.map((feature, i) => (
-                                <motion.div 
+                                <motion.div
                                     key={feature.title}
                                     {...fadeUp(0.2 + i * 0.1)}
                                     className="card-lift p-8 rounded-2xl bg-[var(--card)] shadow-md border border-[var(--border)]/50 dark:border-[var(--border)]"
                                 >
-                                    <div 
+                                    <div
                                         className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6"
                                         style={{ background: feature.bgColor, color: feature.color }}
                                     >
@@ -354,7 +354,7 @@ export default function LandingPage() {
                 <section id="education" className="py-20 lg:py-28 px-6 lg:px-8 overflow-hidden">
                     <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 items-center">
                         {/* Left: Visual */}
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, x: -40 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
@@ -367,7 +367,7 @@ export default function LandingPage() {
                                     <p className="text-sm font-bold uppercase tracking-[0.2em] mb-2 opacity-80">Certified Learning</p>
                                     <h4 className="text-2xl font-black font-[var(--font-nunito)]">Master Your Finances</h4>
                                 </div>
-                                
+
                                 {/* Decorative stats */}
                                 <div className="mt-8 grid grid-cols-2 gap-4 w-full max-w-xs">
                                     <div className="bg-white/15 backdrop-blur-sm rounded-xl p-3 text-center text-white">
@@ -389,11 +389,11 @@ export default function LandingPage() {
                             <motion.p {...fadeUp(0.2)} className="text-[var(--muted-foreground)] mb-10 text-lg leading-relaxed">
                                 We transform abstract financial concepts into tangible pet needs. When you understand why your pet needs a &quot;reserve fund,&quot; you&apos;re learning the basics of emergency savings in the real world.
                             </motion.p>
-                            
+
                             <div className="space-y-6">
                                 {educationItems.map((item, i) => (
-                                    <motion.div 
-                                        key={item.title} 
+                                    <motion.div
+                                        key={item.title}
                                         {...fadeUp(0.3 + i * 0.1)}
                                         className="flex items-start gap-5 group"
                                     >
@@ -423,7 +423,7 @@ export default function LandingPage() {
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                             {methodSteps.map((step, i) => (
-                                <motion.div 
+                                <motion.div
                                     key={step.title}
                                     {...fadeUp(0.1 + i * 0.1)}
                                     className="p-8 rounded-2xl bg-[var(--card)] shadow-md border border-[var(--border)]/50 card-lift text-center"
@@ -470,7 +470,7 @@ export default function LandingPage() {
                     CTA SECTION
                    ══════════════════════════════════════════ */}
                 <section className="py-20 lg:py-28 px-6 lg:px-8">
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
@@ -479,7 +479,7 @@ export default function LandingPage() {
                         {/* Decorative elements */}
                         <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full translate-x-20 -translate-y-20 blur-3xl" />
                         <div className="absolute bottom-0 left-0 w-60 h-60 bg-white/10 rounded-full -translate-x-10 translate-y-10 blur-3xl" />
-                        
+
                         <div className="relative z-10">
                             <h2 className="text-3xl lg:text-6xl font-black font-[var(--font-nunito)] text-white mb-6 tracking-tight leading-tight">Ready to grow together?</h2>
                             <p className="text-white/80 text-lg lg:text-xl mb-10 max-w-2xl mx-auto">Start mastering your finances while raising your new best friend.</p>
@@ -503,9 +503,9 @@ export default function LandingPage() {
                         <div className="lg:col-span-1">
                             <div className="flex items-center gap-2.5 mb-4">
                                 <div className="relative w-8 h-8">
-                                    <Image 
-                                        src="/favicon.svg" 
-                                        alt="PetPal Logo" 
+                                    <Image
+                                        src="/favicon.svg"
+                                        alt="PetPal Logo"
                                         fill
                                         className="object-contain"
                                     />
@@ -544,13 +544,13 @@ export default function LandingPage() {
                             <h4 className="font-bold text-sm mb-4 font-[var(--font-nunito)]">Stay in the loop</h4>
                             <p className="text-[var(--muted-foreground)] text-sm mb-4">Get tips on pet care and financial literacy.</p>
                             <form onSubmit={(e) => e.preventDefault()} className="flex gap-2">
-                                <input 
-                                    type="email" 
+                                <input
+                                    type="email"
                                     placeholder="Enter your email"
                                     className="flex-1 px-4 py-2.5 rounded-full bg-[var(--card)] border border-[var(--border)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ring)] focus:border-transparent"
                                     aria-label="Email for newsletter"
                                 />
-                                <Button 
+                                <Button
                                     type="submit"
                                     className="bg-[var(--primary)] hover:bg-[var(--coral-600)] text-white px-5 py-2.5 rounded-full font-bold text-sm h-auto shrink-0"
                                 >
@@ -567,13 +567,13 @@ export default function LandingPage() {
                         </p>
                         <div className="flex items-center gap-4">
                             <a href="#" className="text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors" aria-label="Twitter">
-                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
                             </a>
                             <a href="#" className="text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors" aria-label="Instagram">
-                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" /></svg>
                             </a>
                             <a href="#" className="text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors" aria-label="TikTok">
-                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.94a8.18 8.18 0 004.77 1.52V7.01a4.84 4.84 0 01-1-.32z"/></svg>
+                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.94a8.18 8.18 0 004.77 1.52V7.01a4.84 4.84 0 01-1-.32z" /></svg>
                             </a>
                         </div>
                     </div>
