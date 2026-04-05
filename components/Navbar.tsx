@@ -147,7 +147,7 @@ export function Navbar() {
                             height={40}
                             className="group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 drop-shadow-md"
                         />
-                        <span className="text-xl font-extrabold tracking-tight text-foreground font-(--font-nunito)">
+                        <span className="text-xl font-extrabold tracking-tight text-foreground">
                             Pet<span className="text-primary">Pal</span>
                         </span>
                     </Link>
@@ -156,7 +156,7 @@ export function Navbar() {
                     <div className="hidden md:flex items-center gap-8">
                         {navLinks.map((link) => {
                             const isSectionActive = pathname === '/' && activeSection === link.id;
-                            const isActive = link.name === 'Education' ? (pathname === '/learn-more' || isSectionActive) : isSectionActive;
+                            const isActive = isSectionActive;
 
                             return (
                                 <Link 
@@ -165,8 +165,8 @@ export function Navbar() {
                                     onClick={(e) => handleClick(e, link.href)}
                                     className={`text-sm font-bold tracking-wide transition-all py-1.5 px-1 border-b-2 ${
                                         isActive 
-                                        ? 'text-[var(--primary)] border-[var(--primary)]' 
-                                        : 'text-[var(--muted-foreground)] border-transparent hover:text-[var(--foreground)]'
+                                        ? 'text-primary border-primary' 
+                                        : 'text-muted-foreground border-transparent hover:text-foreground'
                                     }`}
                                 >
                                     {link.name}
@@ -188,7 +188,7 @@ export function Navbar() {
                             </Link>
                         )}
                         <Link href={hasPets ? '/dashboard' : '/onboarding'}>
-                            <Button className="bg-primary hover:bg-coral-600 text-white px-6 py-2.5 rounded-full text-sm font-bold shadow-md shadow-(--primary)/20 hover:shadow-(--primary)/30 hover:scale-[1.03] active:scale-95 transition-all h-auto">
+                            <Button className="bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded-full text-sm font-bold shadow-md shadow-primary/20 hover:shadow-primary/30 hover:scale-[1.03] active:scale-95 transition-all h-auto">
                                 {hasPets ? 'Dashboard' : 'Get Started'}
                             </Button>
                         </Link>
@@ -216,7 +216,7 @@ export function Navbar() {
                 <div className="p-6">
                     {/* Drawer header */}
                     <div className="flex items-center justify-between mb-10">
-                        <span className="text-lg font-extrabold font-(--font-nunito) text-foreground">
+                        <span className="text-2xl font-extrabold tracking-tight text-foreground">
                             Pet<span className="text-primary">Pal</span>
                         </span>
                         <button 
@@ -232,7 +232,7 @@ export function Navbar() {
                     <div className="flex flex-col gap-2">
                         {navLinks.map((link) => {
                             const isSectionActive = pathname === '/' && activeSection === link.id;
-                            const isActive = link.name === 'Education' ? (pathname === '/learn-more' || isSectionActive) : isSectionActive;
+                            const isActive = isSectionActive;
 
                             return (
                                 <Link 
@@ -263,7 +263,7 @@ export function Navbar() {
                             </Link>
                         )}
                         <Link href={hasPets ? "/dashboard" : "/onboarding"} onClick={() => setDrawerOpen(false)}>
-                            <Button className="w-full bg-[var(--primary)] hover:bg-[var(--coral-600)] text-white py-3 rounded-full font-bold shadow-md h-auto text-base">
+                            <Button className="w-full bg-primary hover:bg-coral-600 text-white py-3 rounded-full font-bold shadow-md h-auto text-base">
                                 {hasPets ? "My Pets" : "Get Started"}
                             </Button>
                         </Link>

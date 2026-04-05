@@ -78,15 +78,15 @@ const faqs = [
     },
     {
         question: 'Is PetPal suitable for kids?',
-        answer: 'Absolutely! PetPal is designed for ages 8+, with content that adapts to the user\'s level. Our Family plan includes parental controls and progress dashboards so parents can track what their kids are learning.',
+        answer: 'Absolutely! PetPal is designed for ages 8+, with content that adapts to the user\'s level. It includes interactive tools and progress dashboards so parents can track what their kids are learning.',
     },
     {
         question: 'Can I use PetPal on multiple devices?',
         answer: 'Yes! With our Cloud Persistence feature, your progress syncs across all your devices. Start on your phone during your commute, continue on your laptop at home.',
     },
     {
-        question: 'What happens if I cancel my subscription?',
-        answer: 'Your pets and progress are always safe. If you cancel, you\'ll revert to the Free plan but keep your existing pets. You can upgrade again anytime and pick up right where you left off.',
+        question: 'How do I adopt my first pet?',
+        answer: 'Getting started is easy! Just click "Get Started" to begin your onboarding journey where you\'ll choose your pet\'s species, name them, and start your financial adventure together.',
     },
     {
         question: 'How is PetPal different from other finance apps?',
@@ -365,7 +365,7 @@ export default function LandingPage() {
                                 <BarChart className="w-24 h-24 mb-6 text-white drop-shadow-md opacity-90" />
                                 <div className="text-center text-white">
                                     <p className="text-sm font-bold uppercase tracking-[0.2em] mb-2 opacity-80">Certified Learning</p>
-                                    <h4 className="text-2xl font-black font-[var(--font-nunito)]">Financial Curriculum Pro</h4>
+                                    <h4 className="text-2xl font-black font-[var(--font-nunito)]">Master Your Finances</h4>
                                 </div>
                                 
                                 {/* Decorative stats */}
@@ -439,8 +439,6 @@ export default function LandingPage() {
                     </div>
                 </section>
 
-                {/* Pricing section hidden for now — implement later */}
-                {/* <Pricing hasPets={hasPets} /> */}
 
 
                 {/* ══════════════════════════════════════════
@@ -506,7 +504,7 @@ export default function LandingPage() {
                             <div className="flex items-center gap-2.5 mb-4">
                                 <div className="relative w-8 h-8">
                                     <Image 
-                                        src="/favicon.png" 
+                                        src="/favicon.svg" 
                                         alt="PetPal Logo" 
                                         fill
                                         className="object-contain"
@@ -526,8 +524,6 @@ export default function LandingPage() {
                             <h4 className="font-bold text-sm mb-4 font-[var(--font-nunito)]">Product</h4>
                             <ul className="space-y-2.5">
                                 <li><Link href="/#features" className="text-sm text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">Features</Link></li>
-                                <li><Link href="/#pricing" className="text-sm text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">Pricing</Link></li>
-                                <li><Link href="/#education" className="text-sm text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">Education</Link></li>
                                 <li><Link href="/demo" className="text-sm text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">Demo</Link></li>
                             </ul>
                         </div>

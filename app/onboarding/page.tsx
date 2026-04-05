@@ -14,7 +14,7 @@ import { randomizeInitialStats, PetData } from '@/lib/gameLogic';
 import { savePetToCloud } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { ChevronLeft, Sparkles, PawPrint, ArrowRight, CheckCircle2, RefreshCw } from 'lucide-react';
+import { ChevronLeft, Sparkles, ArrowRight, CheckCircle2, RefreshCw } from 'lucide-react';
 
 const STEPS = ['Choose Pet', 'Create Home', 'Style', 'Give Name'];
 
@@ -175,8 +175,14 @@ function OnboardingInner() {
                                     className="object-cover group-hover:scale-110 transition-transform duration-700"
                                 />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-muted">
-                                    <PawPrint className="w-20 h-20 text-muted-foreground/30" />
+                                <div className="w-full h-full flex items-center justify-center bg-card p-12">
+                                    <Image 
+                                        src="/favicon.svg" 
+                                        alt="PetPal" 
+                                        width={160}
+                                        height={160}
+                                        className="opacity-20 grayscale brightness-125"
+                                    />
                                 </div>
                             )}
                             
@@ -246,8 +252,13 @@ function OnboardingInner() {
                 {/* Header & Steps */}
                 <div className="flex flex-col items-center text-center space-y-8">
                     <motion.div initial={{ y: -10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="flex items-center gap-3 bg-card/50 backdrop-blur-md px-6 py-3 rounded-full border border-border/50 shadow-sm">
-                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                            <PawPrint className="w-5 h-5 text-primary-foreground" />
+                        <div className="w-8 h-8 relative rounded-lg overflow-hidden shrink-0">
+                            <Image 
+                                src="/favicon.svg" 
+                                alt="PetPal Logo" 
+                                fill
+                                className="object-contain" 
+                            />
                         </div>
                         <span className="font-black tracking-widest uppercase text-xs">Pet Onboarding</span>
                     </motion.div>
@@ -357,8 +368,13 @@ function OnboardingInner() {
                 {showLoginPrompt && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md">
                         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-card p-8 rounded-[3rem] border border-border/50 shadow-2xl max-w-md w-full text-center space-y-6">
-                            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto border border-primary/20">
-                                <Sparkles className="w-8 h-8 text-primary" />
+                            <div className="w-10 h-10 relative rounded-xl overflow-hidden shrink-0 mx-auto">
+                                <Image 
+                                    src="/favicon.svg" 
+                                    alt="PetPal Logo" 
+                                    fill
+                                    className="object-contain" 
+                                />
                             </div>
                             <h2 className="text-3xl font-black">Hold on!</h2>
                             <p className="text-muted-foreground leading-relaxed">

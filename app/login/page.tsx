@@ -89,7 +89,7 @@ export default function LoginPage() {
                     <Link href="/" className="inline-flex items-center gap-2.5 mb-6 group">
                         <div className="w-12 h-12 relative group-hover:scale-110 transition-transform">
                             <Image 
-                                src="/favicon.png" 
+                                src="/favicon.svg" 
                                 alt="PetPal Logo" 
                                 fill
                                 className="object-contain"
