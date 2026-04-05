@@ -31,9 +31,14 @@ export function DogModel() {
 
         const { x, y } = mouseRef.current;
 
-        // Gentle floating
+        // Gentle floating + slight following of the mouse position
         if (groupRef.current) {
-            groupRef.current.position.y = Math.sin(state.clock.elapsedTime * 2) * 0.1;
+            groupRef.current.position.y = Math.sin(state.clock.elapsedTime * 2) * 0.1 + y * 0.2;
+            groupRef.current.position.x = THREE.MathUtils.lerp(
+                groupRef.current.position.x,
+                x * 0.5,
+                0.06
+            );
 
             // Body slightly turns toward cursor (anywhere on page)
             const targetBodyX = (x * Math.PI) / 4;
