@@ -44,8 +44,11 @@ const tips = [
 
 export default function HowToPlayPage() {
     return (
-        <div className="p-6 md:p-10 max-w-4xl mx-auto pb-24">
-            {/* Header */}
+        <div className="game-screen-wrapper">
+            <div className="game-window">
+                <div className="game-window-grid" aria-hidden />
+                <div className="h-full overflow-y-auto custom-scrollbar p-6 md:p-10 max-w-4xl mx-auto pb-32 relative z-10 w-full">
+                    {/* Header */}
             <header className="text-center mb-16 pt-8">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
@@ -131,6 +134,8 @@ export default function HowToPlayPage() {
                     </div>
                 </div>
             </motion.section>
+                </div>
+            </div>
         </div>
     );
 }

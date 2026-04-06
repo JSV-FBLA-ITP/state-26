@@ -3,14 +3,12 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, PawPrint, BookOpen, Home, Save } from 'lucide-react';
+import { LayoutDashboard, PawPrint, BookOpen, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { UserMenu } from '@/components/dashboard/DashboardUserMenu';
 import { Button } from '@/components/ui/button';
-import { savePetToCloud } from '@/lib/storage';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
 
 const navItems = [
     { href: '/dashboard', label: 'Play', icon: LayoutDashboard },
@@ -20,20 +18,6 @@ const navItems = [
 
 export function DashboardTopbar() {
     const pathname = usePathname();
-    const [isSaving, setIsSaving] = useState(false);
-
-    const handleSave = async () => {
-        const petId = localStorage.getItem('currentPetId');
-        if (!petId) return;
-        
-        setIsSaving(true);
-        const { loadPet } = await import('@/lib/storage');
-        const { data: pet } = await loadPet(petId);
-        if (pet) {
-            await savePetToCloud(pet);
-        }
-        setIsSaving(false);
-    };
 
     return (
         <nav className="sticky top-0 z-50 w-full bg-background/70 backdrop-blur-xl border-b border-border/50">
@@ -89,18 +73,8 @@ export function DashboardTopbar() {
                     })}
                 </div>
 
-                {/* Right slot – Save, Theme, User */}
+                {/* Right slot – Theme, User */}
                 <div className="flex items-center gap-3">
-                    <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={handleSave}
-                        disabled={isSaving}
-                        className="rounded-xl font-black text-xs uppercase tracking-wider border-2 border-border/50 bg-card/80 backdrop-blur-xl hover:bg-primary/10 hover:border-primary/50 transition-all px-4 h-10"
-                    >
-                        <Save className={cn("w-4 h-4 mr-2", isSaving && "animate-spin")} />
-                        {isSaving ? 'Cloud...' : 'Save Pet'}
-                    </Button>
                     <ThemeToggle />
                     <UserMenu />
                 </div>
@@ -115,7 +89,7 @@ export function DashboardTopbar() {
                             key={item.href}
                             href={item.href}
                             className={cn(
-                                'relative flex flex-col items-center gap-1.5 px-6 py-2.5 rounded-2xl transition-all duration-300',
+                                'relative flex flex-col items-center px-6 py-2.5 rounded-2xl transition-all duration-300',
                                 isActive ? 'text-primary' : 'text-muted-foreground'
                             )}
                         >
@@ -126,8 +100,7 @@ export function DashboardTopbar() {
                                     transition={{ type: 'spring', bounce: 0.2, duration: 0.5 }}
                                 />
                             )}
-                            <item.icon className={cn("relative z-10 w-5 h-5", isActive && "scale-110")} />
-                            <span className="relative z-10 text-[9px] font-black uppercase tracking-wider">{item.label}</span>
+                            <item.icon className={cn("relative z-10 w-6 h-6", isActive && "scale-110")} />
                         </Link>
                     );
                 })}

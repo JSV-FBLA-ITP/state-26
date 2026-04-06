@@ -9,55 +9,43 @@ import Link from 'next/link';
 interface Props {
     isOpen: boolean;
     onClose: () => void;
-    onSave: () => void;
     onLogout: () => void;
+    inline?: boolean;
 }
 
-export function OptionsOverlay({ isOpen, onClose, onSave, onLogout }: Props) {
-    return (
-        <AnimatePresence>
-            {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={onClose}
-                        className="absolute inset-0 bg-black/60 backdrop-blur-md"
-                    />
+export function OptionsOverlay({ isOpen, onClose, onLogout, inline }: Props) {
+    if (!isOpen && !inline) return null;
 
-                    <motion.div
-                        initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                        animate={{ scale: 1, opacity: 1, y: 0 }}
-                        exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                        className="relative w-full max-w-md bg-card rounded-[2.5rem] border-2 shadow-2xl overflow-hidden flex flex-col"
-                    >
-                        {/* Header */}
-                        <div className="p-6 border-b border-border/50 flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2.5 rounded-xl bg-muted">
-                                    <Settings2 className="w-5 h-5 text-muted-foreground" />
-                                </div>
-                                <h2 className="text-xl font-black">Preferences</h2>
-                            </div>
-                            <Button variant="ghost" size="icon" onClick={onClose} className="rounded-xl">
-                                <X className="w-5 h-5" />
-                            </Button>
-                        </div>
+    const content = (
+        <motion.div
+            initial={inline ? { opacity: 0, x: 20 } : { scale: 0.9, opacity: 0, y: 20 }}
+            animate={inline ? { opacity: 1, x: 0 } : { scale: 1, opacity: 1, y: 0 }}
+            exit={inline ? { opacity: 0, x: 20 } : { scale: 0.9, opacity: 0, y: 20 }}
+            className={inline
+                ? "flex-1 min-h-0 flex flex-col w-full max-w-md mx-auto"
+                : "relative w-full max-w-md bg-card rounded-[2.5rem] border-2 shadow-2xl overflow-hidden flex flex-col"}
+        >
+            {/* Header */}
+            <div className={`p-6 flex items-center justify-between shrink-0 ${inline ? 'pb-2' : 'border-b border-border/50'}`}>
+                <div className="flex items-center gap-3">
+                    <div className="p-2.5 rounded-xl bg-muted">
+                        <Settings2 className="w-5 h-5 text-muted-foreground" />
+                    </div>
+                    <h2 className="text-xl font-black">Preferences</h2>
+                </div>
+                {!inline && (
+                    <Button variant="ghost" size="icon" onClick={onClose} className="rounded-xl">
+                        <X className="w-5 h-5" />
+                    </Button>
+                )}
+            </div>
 
-                        {/* Content */}
-                        <div className="p-6 space-y-6">
+            {/* Content */}
+            <div className={`p-6 space-y-6 ${inline ? 'overflow-y-auto custom-scrollbar flex-1 min-h-0' : ''}`}>
                             {/* Account Section */}
                             <div className="space-y-3">
                                 <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Session</h3>
                                 <div className="grid grid-cols-1 gap-2">
-                                    <Button
-                                        onClick={() => { onSave(); onClose(); }}
-                                        className="h-14 rounded-2xl justify-start px-6 font-bold bg-primary/10 text-primary border-2 border-transparent hover:border-primary/50 hover:bg-primary/20"
-                                    >
-                                        <Save className="w-5 h-5 mr-4" />
-                                        Save Snapshot
-                                    </Button>
                                     <Link href="/dashboard/pets" className="block">
                                         <Button
                                             variant="outline"
@@ -110,12 +98,30 @@ export function OptionsOverlay({ isOpen, onClose, onSave, onLogout }: Props) {
                         </div>
 
                         {/* Footer */}
-                        <div className="px-6 py-4 bg-muted/30 flex justify-center">
+                        <div className="px-6 py-4 bg-muted/30 flex justify-center shrink-0">
                             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                                 Version 1.0.4 • Made with pet care love
                             </p>
                         </div>
-                    </motion.div>
+        </motion.div>
+    );
+
+    if (inline) {
+        return content;
+    }
+
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={onClose}
+                        className="absolute inset-0 bg-black/60 backdrop-blur-md"
+                    />
+                    {content}
                 </div>
             )}
         </AnimatePresence>

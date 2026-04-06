@@ -177,13 +177,17 @@ export function Navbar() {
 
                     {/* Right side: theme toggle + CTA + hamburger */}
                     <div className="flex items-center gap-3">
-                        <ThemeToggle />
+                        {/* Theme toggle — desktop only */}
+                        <div className="hidden md:block">
+                            <ThemeToggle />
+                        </div>
+                        {/* Profile / Login — desktop only */}
                         {user ? (
-                            <Link href="/profile" className="p-2 rounded-xl hover:bg-accent transition-colors" aria-label="Profile">
+                            <Link href="/profile" className="hidden md:block p-2 rounded-xl hover:bg-accent transition-colors" aria-label="Profile">
                                 <User className="w-5 h-5" />
                             </Link>
                         ) : (
-                            <Link href="/login" className="hidden sm:block text-sm font-bold text-muted-foreground hover:text-foreground transition-colors px-2">
+                            <Link href="/login" className="hidden md:block text-sm font-bold text-muted-foreground hover:text-foreground transition-colors px-2">
                                 Log in
                             </Link>
                         )}
@@ -192,11 +196,11 @@ export function Navbar() {
                                 {hasPets ? 'Dashboard' : 'Get Started'}
                             </Button>
                         </Link>
-                        
+
                         {/* Mobile hamburger */}
-                        <button 
-                            onClick={() => setDrawerOpen(!drawerOpen)} 
-                            className="md:hidden p-2 rounded-xl hover:bg-accent transition-colors" 
+                        <button
+                            onClick={() => setDrawerOpen(!drawerOpen)}
+                            className="md:hidden p-2 rounded-xl hover:bg-accent transition-colors"
                             aria-label="Toggle menu"
                         >
                             <Menu className="w-5 h-5" />
@@ -256,10 +260,22 @@ export function Navbar() {
 
                     {/* Drawer CTA */}
                     <div className="mt-8 flex flex-col gap-3">
-                        {user && (
-                            <Link href="/profile" onClick={() => setDrawerOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl bg-accent text-foreground font-bold mb-2">
+                        {/* Theme toggle row */}
+                        <div className="flex items-center justify-between py-3 px-4 rounded-xl bg-accent">
+                            <span className="text-sm font-bold text-foreground">Appearance</span>
+                            <ThemeToggle />
+                        </div>
+
+                        {user ? (
+                            <Link href="/profile" onClick={() => setDrawerOpen(false)} className="flex items-center gap-3 py-3 px-4 rounded-xl bg-accent text-foreground font-bold">
                                 <User className="w-5 h-5 text-primary" />
                                 My Account
+                            </Link>
+                        ) : (
+                            <Link href="/login" onClick={() => setDrawerOpen(false)}>
+                                <Button variant="outline" className="w-full border-border py-3 rounded-full font-bold h-auto text-base">
+                                    Log in
+                                </Button>
                             </Link>
                         )}
                         <Link href={hasPets ? "/dashboard" : "/onboarding"} onClick={() => setDrawerOpen(false)}>
@@ -267,13 +283,6 @@ export function Navbar() {
                                 {hasPets ? "My Pets" : "Get Started"}
                             </Button>
                         </Link>
-                        {!user && (
-                            <Link href="/login" onClick={() => setDrawerOpen(false)}>
-                                <Button variant="outline" className="w-full border-border py-3 rounded-full font-bold h-auto text-base">
-                                    Log in
-                                </Button>
-                            </Link>
-                        )}
                     </div>
                 </div>
             </div>

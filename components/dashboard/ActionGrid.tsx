@@ -66,43 +66,46 @@ export function ActionGrid({ onAction }: Props) {
                     <motion.button
                         key={action}
                         onClick={() => handleButtonClick(action)}
-                        whileHover={{ y: -2, scale: 1.06 }}
-                        whileTap={{ scale: 0.92 }}
+                        whileHover={{ y: -2, scale: 1.02 }}
+                        whileTap={{ scale: 0.96 }}
                         className={cn(
-                            "group relative flex flex-col items-center justify-center rounded-2xl border-[1.5px] transition-all duration-200 p-4 min-w-[96px] gap-2",
+                            "group relative flex flex-col items-center justify-center gap-2 px-2 py-3 rounded-2xl border-[1.5px] transition-all duration-200 flex-1 sm:flex-none sm:min-w-[90px] shrink-0",
                             isActive
                                 ? `${colors.activeBg} shadow-lg ${colors.glow}`
-                                : colors.bg
+                                : `${colors.bg} hover:border-white/10 text-transparent`
                         )}
                     >
                         {/* Icon */}
                         <div className={cn(
-                            "w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200",
+                            "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200",
                             isActive
                                 ? 'bg-white/20 text-white'
-                                : `bg-transparent ${colors.text}`
+                                : `bg-white/5 ${colors.text}`
                         )}>
                             <Icon className={cn(
-                                "w-7 h-7 transition-transform duration-200",
+                                "w-5 h-5 transition-transform duration-200",
                                 isActive && "scale-110 rotate-3"
                             )} />
                         </div>
 
-                        {/* Label */}
-                        <span className={cn(
-                            "text-[11px] font-bold uppercase tracking-wider leading-none transition-colors",
-                            isActive ? 'text-white' : 'text-foreground/70'
-                        )}>
-                            {label}
-                        </span>
+                        {/* Label & Cost Container */}
+                        <div className="flex flex-col items-center gap-0.5">
+                            {/* Label */}
+                            <span className={cn(
+                                "text-[9px] font-black uppercase tracking-widest transition-colors",
+                                isActive ? 'text-white' : 'text-foreground/70'
+                            )}>
+                                {label}
+                            </span>
 
-                        {/* Cost */}
-                        <span className={cn(
-                            "text-[10px] font-black tracking-wide",
-                            isActive ? 'text-white/70' : 'text-coral-500/70'
-                        )}>
-                            ${ACTION_COSTS[action]}
-                        </span>
+                            {/* Cost */}
+                            <span className={cn(
+                                "text-[10px] font-black tracking-wide",
+                                isActive ? 'text-white/70' : 'text-coral-500/70'
+                            )}>
+                                ${ACTION_COSTS[action]}
+                            </span>
+                        </div>
 
                         {/* Burst Ring */}
                         <AnimatePresence>
