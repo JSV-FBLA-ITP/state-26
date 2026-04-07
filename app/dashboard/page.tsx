@@ -15,7 +15,50 @@ import { OptionsOverlay } from '@/components/game/OptionsOverlay';
 import { createClient } from '@/utils/supabase/client';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { BarChart3, PawPrint, Calendar, ArrowRight, Wallet, TrendingUp, TrendingDown, Store, BrainCircuit, Settings } from 'lucide-react';
+import { BarChart3, PawPrint, Calendar, ArrowRight, Wallet, TrendingUp, TrendingDown, Store, BrainCircuit, Settings, Heart, Utensils, Zap, Coffee, Moon, Sparkles, Stethoscope, LucideIcon } from 'lucide-react';
+
+function StatItem({ icon: Icon, label, value, color }: { icon: LucideIcon; label: string; value: number; color: string }) {
+    const isLow = value < 30;
+    return (
+        <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg bg-muted/50 sm:bg-muted/30 backdrop-blur-sm">
+            <Icon className={cn("w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0", color, isLow && "animate-pulse")} />
+            <div className="w-12 sm:w-16 h-1.5 sm:h-2 bg-muted rounded-full overflow-hidden">
+                <div className={cn("h-full rounded-full transition-all duration-500", color)} style={{ width: `${value}%` }} />
+            </div>
+            <span className={cn("text-[10px] sm:text-xs font-black tabular-nums w-8 sm:w-10 text-right", isLow ? "text-rose-500" : "text-muted-foreground")}>
+                {value}
+            </span>
+        </div>
+    );
+}
+
+function ActionButton({ label, cost, icon: Icon, color, onClick }: { action: string; label: string; cost: number; icon: LucideIcon; color: string; onClick: () => void }) {
+    const [active, setActive] = useState(false);
+    
+    const handleClick = () => {
+        setActive(true);
+        onClick();
+        setTimeout(() => setActive(false), 300);
+    };
+    
+    return (
+        <motion.button
+            onClick={handleClick}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className={cn(
+                "flex flex-col items-center justify-center gap-1 px-2 sm:px-3 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl border transition-all duration-200 min-w-[50px] sm:min-w-[70px] lg:min-w-[80px]",
+                active
+                    ? `${color}/20 border-current`
+                    : `bg-muted/30 hover:bg-muted/50 border-border/50`
+            )}
+        >
+            <Icon className={cn("w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7", color)} />
+            <span className="text-[9px] sm:text-[10px] lg:text-xs font-bold uppercase tracking-wide">{label}</span>
+            <span className={cn("text-[8px] sm:text-[9px] lg:text-[10px] font-black", color)}>${cost}</span>
+        </motion.button>
+    );
+}
 import { cn } from '@/lib/utils';
 
 type TabView = 'pet' | 'stats' | 'shop' | 'quiz' | 'settings';
@@ -312,49 +355,72 @@ export default function DashboardPage() {
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: -20 }}
                                     transition={{ duration: 0.2 }}
-                                    className="flex-1 min-h-0 flex flex-col lg:flex-row w-full max-w-5xl mx-auto"
+                                    className="flex flex-col h-full w-full"
                                 >
-                                    {/* Pet hero area */}
-                                    <div className="flex-1 min-h-0 flex items-center justify-center relative overflow-hidden p-3 lg:p-8">
+                                    {/* Pet Display Area - Centered */}
+                                    <div className="flex-1 flex flex-col items-center justify-center relative overflow-hidden min-h-0 py-2 sm:py-4">
                                         <div className="pet-zone-glow" aria-hidden />
-                                        <div className="w-full max-w-[200px] lg:max-w-[400px] relative z-1">
+                                        <div className="w-full max-w-[140px] sm:max-w-[180px] md:max-w-[220px] lg:max-w-[280px] relative z-1">
                                             <PetDisplay pet={pet} emotion={emotion} isGameOver={gameOver} />
                                         </div>
 
                                         {/* Feedback toast */}
-                                        <div className="feedback-area">
-                                            <AnimatePresence>
-                                                {feedback.message && (
-                                                    <motion.div
-                                                        initial={{ opacity: 0, scale: 0.9 }}
-                                                        animate={{ opacity: 1, scale: 1 }}
-                                                        exit={{ opacity: 0, scale: 0.9 }}
-                                                        className={cn(
-                                                            "feedback-toast text-[10px] lg:text-sm",
-                                                            feedback.type === 'success' && 'feedback-success',
-                                                            feedback.type === 'warn' && 'feedback-warn',
-                                                            feedback.type === 'info' && 'feedback-info',
-                                                        )}
-                                                    >
-                                                        {feedback.message}
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
-                                        </div>
+                                        <AnimatePresence>
+                                            {feedback.message && (
+                                                <motion.div
+                                                    initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                    exit={{ opacity: 0, y: 10, scale: 0.9 }}
+                                                    className={cn(
+                                                        "feedback-toast text-[10px] sm:text-xs mt-3",
+                                                        feedback.type === 'success' && 'feedback-success',
+                                                        feedback.type === 'warn' && 'feedback-warn',
+                                                        feedback.type === 'info' && 'feedback-info',
+                                                    )}
+                                                >
+                                                    {feedback.message}
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
                                     </div>
 
-                                    {/* Command zone */}
+                                    {/* Controls Panel */}
                                     {showGameUI && (
-                                        <div className="game-command-zone lg:w-[400px] shrink-0 border-t lg:border-t-0 lg:border-l border-border/10 bg-card/50 backdrop-blur-sm lg:p-6 lg:overflow-y-auto">
-                                            <StatSidebar
-                                                stats={pet.stats}
-                                                monthData={pet.monthData}
-                                                income={income}
-                                                expenses={expenses}
-                                                onNextMonth={handleNextMonth}
-                                                onAction={handleAction}
-                                            />
-                                            <ActionGrid onAction={handleAction} />
+                                        <div className="shrink-0 bg-card/95 backdrop-blur-xl border-t border-border/30">
+                                            {/* Stats Bar */}
+                                            <div className="flex items-center justify-center gap-2 sm:gap-3 lg:gap-4 px-3 sm:px-4 py-2 sm:py-3 border-b border-border/10">
+                                                <StatItem icon={Utensils} label="HGR" value={pet.stats.hunger} color="bg-orange-500" />
+                                                <StatItem icon={Heart} label="HPY" value={pet.stats.happy} color="bg-emerald-500" />
+                                                <StatItem icon={Zap} label="NRG" value={pet.stats.energy} color="bg-sky-400" />
+                                                <StatItem icon={Coffee} label="HP" value={pet.stats.health} color="bg-indigo-400" />
+                                            </div>
+
+                                            {/* Action Buttons */}
+                                            <div className="flex items-center justify-center gap-2 sm:gap-3 lg:gap-4 px-3 sm:px-4 py-3 sm:py-4">
+                                                <ActionButton action="feed" label="Feed" cost={5} icon={Utensils} color="text-orange-500" onClick={() => handleAction('feed')} />
+                                                <ActionButton action="play" label="Play" cost={8} icon={Heart} color="text-emerald-500" onClick={() => handleAction('play')} />
+                                                <ActionButton action="sleep" label="Sleep" cost={6} icon={Moon} color="text-indigo-500" onClick={() => handleAction('sleep')} />
+                                                <ActionButton action="clean" label="Clean" cost={4} icon={Sparkles} color="text-cyan-500" onClick={() => handleAction('clean')} />
+                                                <ActionButton action="healthCheck" label="Health" cost={10} icon={Stethoscope} color="text-rose-500" onClick={() => handleAction('healthCheck')} />
+                                            </div>
+
+                                            {/* Required Tasks (if any) */}
+                                            {pet.monthData.requiredActions && pet.monthData.requiredActions.length > 0 && (
+                                                <div className="flex items-center justify-center gap-2 px-3 pb-3 overflow-x-auto scrollbar-hide">
+                                                    <span className="text-[10px] font-black text-muted-foreground shrink-0">Tasks:</span>
+                                                    {pet.monthData.requiredActions.map((action) => {
+                                                        const isCompleted = (pet.monthData.actionsCompleted[action] || 0) > 0;
+                                                        return (
+                                                            <span key={action} className={cn(
+                                                                "text-[9px] sm:text-[10px] font-black px-2 py-1 rounded-full shrink-0",
+                                                                isCompleted ? "bg-emerald-500/20 text-emerald-500" : "bg-amber-500/20 text-amber-500"
+                                                            )}>
+                                                                {action.charAt(0).toUpperCase() + action.slice(1)}
+                                                            </span>
+                                                        );
+                                                    })}
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </motion.div>
@@ -367,7 +433,7 @@ export default function DashboardPage() {
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: 20 }}
                                     transition={{ duration: 0.2 }}
-                                    className="flex-1 min-h-0 flex flex-col w-full max-w-4xl mx-auto items-center justify-center p-4 lg:p-8"
+                                    className="flex-1 min-h-0 flex flex-col w-full max-w-4xl xl:max-w-5xl mx-auto items-center justify-center p-4 sm:p-6 lg:p-8"
                                 >
                                     <div className="w-full h-full flex flex-col bg-card/60 backdrop-blur-xl border border-border/40 rounded-3xl overflow-hidden shadow-2xl">
                                         <StatsOverlay isOpen={true} onClose={() => { }} pet={pet} inline={true} />
@@ -382,7 +448,7 @@ export default function DashboardPage() {
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0, scale: 0.95 }}
                                     transition={{ duration: 0.2 }}
-                                    className="flex-1 min-h-0 flex flex-col w-full max-w-4xl mx-auto items-center justify-center p-4 lg:p-8"
+                                    className="flex-1 min-h-0 flex flex-col w-full max-w-4xl xl:max-w-5xl mx-auto items-center justify-center p-4 sm:p-6 lg:p-8"
                                 >
                                     <div className="w-full h-full flex flex-col bg-card/60 backdrop-blur-xl border border-border/40 rounded-3xl overflow-hidden shadow-2xl">
                                         <ShopOverlay isOpen={true} onClose={() => { }} money={pet.stats.money || 0} onPurchase={handlePurchase} inline={true} />
@@ -397,7 +463,7 @@ export default function DashboardPage() {
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0, scale: 0.95 }}
                                     transition={{ duration: 0.2 }}
-                                    className="flex-1 min-h-0 flex flex-col w-full max-w-4xl mx-auto items-center justify-center p-4 lg:p-8"
+                                    className="flex-1 min-h-0 flex flex-col w-full max-w-4xl xl:max-w-5xl mx-auto items-center justify-center p-4 sm:p-6 lg:p-8"
                                 >
                                     <div className="w-full h-full flex flex-col bg-card/60 backdrop-blur-xl border border-border/40 rounded-3xl overflow-hidden shadow-2xl">
                                         <QuizOverlay isOpen={true} onClose={() => { }} onComplete={handleQuizComplete} inline={true} />
@@ -412,7 +478,7 @@ export default function DashboardPage() {
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0, scale: 0.95 }}
                                     transition={{ duration: 0.2 }}
-                                    className="flex-1 min-h-0 flex flex-col w-full max-w-2xl mx-auto items-center justify-center p-4 lg:p-8"
+                                    className="flex-1 min-h-0 flex flex-col w-full max-w-2xl xl:max-w-3xl mx-auto items-center justify-center p-4 sm:p-6 lg:p-8"
                                 >
                                     <div className="w-full h-full flex flex-col bg-card/60 backdrop-blur-xl border border-border/40 rounded-3xl overflow-hidden shadow-2xl">
                                         <OptionsOverlay isOpen={true} onClose={() => { }} onLogout={handleLogout} inline={true} />
@@ -423,7 +489,7 @@ export default function DashboardPage() {
                     </div>
 
                     {/* Unified Tab Bar */}
-                    <div className="mobile-tab-bar overflow-x-auto gap-3 pt-4 pb-2 px-4 safe-area-bottom scrollbar-hide justify-center shrink-0">
+                    <div className="mobile-tab-bar overflow-x-auto gap-3 sm:gap-4 lg:gap-5 pt-4 pb-2 sm:pt-5 sm:pb-3 lg:pt-6 lg:pb-4 px-4 sm:px-6 lg:px-8 safe-area-bottom scrollbar-hide justify-center shrink-0">
                         {[
                             { id: 'shop', label: 'Shop', icon: Store },
                             { id: 'quiz', label: 'Quiz', icon: BrainCircuit },
@@ -441,25 +507,25 @@ export default function DashboardPage() {
                                     whileHover={{ y: -2, scale: 1.02 }}
                                     whileTap={{ scale: 0.96 }}
                                     className={cn(
-                                        "group relative flex items-center gap-2 px-3 py-2 rounded-2xl border-[1.5px] transition-all duration-200 shrink-0",
+                                        "group relative flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-2xl sm:rounded-2xl border-[1.5px] transition-all duration-200 shrink-0",
                                         isActive
                                             ? `${colors.activeBg} shadow-lg ${colors.glow}`
                                             : `${colors.bg} hover:border-white/10 text-transparent`
                                     )}
                                 >
                                     <div className={cn(
-                                        "w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200",
+                                        "w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all duration-200",
                                         isActive
                                             ? 'bg-white/20 text-white'
                                             : `bg-white/5 ${colors.text}`
                                     )}>
                                         <Icon className={cn(
-                                            "w-4 h-4 transition-transform duration-200",
+                                            "w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200",
                                             isActive && "scale-110"
                                         )} />
                                     </div>
                                     <span className={cn(
-                                        "text-[10px] sm:block hidden font-black uppercase tracking-widest transition-colors pr-1",
+                                        "text-[10px] sm:text-xs lg:text-sm font-black uppercase tracking-widest transition-colors pr-1",
                                         isActive ? 'text-white' : 'text-foreground/70'
                                     )}>
                                         {tab.label}

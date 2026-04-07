@@ -52,10 +52,10 @@ export function PetDisplay({ pet, emotion, isGameOver }: Props) {
                 initial={{ y: 10, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className="flex items-center gap-1.5 bg-white/90 dark:bg-card/90 backdrop-blur-md px-3 py-1.5 rounded-full shadow-lg border border-border/30"
+                className="flex items-center gap-1.5 sm:gap-2 bg-white/90 dark:bg-card/90 backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-full shadow-lg border border-border/30"
             >
-                <HeaderIcon className="w-3.5 h-3.5 text-primary" />
-                <span className="font-black text-[11px] text-primary uppercase tracking-wide">{emotion.emotion}</span>
+                <HeaderIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
+                <span className="font-black text-[11px] sm:text-xs lg:text-sm text-primary uppercase tracking-wide">{emotion.emotion}</span>
             </motion.div>
         </div>
     );

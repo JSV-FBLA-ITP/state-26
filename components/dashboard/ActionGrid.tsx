@@ -53,7 +53,7 @@ export function ActionGrid({ onAction }: Props) {
     };
 
     return (
-        <div className="action-row flex-wrap">
+        <div className="action-row py-2 sm:py-3 lg:py-4 flex-row !flex-nowrap justify-center">
             {ALL_ACTIONS.map((action) => {
                 const [iconName, ...labelParts] = ACTION_LABELS[action].split(' ');
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -69,7 +69,7 @@ export function ActionGrid({ onAction }: Props) {
                         whileHover={{ y: -2, scale: 1.02 }}
                         whileTap={{ scale: 0.96 }}
                         className={cn(
-                            "group relative flex flex-col items-center justify-center gap-2 px-2 py-3 rounded-2xl border-[1.5px] transition-all duration-200 flex-1 sm:flex-none sm:min-w-[90px] shrink-0",
+                            "group relative flex flex-col items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 py-3 sm:py-4 lg:py-5 rounded-xl sm:rounded-2xl border-[1.5px] transition-all duration-200 min-w-[60px] sm:min-w-[80px] md:min-w-[100px] lg:min-w-[120px] shrink-0 shadow-md hover:shadow-lg",
                             isActive
                                 ? `${colors.activeBg} shadow-lg ${colors.glow}`
                                 : `${colors.bg} hover:border-white/10 text-transparent`
@@ -77,31 +77,31 @@ export function ActionGrid({ onAction }: Props) {
                     >
                         {/* Icon */}
                         <div className={cn(
-                            "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200",
+                            "w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-lg sm:rounded-xl flex items-center justify-center transition-all duration-200 shadow-sm",
                             isActive
                                 ? 'bg-white/20 text-white'
-                                : `bg-white/5 ${colors.text}`
+                                : `bg-white/10 ${colors.text}`
                         )}>
                             <Icon className={cn(
-                                "w-5 h-5 transition-transform duration-200",
+                                "w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 transition-transform duration-200",
                                 isActive && "scale-110 rotate-3"
                             )} />
                         </div>
 
                         {/* Label & Cost Container */}
-                        <div className="flex flex-col items-center gap-0.5">
+                        <div className="flex flex-col items-center gap-0">
                             {/* Label */}
                             <span className={cn(
-                                "text-[9px] font-black uppercase tracking-widest transition-colors",
-                                isActive ? 'text-white' : 'text-foreground/70'
+                                "text-[8px] sm:text-[10px] lg:text-xs font-black uppercase tracking-wider transition-colors leading-tight",
+                                isActive ? 'text-white' : 'text-foreground/80'
                             )}>
                                 {label}
                             </span>
 
                             {/* Cost */}
                             <span className={cn(
-                                "text-[10px] font-black tracking-wide",
-                                isActive ? 'text-white/70' : 'text-coral-500/70'
+                                "text-[9px] sm:text-[11px] lg:text-sm font-black tracking-wide leading-tight",
+                                isActive ? 'text-white/70' : 'text-coral-500/80'
                             )}>
                                 ${ACTION_COSTS[action]}
                             </span>
@@ -115,7 +115,7 @@ export function ActionGrid({ onAction }: Props) {
                                     animate={{ scale: 2.2, opacity: 0 }}
                                     exit={{ opacity: 0 }}
                                     transition={{ duration: 0.4 }}
-                                    className={cn("absolute inset-0 border-2 rounded-xl pointer-events-none", `border-current ${colors.text}`)}
+                                    className={cn("absolute inset-0 border-2 rounded-xl sm:rounded-2xl pointer-events-none", `border-current ${colors.text}`)}
                                 />
                             )}
                         </AnimatePresence>
