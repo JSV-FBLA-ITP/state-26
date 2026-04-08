@@ -42,22 +42,43 @@ export function OptionsOverlay({ isOpen, onClose, onLogout, inline }: Props) {
 
             {/* Content */}
             <div className={`p-6 space-y-6 ${inline ? 'overflow-y-auto custom-scrollbar flex-1 min-h-0' : ''}`}>
-                            {/* Account Section */}
+                            {/* Navigation Section */}
                             <div className="space-y-3">
-                                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Session</h3>
+                                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Navigate</h3>
                                 <div className="grid grid-cols-1 gap-2">
                                     <Link href="/dashboard/pets" className="block">
                                         <Button
                                             variant="outline"
-                                            className="w-full h-14 rounded-2xl justify-start px-6 font-bold border-2"
+                                            className="w-full h-12 rounded-2xl justify-start px-6 font-bold border-2"
                                         >
                                             <Home className="w-5 h-5 mr-4 text-emerald-500" />
                                             Return to Hub
                                             <ArrowRight className="w-4 h-4 ml-auto opacity-50" />
                                         </Button>
                                     </Link>
+                                    <Link href="/dashboard/pets" className="block">
+                                        <Button
+                                            variant="outline"
+                                            className="w-full h-12 rounded-2xl justify-start px-6 font-bold border-2"
+                                        >
+                                            <span className="mr-4 text-primary">🐾</span>
+                                            My Pets
+                                            <ArrowRight className="w-4 h-4 ml-auto opacity-50" />
+                                        </Button>
+                                    </Link>
+                                    <Link href="/dashboard/how-to-play" className="block">
+                                        <Button
+                                            variant="outline"
+                                            className="w-full h-12 rounded-2xl justify-start px-6 font-bold border-2"
+                                        >
+                                            <span className="mr-4 text-indigo-400">📖</span>
+                                            How to Play
+                                            <ArrowRight className="w-4 h-4 ml-auto opacity-50" />
+                                        </Button>
+                                    </Link>
                                 </div>
                             </div>
+
 
                             {/* Game Settings */}
                             <div className="space-y-3">

@@ -78,7 +78,7 @@ export function QuizOverlay({ isOpen, onClose, onComplete, inline }: Props) {
                         <GraduationCap className="w-6 h-6 text-primary" />
                     </div>
                     <div>
-                        <h2 className="text-2xl font-black tracking-tight uppercase">Financial Prep</h2>
+                        <h2 className="text-xl sm:text-2xl font-black tracking-tight uppercase">Financially Prepare for Your Pet</h2>
                         <p className="text-sm text-muted-foreground font-bold">Earn money while you learn</p>
                     </div>
                 </div>
@@ -143,7 +143,7 @@ export function QuizOverlay({ isOpen, onClose, onComplete, inline }: Props) {
                                         key={i}
                                         disabled={isAnswered}
                                         onClick={() => handleAnswerSelect(i)}
-                                        className={`w-full p-6 text-left rounded-2xl border-2 transition-all flex items-center justify-between group ${statusStyles} ${!isAnswered ? 'hover:border-primary hover:bg-white' : ''}`}
+                                        className={`w-full p-6 text-left rounded-2xl border-2 transition-all flex items-center justify-between group ${statusStyles} ${!isAnswered ? 'hover:border-primary hover:bg-primary/10' : ''}`}
                                     >
                                         <span className="font-bold">{opt}</span>
                                         {isAnswered && isCorrect && <CheckCircle2 className="w-5 h-5 text-emerald-500" />}

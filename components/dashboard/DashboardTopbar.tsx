@@ -7,7 +7,6 @@ import { LayoutDashboard, PawPrint, BookOpen, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { UserMenu } from '@/components/dashboard/DashboardUserMenu';
-import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 
 const navItems = [

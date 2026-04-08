@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchUserPets, deletePet, savePetToCloud } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
-import { PawPrint, Plus, Heart, Zap, Coins, ArrowRight, ReceiptText, Settings2, Edit2, Trash2, Check, RotateCcw, Home, ChevronLeft, Users } from 'lucide-react';
+import { PawPrint, Plus, Heart, Zap, Coins, ArrowRight, Settings2, Edit2, Trash2, Check, RotateCcw, Home, ChevronLeft, Users, BarChart3 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -96,9 +96,9 @@ export default function MyPetsPage() {
                                 <ChevronLeft className="w-5 h-5" />
                             </Button>
                         )}
-                        <h1 className="text-4xl font-black tracking-tight flex items-center gap-3">
+                        <h1 className="text-3xl md:text-4xl font-black tracking-tight flex flex-wrap items-center gap-3">
                             {selectedHousehold ? selectedHousehold : "Household Hub"}
-                            <Home className="w-8 h-8 text-primary" />
+                            <Home className="w-6 h-6 md:w-8 md:h-8 text-primary shadow-sm" />
                         </h1>
                     </div>
                     
@@ -122,9 +122,9 @@ export default function MyPetsPage() {
                 </div>
                 {!selectedHousehold && (
                     <Link href="/onboarding">
-                        <Button className="rounded-2xl h-14 px-8 font-extrabold shadow-xl shadow-coral-500/20 bg-linear-to-r from-coral-400 to-orange-100 text-black border-0 hover:scale-[1.02] active:scale-95 transition-all">
-                            <Plus className="w-6 h-6 mr-2" />
-                            Create New Household
+                        <Button className="rounded-2xl h-12 md:h-14 px-5 md:px-8 text-sm md:text-base font-extrabold shadow-xl shadow-coral-500/20 bg-linear-to-r from-coral-400 to-orange-100 text-black border-0 hover:scale-[1.02] active:scale-95 transition-all w-full md:w-auto">
+                            <Plus className="w-5 h-5 md:w-6 md:h-6 mr-1 md:mr-2 shrink-0" />
+                            Create Household
                         </Button>
                     </Link>
                 )}
@@ -239,17 +239,17 @@ export default function MyPetsPage() {
                             exit={{ opacity: 0, x: -20 }}
                             className="space-y-12"
                         >
-                             <div className="flex items-center justify-between">
-                                <h2 className="text-2xl font-black flex items-center gap-3">
+                             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                <h2 className="text-xl md:text-2xl font-black flex items-center gap-3">
                                     <span className="p-2 rounded-xl bg-primary/10">
                                         <PawPrint className="w-5 h-5 text-primary" />
                                     </span>
                                     Companion Registry
                                 </h2>
-                                <Link href={`/onboarding?household=${encodeURIComponent(selectedHousehold)}`}>
-                                    <Button className="rounded-2xl h-12 px-6 font-bold bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 transition-all active:scale-95">
+                                <Link href={`/onboarding?household=${encodeURIComponent(selectedHousehold)}`} className="w-full sm:w-auto">
+                                    <Button className="rounded-2xl h-12 px-6 font-bold bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 transition-all active:scale-95 w-full sm:w-auto">
                                         <Plus className="w-5 h-5 mr-2" />
-                                        Adopt New Companion
+                                        Adopt
                                     </Button>
                                 </Link>
                             </div>
@@ -394,17 +394,17 @@ export default function MyPetsPage() {
                                                     onClick={() => handleSelectPet(p.id)}
                                                     className="rounded-2xl h-12 group bg-primary/10 text-primary hover:bg-primary hover:text-white border-0 transition-all font-black uppercase tracking-wide"
                                                 >
-                                                    Focus
+                                                    Play
                                                     <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                                                 </Button>
-                                                <Link href="/dashboard/expenses" className="w-full">
+                                                <Link href="/dashboard/stats" className="w-full">
                                                     <Button
                                                         variant="outline"
                                                         onClick={() => localStorage.setItem('currentPetId', p.id)}
                                                         className="w-full rounded-2xl h-12 border-2 hover:bg-card/80 font-black uppercase tracking-wide"
                                                     >
-                                                        <ReceiptText className="w-4 h-4 mr-2" />
-                                                        Ledger
+                                                        <BarChart3 className="w-4 h-4 mr-2" />
+                                                        Stats
                                                     </Button>
                                                 </Link>
                                             </div>

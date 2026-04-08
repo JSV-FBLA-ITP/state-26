@@ -5,9 +5,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { ActionType, getEmotionData, PetData, areRequiredActionsCompleted, ACTION_COSTS } from '@/lib/gameLogic';
 import { loadPet, savePetToCloud } from '@/lib/storage';
 import { PetDisplay } from '@/components/dashboard/PetDisplay';
-import { StatSidebar } from '@/components/dashboard/StatSidebar';
-import { ActionGrid } from '@/components/dashboard/ActionGrid';
-import { ControlPanel } from '@/components/dashboard/ControlPanel';
 import { ShopOverlay } from '@/components/game/ShopOverlay';
 import { QuizOverlay } from '@/components/game/QuizOverlay';
 import { StatsOverlay } from '@/components/game/StatsOverlay';
@@ -15,17 +12,17 @@ import { OptionsOverlay } from '@/components/game/OptionsOverlay';
 import { createClient } from '@/utils/supabase/client';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { BarChart3, PawPrint, Calendar, ArrowRight, Wallet, TrendingUp, TrendingDown, Store, BrainCircuit, Settings, Heart, Utensils, Zap, Coffee, Moon, Sparkles, Stethoscope, LucideIcon } from 'lucide-react';
+import { BarChart3, PawPrint, Calendar, ArrowRight, Wallet, TrendingUp, TrendingDown, Store, BrainCircuit, Settings, Heart, Utensils, Zap, Coffee, Moon, Sparkles, Stethoscope, LucideIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 
-function StatItem({ icon: Icon, label, value, color }: { icon: LucideIcon; label: string; value: number; color: string }) {
+function StatItem({ icon: Icon, value, color }: { icon: LucideIcon; value: number; color: string }) {
     const isLow = value < 30;
     return (
         <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg bg-muted/50 sm:bg-muted/30 backdrop-blur-sm">
             <Icon className={cn("w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0", color, isLow && "animate-pulse")} />
-            <div className="w-12 sm:w-16 h-1.5 sm:h-2 bg-muted rounded-full overflow-hidden">
+            <div className="hidden sm:block w-12 sm:w-16 h-1.5 sm:h-2 bg-muted rounded-full overflow-hidden">
                 <div className={cn("h-full rounded-full transition-all duration-500", color)} style={{ width: `${value}%` }} />
             </div>
-            <span className={cn("text-[10px] sm:text-xs font-black tabular-nums w-8 sm:w-10 text-right", isLow ? "text-rose-500" : "text-muted-foreground")}>
+            <span className={cn("text-[10px] sm:text-xs font-black tabular-nums w-4 sm:w-10 text-right", isLow ? "text-rose-500" : "text-muted-foreground")}>
                 {value}
             </span>
         </div>
@@ -98,6 +95,7 @@ const TAB_COLORS = {
 
 export default function DashboardPage() {
     const [pet, setPet] = useState<PetData | null>(null);
+    const [availablePets, setAvailablePets] = useState<PetData[]>([]);
     const [loading, setLoading] = useState(true);
     const [gameOver, setGameOver] = useState(false);
     const [feedback, setFeedback] = useState<{ message: string; type: 'success' | 'warn' | 'info' | null }>({ message: '', type: null });
@@ -106,8 +104,10 @@ export default function DashboardPage() {
     const loadData = useCallback(async () => {
         let petId = localStorage.getItem('currentPetId');
 
+        const { data: cloudPets } = await (await import('@/lib/storage')).fetchUserPets();
+        setAvailablePets(cloudPets || []);
+
         if (!petId) {
-            const { data: cloudPets } = await (await import('@/lib/storage')).fetchUserPets();
             if (cloudPets && cloudPets.length > 0) {
                 petId = cloudPets[0].id;
                 localStorage.setItem('currentPetId', petId!);
@@ -139,6 +139,21 @@ export default function DashboardPage() {
     useEffect(() => {
         loadData();
     }, [loadData]);
+
+    const handleSwitchPet = (direction: 'next' | 'prev') => {
+        if (!availablePets || availablePets.length <= 1 || !pet) return;
+        const currentIndex = availablePets.findIndex(p => p.id === pet.id);
+        if (currentIndex === -1) return;
+        let newIndex = direction === 'next' ? currentIndex + 1 : currentIndex - 1;
+        if (newIndex >= availablePets.length) newIndex = 0;
+        if (newIndex < 0) newIndex = availablePets.length - 1;
+        const nextPetId = availablePets[newIndex].id;
+        if (nextPetId) {
+            localStorage.setItem('currentPetId', nextPetId);
+        }
+        setLoading(true);
+        loadData();
+    };
 
     // Manual save removed, auto-save handles data persistence.
 
@@ -285,14 +300,26 @@ export default function DashboardPage() {
                         {/* Left Side: Pet Identity & Time */}
                         <div className="flex items-center gap-2 sm:gap-4 shrink-0">
                             {/* Identity */}
-                            <div className="flex items-center gap-2 sm:gap-3">
-                                <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
-                                    <PawPrint className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                            <div className="flex items-center gap-1 sm:gap-2">
+                                {availablePets.length > 1 && (
+                                    <Button variant="ghost" size="icon" className="h-6 w-6 sm:h-8 sm:w-8 shrink-0 hover:bg-muted" onClick={() => handleSwitchPet('prev')}>
+                                        <ChevronLeft className="w-4 h-4" />
+                                    </Button>
+                                )}
+                                <div className="flex items-center gap-2 sm:gap-3">
+                                    <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
+                                        <PawPrint className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <p className="font-black text-sm sm:text-base tracking-tight leading-none text-foreground whitespace-nowrap">{pet.name}</p>
+                                        <p className="hidden sm:block text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground mt-0.5">Companion</p>
+                                    </div>
                                 </div>
-                                <div className="flex flex-col">
-                                    <p className="font-black text-sm sm:text-base tracking-tight leading-none text-foreground">{pet.name}</p>
-                                    <p className="hidden sm:block text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground mt-0.5">Companion</p>
-                                </div>
+                                {availablePets.length > 1 && (
+                                    <Button variant="ghost" size="icon" className="h-6 w-6 sm:h-8 sm:w-8 shrink-0 hover:bg-muted" onClick={() => handleSwitchPet('next')}>
+                                        <ChevronRight className="w-4 h-4" />
+                                    </Button>
+                                )}
                             </div>
 
                             <div className="hidden sm:block h-6 w-px bg-border/30 mx-1" />
@@ -388,15 +415,15 @@ export default function DashboardPage() {
                                     {showGameUI && (
                                         <div className="shrink-0 bg-card/95 backdrop-blur-xl border-t border-border/30">
                                             {/* Stats Bar */}
-                                            <div className="flex items-center justify-center gap-2 sm:gap-3 lg:gap-4 px-3 sm:px-4 py-2 sm:py-3 border-b border-border/10">
-                                                <StatItem icon={Utensils} label="HGR" value={pet.stats.hunger} color="bg-orange-500" />
-                                                <StatItem icon={Heart} label="HPY" value={pet.stats.happy} color="bg-emerald-500" />
-                                                <StatItem icon={Zap} label="NRG" value={pet.stats.energy} color="bg-sky-400" />
-                                                <StatItem icon={Coffee} label="HP" value={pet.stats.health} color="bg-indigo-400" />
+                                            <div className="flex items-center justify-center gap-2 sm:gap-3 lg:gap-4 px-3 sm:px-4 py-1.5 sm:py-2 border-b border-border/10">
+                                                <StatItem icon={Utensils} value={pet.stats.hunger} color="bg-orange-500" />
+                                                <StatItem icon={Heart} value={pet.stats.happy} color="bg-emerald-500" />
+                                                <StatItem icon={Zap} value={pet.stats.energy} color="bg-sky-400" />
+                                                <StatItem icon={Coffee} value={pet.stats.health} color="bg-indigo-400" />
                                             </div>
 
                                             {/* Action Buttons */}
-                                            <div className="flex items-center justify-center gap-2 sm:gap-3 lg:gap-4 px-3 sm:px-4 py-3 sm:py-4">
+                                            <div className="flex items-center justify-center gap-2 sm:gap-3 lg:gap-4 px-3 sm:px-4 py-2 sm:py-2.5">
                                                 <ActionButton action="feed" label="Feed" cost={5} icon={Utensils} color="text-orange-500" onClick={() => handleAction('feed')} />
                                                 <ActionButton action="play" label="Play" cost={8} icon={Heart} color="text-emerald-500" onClick={() => handleAction('play')} />
                                                 <ActionButton action="sleep" label="Sleep" cost={6} icon={Moon} color="text-indigo-500" onClick={() => handleAction('sleep')} />
@@ -406,7 +433,7 @@ export default function DashboardPage() {
 
                                             {/* Required Tasks (if any) */}
                                             {pet.monthData.requiredActions && pet.monthData.requiredActions.length > 0 && (
-                                                <div className="flex items-center justify-center gap-2 px-3 pb-3 overflow-x-auto scrollbar-hide">
+                                                <div className="flex items-center justify-center gap-2 px-3 pb-1.5 overflow-x-auto scrollbar-hide">
                                                     <span className="text-[10px] font-black text-muted-foreground shrink-0">Tasks:</span>
                                                     {pet.monthData.requiredActions.map((action) => {
                                                         const isCompleted = (pet.monthData.actionsCompleted[action] || 0) > 0;
@@ -489,7 +516,7 @@ export default function DashboardPage() {
                     </div>
 
                     {/* Unified Tab Bar */}
-                    <div className="mobile-tab-bar overflow-x-auto gap-3 sm:gap-4 lg:gap-5 pt-4 pb-2 sm:pt-5 sm:pb-3 lg:pt-6 lg:pb-4 px-4 sm:px-6 lg:px-8 safe-area-bottom scrollbar-hide justify-center shrink-0">
+                    <div className="mobile-tab-bar overflow-x-auto gap-3 sm:gap-4 lg:gap-5 py-2 sm:py-3 px-4 sm:px-6 lg:px-8 scrollbar-hide justify-center shrink-0">
                         {[
                             { id: 'shop', label: 'Shop', icon: Store },
                             { id: 'quiz', label: 'Quiz', icon: BrainCircuit },
@@ -514,18 +541,18 @@ export default function DashboardPage() {
                                     )}
                                 >
                                     <div className={cn(
-                                        "w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all duration-200",
+                                        "flex sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-none sm:rounded-2xl items-center justify-center transition-all duration-200",
                                         isActive
-                                            ? 'bg-white/20 text-white'
-                                            : `bg-white/5 ${colors.text}`
+                                            ? 'bg-transparent sm:bg-white/20 text-white'
+                                            : `bg-transparent sm:bg-white/5 ${colors.text}`
                                     )}>
                                         <Icon className={cn(
-                                            "w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200",
+                                            "w-5 h-5 sm:w-5 sm:h-5 transition-transform duration-200",
                                             isActive && "scale-110"
                                         )} />
                                     </div>
                                     <span className={cn(
-                                        "text-[10px] sm:text-xs lg:text-sm font-black uppercase tracking-widest transition-colors pr-1",
+                                        "text-[10px] sm:text-xs lg:text-sm font-black uppercase tracking-widest transition-colors pr-1 hidden sm:block",
                                         isActive ? 'text-white' : 'text-foreground/70'
                                     )}>
                                         {tab.label}
