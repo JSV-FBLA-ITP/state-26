@@ -1,7 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useState, useEffect } from 'react';
+/**
+ * PetPal Financial Statistics & Ledger
+ * 
+ * This page serves as the "Financial Responsibility" core of the project.
+ * It provides users with transparency regarding their pet care spending.
+ * 
+ * Key Features:
+ * 1. Budget Monitoring: Progress bar comparing actual spending vs. pet.budgetLimit.
+ * 2. Expense Ledger: A real-time transaction history fetched from Supabase.
+ * 3. Categorized Breakdown: Visual summary of spending in Food, Health, and Activity categories.
+ * 4. Savings Tracking: Progress toward the user-defined savings goal.
+ * 
+ * Educational Purpose:
+ * Demonstrates the impact of small daily decisions on a larger monthly budget,
+ * aligning with FBLA goals of teaching financial literacy through programming.
+ */
+
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { fetchExpenses, loadPet } from '@/lib/storage';
 import {
@@ -36,6 +53,15 @@ export default function StatsPage() {
     const totalSpent = expenses.reduce((acc, curr) => acc + curr.cost, 0);
     const savingsProgress = pet ? (pet.savingsCurrent / pet.savingsGoal) * 100 : 0;
 
+    const categoryBreakdown = useMemo(() => {
+        const counts: Record<string, number> = {};
+        expenses.forEach(exp => {
+            const cat = exp.category || 'Maintenance';
+            counts[cat] = (counts[cat] || 0) + exp.cost;
+        });
+        return counts;
+    }, [expenses]);
+
     if (loading) return (
         <div className="flex items-center justify-center min-h-[60vh]">
             <div className="w-10 h-10 rounded-2xl bg-primary/20 animate-pulse" />
@@ -48,9 +74,14 @@ export default function StatsPage() {
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
                 <div>
                     <h1 className="text-3xl md:text-4xl font-black tracking-tight mb-2">{pet?.name}&apos;s Statistics</h1>
-                    <p className="text-muted-foreground italic">
-                        Comprehensive ledger and analytics for your companion.
-                    </p>
+                    <div className="flex items-center gap-3">
+                        <p className="text-muted-foreground italic">
+                            Comprehensive ledger and analytics for your companion.
+                        </p>
+                        <span className="px-2 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-black uppercase tracking-tighter border border-primary/20">
+                            Age: {pet?.age || 0} Months
+                        </span>
+                    </div>
                 </div>
 
                 <div className="flex gap-4 shrink-0 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
@@ -120,6 +151,30 @@ export default function StatsPage() {
                         </div>
                     </div>
 
+                    {/* Budget Health (FBLA: Financial Responsibility) */}
+                    <div className="p-6 rounded-2xl bg-rose-500/10 border border-rose-500/20">
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-2">
+                                <TrendingDown className="w-5 h-5 text-rose-500" />
+                                <span className="text-rose-500 font-bold">Monthly Budget</span>
+                            </div>
+                            <span className="text-sm font-black text-rose-500">${pet?.budgetLimit || 500} Limit</span>
+                        </div>
+                        <div className="space-y-4">
+                            <div className="flex justify-between text-sm">
+                                <span className="text-rose-500/70">Expenditure</span>
+                                <span className="font-black text-rose-500">${totalSpent}</span>
+                            </div>
+                            <Progress 
+                                value={Math.min(100, (totalSpent / (pet?.budgetLimit || 500)) * 100)} 
+                                className="h-4 bg-rose-500/20" 
+                            />
+                            <p className="text-[10px] text-center text-rose-500/70 uppercase font-bold tracking-widest">
+                                {totalSpent > (pet?.budgetLimit || 500) ? 'OVER BUDGET!' : `${Math.floor(100 - (totalSpent / (pet?.budgetLimit || 500) * 100))}% safe margin`}
+                            </p>
+                        </div>
+                    </div>
+
                     {/* Learned Tricks */}
                     <div className="p-6 rounded-2xl bg-indigo-500/10 border border-indigo-500/20">
                         <div className="flex items-center gap-2 mb-4">
@@ -148,6 +203,21 @@ export default function StatsPage() {
                             Ledger & Transactions
                         </h2>
                         <span className="text-xs text-muted-foreground font-semibold bg-muted/50 px-3 py-1 rounded-full">{expenses.length} records</span>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                        {Object.entries(categoryBreakdown).map(([cat, amount]) => (
+                            <div key={cat} className="p-4 rounded-xl bg-card border border-border/50">
+                                <p className="text-[10px] font-black uppercase text-muted-foreground tracking-tighter mb-1">{cat}</p>
+                                <p className="font-bold text-sm">${amount}</p>
+                                <div className="w-full h-1 bg-muted rounded-full mt-2 overflow-hidden">
+                                    <div 
+                                        className="h-full bg-primary" 
+                                        style={{ width: `${Math.min(100, (amount / Math.max(1, totalSpent)) * 100)}%` }} 
+                                    />
+                                </div>
+                            </div>
+                        ))}
                     </div>
 
                     {expenses.length === 0 ? (

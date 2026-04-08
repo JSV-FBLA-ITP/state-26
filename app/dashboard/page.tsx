@@ -1,9 +1,25 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 'use client';
 
+/**
+ * PetPal Game Dashboard
+ * 
+ * The central component in the PetPal ecosystem. This file orchestrates:
+ * 1. State Management: Real-time pet statistics (hunger, happiness, health, energy).
+ * 2. Action Handling: Feeding, Playing, Training, and Medical care with budget constraints.
+ * 3. Monthly Progression: Processing time increments, income generation, and random events.
+ * 4. Modals & Overlays: Shop, Quizzes, Financial Stats, and Help modules.
+ * 
+ * FBLA Competitive Requirements addressed:
+ * - Interactive Virtual Pet caring logic.
+ * - Dynamic 3D visual feedback system.
+ * - Budgeting and Financial Responsibility (alert systems and expense categorization).
+ * - Multi-pet support logic.
+ */
+
 import { useState, useEffect, useCallback } from 'react';
-import { ActionType, getEmotionData, PetData, areRequiredActionsCompleted, ACTION_COSTS } from '@/lib/gameLogic';
-import { loadPet, savePetToCloud } from '@/lib/storage';
+import { ActionType, getEmotionData, PetData, areRequiredActionsCompleted, ACTION_COSTS, processNextMonth } from '@/lib/gameLogic';
+import { loadPet, savePetToCloud, saveExpense } from '@/lib/storage';
 import { PetDisplay } from '@/components/dashboard/PetDisplay';
 import { ShopOverlay } from '@/components/game/ShopOverlay';
 import { QuizOverlay } from '@/components/game/QuizOverlay';
@@ -12,7 +28,7 @@ import { OptionsOverlay } from '@/components/game/OptionsOverlay';
 import { createClient } from '@/utils/supabase/client';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { BarChart3, PawPrint, Calendar, ArrowRight, Wallet, TrendingUp, TrendingDown, Store, BrainCircuit, Settings, Heart, Utensils, Zap, Coffee, Moon, Sparkles, Stethoscope, LucideIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { BarChart3, PawPrint, Calendar, ArrowRight, Wallet, TrendingUp, TrendingDown, Store, BrainCircuit, Settings, Heart, Utensils, Zap, Coffee, Moon, Sparkles, Stethoscope, LucideIcon, ChevronLeft, ChevronRight, HelpCircle, X, Info } from 'lucide-react';
 
 function StatItem({ icon: Icon, value, color }: { icon: LucideIcon; value: number; color: string }) {
     const isLow = value < 30;
@@ -99,6 +115,8 @@ export default function DashboardPage() {
     const [loading, setLoading] = useState(true);
     const [gameOver, setGameOver] = useState(false);
     const [feedback, setFeedback] = useState<{ message: string; type: 'success' | 'warn' | 'info' | null }>({ message: '', type: null });
+    const [showHelp, setShowHelp] = useState(false);
+    const [monthlySummary, setMonthlySummary] = useState<any>(null);
     const [currentTab, setCurrentTab] = useState<TabView>('pet');
 
     const loadData = useCallback(async () => {
@@ -165,14 +183,25 @@ export default function DashboardPage() {
         return () => clearTimeout(timeout);
     }, [pet]);
 
+    /**
+     * Executes a pet care action (feed, play, train, etc.)
+     * Includes FBLA-required budget validation and categorization logic.
+     */
     const handleAction = (type: ActionType) => {
         if (!pet) return;
 
+        // 1. Financial check: Ensure user has sufficient virtual currency
         const cost = ACTION_COSTS[type];
         if ((pet.stats.money || 0) < cost) {
             setFeedback({ message: `Not enough money! Need $${cost}`, type: 'warn' });
             setTimeout(() => setFeedback({ message: '', type: null }), 3000);
             return;
+        }
+
+        // 2. FBLA Budget Compliance: Warn user if spending exceeds their monthly limit
+        const currentMonthExpenses = Object.values(pet.monthData.actionsCompleted).reduce((sum, count) => sum + (count * 10), 0);
+        if (currentMonthExpenses + cost > (pet.budgetLimit || 1000)) {
+             setFeedback({ message: `Budget Alert! You are exceeding your $${pet.budgetLimit} limit!`, type: 'warn' });
         }
 
         const newPet = { ...pet };
@@ -181,23 +210,32 @@ export default function DashboardPage() {
             play: 'happy',
             sleep: 'energy',
             clean: 'health',
-            healthCheck: 'health'
+            healthCheck: 'health',
+            train: 'happy'
         };
 
         const targetStat = statMap[type];
 
+        // 3. Dynamic Boost Calculation: Uses diminishing returns to encourage balanced care
         const { getDiminishedBoost, recordClickForStat } = require('@/lib/gameLogic');
         recordClickForStat(targetStat);
         const boost = getDiminishedBoost(targetStat, 15, newPet.stats[targetStat]);
 
+        // 4. Update state: Apply stat changes and deduct currency
         newPet.stats[targetStat] = Math.min(100, newPet.stats[targetStat] + boost);
         newPet.stats.money = (newPet.stats.money || 0) - cost;
         newPet.totalExpenses += cost;
         newPet.interactionCount += 1;
 
+        // 5. Track completion for fbla "Monthly Care Requirements"
         newPet.monthData.actionsCompleted[type] = (newPet.monthData.actionsCompleted[type] || 0) + 1;
 
         setPet({ ...newPet });
+
+        // 6. Persistence & Ledger: Record categorized expense for financial reporting
+        const { saveExpense } = require('@/lib/storage');
+        const { ACTION_CATEGORIES } = require('@/lib/gameLogic');
+        saveExpense(newPet.id, type.charAt(0).toUpperCase() + type.slice(1), cost, ACTION_CATEGORIES[type]);
 
         if (newPet.stats.health <= 0) {
             setGameOver(true);
@@ -225,8 +263,7 @@ export default function DashboardPage() {
             return;
         }
 
-        const { processNextMonth } = require('@/lib/gameLogic');
-        const nextPet = processNextMonth(pet);
+        const { pet: nextPet, emergencyCost, newTrick } = processNextMonth(pet);
 
         if (nextPet.stats.health <= 0) {
             setPet(nextPet);
@@ -234,9 +271,19 @@ export default function DashboardPage() {
             return;
         }
 
+        // Record emergency expense if it happened
+        if (emergencyCost > 0) {
+            saveExpense(nextPet.id, 'Vet Emergency', emergencyCost, 'Health');
+        }
+
         setPet(nextPet);
-        setFeedback({ message: `Welcome to Month ${nextPet.monthData.currentMonth}!`, type: 'success' });
-        setTimeout(() => setFeedback({ message: '', type: null }), 3000);
+        setMonthlySummary({
+            month: nextPet.monthData.currentMonth - 1,
+            income: nextPet.monthlyIncome || 0,
+            expenses: nextPet.monthlyExpenses || 0,
+            emergency: emergencyCost,
+            trick: newTrick
+        });
         savePetToCloud(nextPet);
     };
 
@@ -353,6 +400,14 @@ export default function DashboardPage() {
                                 )}
                             </div>
 
+                            <button 
+                                onClick={() => setShowHelp(true)}
+                                className="p-1 sm:p-2 rounded-lg sm:rounded-xl bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground transition-all shrink-0"
+                                title="How to Play"
+                            >
+                                <HelpCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+                            </button>
+
                             {/* Wallet */}
                             <div className="flex items-center gap-1.5 sm:gap-2 bg-primary/10 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl shrink-0">
                                 <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-primary" />
@@ -428,7 +483,8 @@ export default function DashboardPage() {
                                                 <ActionButton action="play" label="Play" cost={8} icon={Heart} color="text-emerald-500" onClick={() => handleAction('play')} />
                                                 <ActionButton action="sleep" label="Sleep" cost={6} icon={Moon} color="text-indigo-500" onClick={() => handleAction('sleep')} />
                                                 <ActionButton action="clean" label="Clean" cost={4} icon={Sparkles} color="text-cyan-500" onClick={() => handleAction('clean')} />
-                                                <ActionButton action="healthCheck" label="Health" cost={10} icon={Stethoscope} color="text-rose-500" onClick={() => handleAction('healthCheck')} />
+                                                <ActionButton action="healthCheck" label="Health" cost={25} icon={Stethoscope} color="text-rose-500" onClick={() => handleAction('healthCheck')} />
+                                                <ActionButton action="train" label="Train" cost={12} icon={BrainCircuit} color="text-indigo-400" onClick={() => handleAction('train')} />
                                             </div>
 
                                             {/* Required Tasks (if any) */}
@@ -604,6 +660,133 @@ export default function DashboardPage() {
                                 className="w-full py-4 text-base font-bold bg-rose-500 hover:bg-rose-600 text-white rounded-xl"
                             >
                                 Return to Pet Selection
+                            </Button>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+            <AnimatePresence>
+                {showHelp && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-6"
+                        onClick={() => setShowHelp(false)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.9, y: 20 }}
+                            className="bg-card w-full max-w-lg rounded-[2.5rem] p-8 sm:p-10 border border-white/20 shadow-2xl relative"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="flex items-center justify-between mb-6">
+                                <h2 className="text-2xl font-black flex items-center gap-3">
+                                    <HelpCircle className="w-6 h-6 text-primary" />
+                                    How to Play PetPal
+                                </h2>
+                                <button onClick={() => setShowHelp(false)} className="p-2 rounded-full hover:bg-muted transition-colors">
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
+
+                            <div className="space-y-6 overflow-y-auto max-h-[60vh] pr-2 scrollbar-hide">
+                                <div className="space-y-4">
+                                    <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20">
+                                        <h3 className="font-bold text-primary mb-1 italic">The Golden Rule</h3>
+                                        <p className="text-sm text-primary/80">Every action has a cost. Balance your pet&apos;s happiness with your personal savings goal to succeed.</p>
+                                    </div>
+                                    
+                                    <section>
+                                        <h4 className="font-bold text-sm uppercase tracking-widest text-muted-foreground mb-3 px-1">Core Concepts</h4>
+                                        <div className="grid gap-3">
+                                            <div className="flex gap-4 p-3 rounded-xl bg-muted/30">
+                                                <div className="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center shrink-0">
+                                                    <BrainCircuit className="w-4 h-4 text-orange-500" />
+                                                </div>
+                                                <p className="text-xs leading-relaxed"><span className="font-bold">Budgeting:</span> Watch the progress bar in stats. Exceeding your limit hurts your financial health score!</p>
+                                            </div>
+                                            <div className="flex gap-4 p-3 rounded-xl bg-muted/30">
+                                                <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center shrink-0">
+                                                    <Stethoscope className="w-4 h-4 text-blue-500" />
+                                                </div>
+                                                <p className="text-xs leading-relaxed"><span className="font-bold">Emergencies:</span> Vet visits are random and expensive. Always keep an &quot;Emergency Fund&quot; in your balance.</p>
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                    <section>
+                                        <h4 className="font-bold text-sm uppercase tracking-widest text-muted-foreground mb-3 px-1">Pro Tips</h4>
+                                        <ul className="space-y-2 list-disc pl-5 text-sm text-muted-foreground">
+                                            <li>Training your pet enough will unlock new tricks and traits.</li>
+                                            <li>Complete the monthly quiz for extra cash.</li>
+                                            <li>Don&apos;t let health hit 0, or your pet will have to go to a spa... forever!</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+
+                            <Button 
+                                onClick={() => setShowHelp(false)} 
+                                className="w-full mt-8 rounded-2xl font-black py-6 h-auto"
+                            >
+                                Got it, Boss!
+                            </Button>
+                        </motion.div>
+                    </motion.div>
+                )}
+            <AnimatePresence>
+                {monthlySummary && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[101] bg-black/60 backdrop-blur-sm flex items-center justify-center p-6"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            className="bg-card w-full max-w-sm rounded-[2.5rem] p-8 border border-white/20 shadow-2xl text-center"
+                        >
+                            <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Sparkles className="w-8 h-8 text-primary" />
+                            </div>
+                            <h2 className="text-2xl font-black mb-1">Month {monthlySummary.month} Complete!</h2>
+                            <p className="text-muted-foreground text-sm mb-6">Here is your financial and growth summary.</p>
+
+                            <div className="space-y-3 mb-8">
+                                <div className="flex justify-between items-center p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/10">
+                                    <span className="text-xs font-bold text-emerald-600">Net Savings</span>
+                                    <span className="font-black text-emerald-600">+${monthlySummary.income - monthlySummary.expenses}</span>
+                                </div>
+                                {monthlySummary.emergency > 0 && (
+                                    <div className="flex justify-between items-center p-3 rounded-xl bg-orange-500/5 border border-orange-500/10 text-left">
+                                        <div className="flex items-center gap-2">
+                                            <Stethoscope className="w-3.5 h-3.5 text-orange-500" />
+                                            <span className="text-xs font-bold text-orange-600 uppercase">Emergency Vet Trip</span>
+                                        </div>
+                                        <span className="font-black text-orange-600">-${monthlySummary.emergency}</span>
+                                    </div>
+                                )}
+                                {monthlySummary.trick && (
+                                    <div className="flex justify-between items-center p-3 rounded-xl bg-purple-500/5 border border-purple-500/10 text-left">
+                                        <div>
+                                            <p className="text-[10px] uppercase font-black text-purple-600 tracking-widest leading-none mb-1">New Skill Learned!</p>
+                                            <p className="font-black text-purple-700">{monthlySummary.trick}</p>
+                                        </div>
+                                        <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
+                                            <BrainCircuit className="w-4 h-4 text-purple-600" />
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            <Button 
+                                onClick={() => setMonthlySummary(null)}
+                                className="w-full rounded-2xl font-black py-4 h-auto shadow-lg shadow-primary/20"
+                            >
+                                Start Month {monthlySummary.month + 1}
                             </Button>
                         </motion.div>
                     </motion.div>

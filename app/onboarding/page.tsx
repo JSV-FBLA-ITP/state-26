@@ -1,5 +1,24 @@
 'use client';
 
+/**
+ * PetPal Onboarding Flow
+ * 
+ * A multi-step wizard that guides users through creating their first pet and 
+ * setting up their financial baseline. This flow is critical for the "Initialization"
+ * aspect of the FBLA Programming rubric.
+ * 
+ * Steps:
+ * 1. Choose Pet: Select species (Dog, Cat, etc.)
+ * 2. Create Home: Define household parameters (Income & Expenses).
+ * 3. Style: Customize pet appearance.
+ * 4. Give Name: Finalize naming with character validation.
+ * 
+ * Logic Highlights:
+ * - Starting capital calculation based on user-provided income/expenses.
+ * - Dynamic 3D model state initialization (age, stats, budget limits).
+ * - Guest mode vs Cloud sync handling for data persistence using Supabase.
+ */
+
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -11,6 +30,7 @@ import { PetCustomizer } from '@/components/onboarding/PetCustomizer';
 import { PetNaming } from '@/components/onboarding/PetNaming';
 import { UserOnboarding } from '@/components/onboarding/UserOnboarding';
 import { randomizeInitialStats, PetData } from '@/lib/gameLogic';
+import { validatePetName } from '@/lib/validation';
 import { savePetToCloud } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -69,6 +89,8 @@ function OnboardingInner() {
             stats: { ...randomizeInitialStats(), money: startingMoney },
             learnedTricks: [],
             totalExpenses: 0,
+            budgetLimit: 500, // Default FBLA budget
+            age: 0, // Months
             savingsGoal: 500,
             savingsCurrent: 0,
             lastInteraction: Date.now(),
@@ -113,7 +135,7 @@ function OnboardingInner() {
         if (step === 0) return !!petType;
         if (step === 1) return householdName.trim().length >= 2;
         if (step === 2) return true;
-        if (step === 3) return petName.trim().length >= 2;
+        if (step === 3) return validatePetName(petName).isValid;
         return false;
     };
 

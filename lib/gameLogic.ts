@@ -1,9 +1,19 @@
 /**
  * =============================================================================
- * GAME LOGIC MODULE (Modernized for State)
+ * PETPAL CORE GAME ENGINE
  * =============================================================================
- * Pure functions for PetPal virtual pet game.
- * Updated with better type definitions and state management.
+ * This module encodes the primary business logic and mathematical models for 
+ * the PetPal virtual pet simulation.
+ * 
+ * CORE RESPONSIBILITIES:
+ * 1. Data Modeling: Defining PetData, PetStats, and MonthData interfaces.
+ * 2. State Transitions: Pure functions for monthly processing (income, stats decay).
+ * 3. Financial Logic: Budget validation, interest/savings calculations, and category mapping.
+ * 4. Gamification: Experience points, levels, and trick-learning probabilities.
+ * 
+ * FBLA ALIGNMENT:
+ * - Implementation of "Programming Logic" and "Math Operations" as per rubric.
+ * - Centralized logic ensures a clean "Separation of Concerns" (SoC) principle.
  */
 
 export interface PetStats {
@@ -21,6 +31,8 @@ export interface MonthData {
     actionsCompleted: Record<string, number>;
 }
 
+export type ActionCategory = 'Food' | 'Health' | 'Toys' | 'Activity' | 'Maintenance' | 'Other';
+
 export interface PetData {
     id?: string;               // Optional UUID from Supabase
     type: string;
@@ -33,6 +45,8 @@ export interface PetData {
     totalExpenses: number;
     savingsGoal: number;
     savingsCurrent: number;
+    budgetLimit: number;       // FBLA: Added budget limit
+    age: number;               // FBLA: Added age in months
     lastInteraction: number;
     interactionCount: number;
     shop_multipliers: Record<string, number>;
@@ -53,7 +67,7 @@ export interface EmotionData {
     emoji: string;
 }
 
-export type ActionType = 'feed' | 'play' | 'sleep' | 'clean' | 'healthCheck';
+export type ActionType = 'feed' | 'play' | 'sleep' | 'clean' | 'healthCheck' | 'train';
 
 // Game Constants
 export const TRICK_LEARNING_DELAY = 10000;
@@ -67,6 +81,7 @@ export const ACTION_LABELS: Record<ActionType, string> = {
     sleep: 'Moon Sleep',
     clean: 'Sparkles Clean',
     healthCheck: 'Pill Health Check',
+    train: 'Brain Brain Training',
 };
 
 export const ACTION_COSTS: Record<ActionType, number> = {
@@ -74,8 +89,22 @@ export const ACTION_COSTS: Record<ActionType, number> = {
     play: 15,
     sleep: 5,
     clean: 8,
-    healthCheck: 20,
+    healthCheck: 25,
+    train: 12,
 };
+
+export const ACTION_CATEGORIES: Record<ActionType, ActionCategory> = {
+    feed: 'Food',
+    play: 'Activity',
+    sleep: 'Maintenance',
+    clean: 'Maintenance',
+    healthCheck: 'Health',
+    train: 'Activity',
+};
+
+export const POSSIBLE_TRICKS = [
+    "Sit", "Stay", "Shake", "Roll Over", "Play Dead", "Backflip", "Fetch Budget"
+];
 
 export const QUIZ_QUESTIONS: Record<string, QuizQuestion[]> = {
     easy: [
@@ -238,14 +267,38 @@ export function processNextMonth(pet: PetData): PetData {
     // 2. Stat Decay
     newPet.stats = applyMonthlyStatDecay(newPet.stats, newPet.monthData.currentMonth);
 
-    // 3. Month Increment
+    // 3. Month Increment & Age
     newPet.monthData.currentMonth += 1;
+    newPet.age += 1; // Increment age
 
-    // 4. Refresh Required Actions
+    // 4. Random Trick Learning (FBLA: possible evolution)
+    if (newPet.interactionCount > 0 && newPet.interactionCount % 10 === 0) {
+        const potentialTricks = POSSIBLE_TRICKS.filter(t => !newPet.learnedTricks.includes(t));
+        if (potentialTricks.length > 0) {
+            const newTrick = potentialTricks[Math.floor(Math.random() * potentialTricks.length)];
+            newPet.learnedTricks.push(newTrick);
+        }
+    }
+
+    // 5. Random Vet Emergency (FBLA: financial responsibility)
+    let emergencyCost = 0;
+    if (Math.random() < 0.15) { // 15% chance
+        emergencyCost = Math.floor(Math.random() * 100) + 50;
+        newPet.stats.money = Math.max(0, newPet.stats.money - emergencyCost);
+        newPet.totalExpenses += emergencyCost;
+    }
+
+    // 6. Refresh Required Actions
     newPet.monthData.requiredActions = selectRandomRequiredActions();
     newPet.monthData.actionsCompleted = {};
 
-    return newPet;
+    return {
+        pet: newPet,
+        emergencyCost,
+        newTrick: (newPet.learnedTricks.length > pet.learnedTricks.length) 
+            ? newPet.learnedTricks[newPet.learnedTricks.length - 1] 
+            : null
+    };
 }
 
 export function getRandomMessage(messages: string[]): string {

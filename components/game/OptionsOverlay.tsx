@@ -1,5 +1,12 @@
 'use client';
 
+/**
+ * PetPal Game: Options & Support Module
+ * 
+ * Provides structural controls for account management, game resets, 
+ * and accessibility help documentation.
+ */
+
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Settings2, LogOut, Save, Trash2, Home, Volume2, Moon, Sun, ArrowRight } from 'lucide-react';

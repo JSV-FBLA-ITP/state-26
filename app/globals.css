@@ -2,6 +2,27 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/**
+ * PetPal Global Styles & Design System
+ * 
+ * This file defines the visual language of PetPal.
+ * Consistent with modern UI/UX standards and FBLA professional presentation requirements.
+ * 
+ * CORE DESIGN TOKENS:
+ * - Coral (#FF6B47): Primary energy and action color.
+ * - Sage Green (#5A9A5A): Secondary growth and financial health color.
+ * - Warm Cream (#FFF8F3): Foundation for the light theme to reduce eye strain.
+ * 
+ * ANIMATION LIBRARY:
+ * - breathe-glow: Ambient feedback for the 3D pet zone.
+ * - float-paw: Dynamic background elements for user engagement.
+ * - card-lift: Interactive states for all dashboard components.
+ * 
+ * RESPONSIVE UTILITIES:
+ * - mobile-drawer: Handcrafted navigation for smaller screens.
+ * - game-screen-wrapper: Ensuring 100% viewport compliance across devices.
+ */
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

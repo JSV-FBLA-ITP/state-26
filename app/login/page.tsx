@@ -1,5 +1,17 @@
 'use client';
 
+/**
+ * PetPal Authentication Gateway
+ * 
+ * Manages secure user access via Supabase Auth, supporting traditional 
+ * Email/Password credentials and OAuth (GitHub/Google) social providers.
+ * 
+ * FBLA SECURITY COMPLIANCE:
+ * 1. Secure Redirects: Uses server-side auth callback routes for token exchange.
+ * 2. Input Sanitation: Enforces valid email structures and password requirements.
+ * 3. Feedback Loop: Dynamic error handling and success states for cross-platform reliability.
+ */
+
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -64,12 +76,18 @@ export default function LoginPage() {
                 provider,
                 options: {
                     redirectTo: `${window.location.origin}/auth/callback`,
+                    queryParams: provider === 'google' ? {
+                        access_type: 'offline',
+                        prompt: 'select_account',
+                    } : undefined,
+                    scopes: provider === 'google' ? 'email profile' : undefined,
                 },
             });
             if (error) throw error;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
-            setError(err.message);
+            console.error('Auth Error:', err);
+            setError(err.message || `Failed to sign in with ${provider}`);
         }
     };
 

@@ -1,5 +1,17 @@
 'use client';
 
+/**
+ * PetPal Game: Financial Literacy Quiz Engine
+ * 
+ * The primary educational vehicle of the application. 
+ * Presents multiple-choice questions on real-world banking, pet care costs, 
+ * and budgeting concepts.
+ * 
+ * EDUCATIONAL DESIGN:
+ * 1. Immediate Feedback: Highlights correct/incorrect answers with logic explanations.
+ * 2. Rewarded Learning: Granting in-game currency for successful performance to build positive financial habits.
+ */
+
 import { useState } from 'react';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { motion, AnimatePresence } from 'framer-motion';

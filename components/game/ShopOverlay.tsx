@@ -1,5 +1,12 @@
 'use client';
 
+/**
+ * PetPal Game: Upgrade & Shop Module
+ * 
+ * Manages the interactive storefront where users can purchase permanent stat-boosting 
+ * upgrades using game currency.
+ */
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { X, ShoppingCart, Zap, Heart, Utensils, Coffee, Coins } from 'lucide-react';

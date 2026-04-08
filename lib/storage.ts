@@ -1,13 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+
+/**
+ * PetPal Data Persistence Layer (Supabase + Local)
+ * 
+ * This module manages the synchronization of game state between the 
+ * client-side React state and the Supabase Postgres database.
+ * 
+ * Key Logic Elements:
+ * 1. Hybrid Storage: Uses LocalStorage for immediate UI responsiveness and 
+ *    Supabase for robust, cross-device cloud persistence.
+ * 2. Data Integrity: Ensures nested game objects (stats, monthData) are 
+ *    properly mapped to the relational database schema.
+ * 3. Ledger Management: Dynamically records every expense with category 
+ *    metadata, enabling the competitive "Financial Responsibility" features.
+ */
 import { PetData } from '@/lib/gameLogic';
 import { createClient } from '@/utils/supabase/client';
 const supabase = createClient();
-
-/**
- * Storage utility to handle data persistence via Supabase.
- * Includes fallback patterns and type safety.
- */
 
 export async function savePetToCloud(petData: PetData, explicitlyProvidedUserId?: string): Promise<{ data: any; error: any }> {
     const providedId = (petData as any).id;
@@ -51,6 +61,8 @@ export async function savePetToCloud(petData: PetData, explicitlyProvidedUserId?
             savings_current: petData.savingsCurrent || 0,
             monthly_income: petData.monthlyIncome,
             monthly_expenses: petData.monthlyExpenses,
+            budget_limit: petData.budgetLimit,
+            age: petData.age,
         };
 
         let result;
@@ -177,6 +189,8 @@ export async function loadPetFromCloud(petId: string): Promise<{ data: PetData |
             interactionCount: data.interaction_count || 0,
             monthlyIncome: data.monthly_income,
             monthlyExpenses: data.monthly_expenses,
+            budgetLimit: data.budget_limit || 100,
+            age: data.age || 0,
         };
 
         return { data: mappedData, error: null };
@@ -185,7 +199,7 @@ export async function loadPetFromCloud(petId: string): Promise<{ data: PetData |
     }
 }
 
-export async function saveExpense(petId: string, item: string, cost: number): Promise<void> {
+export async function saveExpense(petId: string, item: string, cost: number, category: string = 'Other'): Promise<void> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
@@ -193,7 +207,8 @@ export async function saveExpense(petId: string, item: string, cost: number): Pr
         pet_id: petId,
         user_id: user.id,
         item,
-        cost
+        cost,
+        category
     });
 }
 

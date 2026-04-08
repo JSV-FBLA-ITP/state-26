@@ -1,5 +1,18 @@
 'use client';
 
+/**
+ * User Profile Page
+ * 
+ * Displays the authenticated user's account details and high-level 
+ * progress statistics. 
+ * 
+ * Logic Highlights:
+ * - Supabase Authentication: Fetches the current session and user profile data dynamically.
+ * - Dynamic Stats: Displays membership duration, verification status, and recent activity.
+ * - Guard Rails: Automatic redirection to the login system for unauthenticated access.
+ * - UX Design: Clean, responsive overview of the player's identity in the PetPal ecosystem.
+ */
+
 import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { motion } from 'framer-motion';

@@ -30,7 +30,9 @@ CREATE TABLE IF NOT EXISTS public.pets (
     savings_goal     FLOAT NOT NULL DEFAULT 500.0,
     savings_current  FLOAT NOT NULL DEFAULT 0.0,
     monthly_income   FLOAT,
-    monthly_expenses FLOAT
+    monthly_expenses FLOAT,
+    budget_limit     FLOAT NOT NULL DEFAULT 500.0,
+    age              INTEGER NOT NULL DEFAULT 0
 );
 
 -- Add any missing columns to existing tables (safe to re-run)
@@ -39,6 +41,8 @@ ALTER TABLE public.pets ADD COLUMN IF NOT EXISTS household_name   TEXT;
 ALTER TABLE public.pets ADD COLUMN IF NOT EXISTS savings_current  FLOAT NOT NULL DEFAULT 0.0;
 ALTER TABLE public.pets ADD COLUMN IF NOT EXISTS monthly_income   FLOAT;
 ALTER TABLE public.pets ADD COLUMN IF NOT EXISTS monthly_expenses FLOAT;
+ALTER TABLE public.pets ADD COLUMN IF NOT EXISTS budget_limit     FLOAT NOT NULL DEFAULT 200.0;
+ALTER TABLE public.pets ADD COLUMN IF NOT EXISTS age              INTEGER NOT NULL DEFAULT 0;
 ALTER TABLE public.pets ADD COLUMN IF NOT EXISTS user_id          UUID REFERENCES auth.users(id) ON DELETE CASCADE;
 
 -- Indexes

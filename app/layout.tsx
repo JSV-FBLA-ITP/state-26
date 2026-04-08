@@ -1,4 +1,16 @@
 import type { Metadata, Viewport } from 'next';
+
+/**
+ * Root Layout
+ * 
+ * Provides the global HTML structure, fonts, and core provider wrappers
+ * for the PetPal application. 
+ * 
+ * Injected Components:
+ * - ThemeProvider: Handles Light/Dark mode switching (accessible branding).
+ * - ClientLayout: Manages client-side logic and persistence initializations.
+ * - Managed Metadata: SEO and social sharing optimization (Professional requirement).
+ */
 import { Nunito, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/ThemeProvider';

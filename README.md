@@ -1,4 +1,5 @@
-# 🐾 PetPal — Nurture Your Pet, Master Your Money
+# 🐾 PetPal — FBLA 2025-2026 Competitive Project
+### Topic: Virtual Pet (Financial Literacy / Intro to Programming)
 
 
 
@@ -10,15 +11,14 @@ PetPal is a virtual pet simulator built around **financial literacy**. Players e
 
 | Feature | Description |
 |---|---|
-| **Interactive Virtual Pet** | A real-time 3D dog (Three.js) that floats, wags its tail, and tracks your mouse cursor |
-| **AI Pet Customization** | Generate unique pet appearances via the Hugging Face API (Stable Diffusion) |
-| **Financial Literacy Gameplay** | Budget, earn, and spend in-game currency; complete financial quizzes to level up |
-| **Dashboard & Stats** | Sidebar showing pet health, happiness, hunger, and level progression |
-| **Shop Overlay** | Buy food, toys, and accessories using earned in-game currency |
-| **Quiz Overlay** | Answer financial literacy questions to earn coins and XP |
-| **Cloud Persistence** | User accounts and pet data saved to Supabase; pick up where you left off on any device |
-| **Dark / Light Mode** | Full theme support via `next-themes` |
-| **Onboarding Flow** | Step-by-step pet creation and account setup |
+| **Reactive 3D Model** | Interactive Dog (Three.js/R3F) that reflects current **happiness, energy, and growth (age)** |
+| **Financial Responsibility** | Integrated cost-of-care system with **budget limits, emergency expenses, and monthly reports** |
+| **Trait Evolution** | Pets learn new tricks (Evolution History) as you interact and train them |
+| **Categorized Ledger** | Detailed transaction history with **Food, Health, and Activity** expense categorization |
+| **Educational Quizzes** | Built-in financial literacy test to earn bonus currency |
+| **User Guidance** | Interactive "How to Play" system for a smooth educational experience |
+| **Robust Validation** | Syntactic and semantic input validation to ensure high software quality standards |
+| **Cloud Persistence** | Real-time Supabase sync for all pet stats, ledger items, and learned traits |
 
 ---
 

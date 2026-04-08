@@ -1,5 +1,12 @@
 'use client';
 
+/**
+ * PetPal Game: Financial Records & Stats
+ * 
+ * Aggregates game data into a professional dashboard format to demonstrate 
+ * financial tracking capabilities.
+ */
+
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/no-unescaped-entities */
 import { motion, AnimatePresence } from 'framer-motion';

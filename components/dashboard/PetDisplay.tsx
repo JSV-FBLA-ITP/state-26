@@ -1,9 +1,22 @@
 'use client';
 
+/**
+ * PetPal Dashboard: Pet Visualization Engine
+ * 
+ * Responsible for the real-time visual representation of the pet's state. 
+ * Integrates 3D models via Pet3DView and provides status-based visual effects.
+ * 
+ * DESIGN FEATURES:
+ * 1. Emotion-Driven Styling: Changes borders, glows, and background lints based on happiness level.
+ * 2. Death State Handling: Implements a "grayscale" mortality toggle to communicate the 'Game Over' status clearly.
+ * 3. Responsive Framing: Optimized aspect ratios to ensure the pet remains fixed and legible on all screen sizes.
+ */
+
 import { motion } from 'framer-motion';
 import { PetData, EmotionData } from '@/lib/gameLogic';
 import Image from 'next/image';
 import * as Icons from 'lucide-react';
+import { Pet3DView } from './Pet3DView';
 
 interface Props {
     pet: PetData;
@@ -26,23 +39,12 @@ export function PetDisplay({ pet, emotion, isGameOver }: Props) {
                 <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-6 rounded-[100%] blur-lg ${isGameOver ? 'bg-rose-500/15' : 'bg-black/8'}`} />
 
                 <motion.div
-                    animate={isGameOver ? {} : {
-                        y: [0, -10, 0],
-                    }}
-                    transition={isGameOver ? {} : {
-                        duration: 4,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                    }}
-                    className={`relative w-full h-full rounded-[2rem] overflow-hidden border-[3px] shadow-2xl bg-white transition-all duration-300 ${isGameOver ? 'border-rose-500/60 grayscale' : 'border-white/80 dark:border-white/20'}`}
+                    className={`relative w-full h-full rounded-[2rem] overflow-hidden border-[3px] shadow-2xl bg-gradient-to-b from-white to-slate-50 dark:from-slate-900 dark:to-card transition-all duration-300 ${isGameOver ? 'border-rose-500/60 grayscale' : 'border-white/80 dark:border-white/20'}`}
                 >
-                    <Image
-                        src={pet.petImage}
-                        alt={pet.name}
-                        fill
-                        className="object-contain"
-                        priority
-                        unoptimized
+                    <Pet3DView 
+                        stats={pet.stats} 
+                        age={pet.age} 
+                        isGameOver={isGameOver} 
                     />
                 </motion.div>
             </div>

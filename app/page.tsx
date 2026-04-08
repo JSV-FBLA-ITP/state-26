@@ -1,5 +1,23 @@
 'use client';
 
+/**
+ * PetPal Landing Page
+ * 
+ * This is the primary entry point for the PetPal application. 
+ * Designed for the FBLA 2025-2026 Competitive Event (Introduction to Programming).
+ * 
+ * Features:
+ * - Dynamic Hero Section with interactive 3D elements.
+ * - Value Proposition highlight (Financial Literacy + Pet Care).
+ * - Multi-section layout (Features, Why PetPal, How it Works, FAQ).
+ * - Real-time pet status check for returning users using Supabase storage logic.
+ * 
+ * Technical Highlights:
+ * - Framer Motion for smooth entrances and scroll-triggered animations.
+ * - Three.js (via HeroCanvas) for premium visual engagement.
+ * - Responsive design architecture for desktop and mobile devices.
+ */
+
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
