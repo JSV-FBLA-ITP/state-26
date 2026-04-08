@@ -77,8 +77,11 @@ export function ChatbaseWidget() {
     }
   }, []);
 
-  const handleChatClick = () => {
-    if (!isAuthenticated) {
+  const handleChatClick = async () => {
+    const supabase = createClient();
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
       setShowAuthModal(true);
       return;
     }
@@ -88,6 +91,13 @@ export function ChatbaseWidget() {
   useEffect(() => {
     if (isAuthenticated) {
       loadChatbase();
+    } else {
+      const chatbaseElements = document.querySelectorAll('#chatbase-bubble, #chatbase-message-container, iframe[src*="chatbase.co"]');
+      chatbaseElements.forEach(el => el.remove());
+      const existingScript = document.getElementById('yNvNySL5dk4GONkyHXlUH');
+      if (existingScript) {
+        existingScript.remove();
+      }
     }
   }, [isAuthenticated, loadChatbase]);
 

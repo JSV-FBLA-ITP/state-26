@@ -63,7 +63,13 @@ function OnboardingInner() {
         }
     };
 
-    const handleBack = () => setStep((s) => Math.max(0, s - 1));
+    const handleBack = () => {
+        if (step === 0) {
+            router.push('/');
+        } else {
+            setStep((s) => Math.max(0, s - 1));
+        }
+    };
 
     const handleFinalize = async (isGuest = false) => {
         setIsSubmitting(true);
@@ -362,7 +368,7 @@ function OnboardingInner() {
                         <Button
                             variant="ghost"
                             onClick={handleBack}
-                            disabled={step === 0 || isSubmitting}
+                            disabled={isSubmitting}
                             className="rounded-2xl h-14 px-8 font-black gap-2 hover:bg-muted"
                         >
                             <ChevronLeft className="w-5 h-5" /> Back
