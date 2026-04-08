@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
+import { MessageCircle } from 'lucide-react';
+import { AuthModal } from '@/components/auth/AuthModal';
 
 declare global {
   interface Window {
@@ -14,16 +16,16 @@ declare global {
 
 export function ChatbaseWidget() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
 
-    // Check initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsAuthenticated(!!session);
     });
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsAuthenticated(!!session);
     });
@@ -33,7 +35,12 @@ export function ChatbaseWidget() {
     };
   }, []);
 
-  useEffect(() => {
+  const loadChatbase = () => {
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+      return;
+    }
+
     const chatbaseElements = document.querySelectorAll('#chatbase-bubble, #chatbase-message-container, iframe[src*="chatbase.co"]');
     chatbaseElements.forEach(el => el.remove());
 
@@ -44,12 +51,7 @@ export function ChatbaseWidget() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).chatbase = undefined;
 
-    if (!isAuthenticated) {
-      return;
-    }
-
     const chatbaseFn = (...args: unknown[]) => {
-      // Create chatbase if it doesn't exist to avoid undefined error on q
       if (!window.chatbase) {
         window.chatbase = chatbaseFn as Window['chatbase'];
       }
@@ -77,9 +79,38 @@ export function ChatbaseWidget() {
       script.id = 'yNvNySL5dk4GONkyHXlUH';
       script.setAttribute('domain', 'www.chatbase.co');
       script.defer = true;
+      script.onload = () => setIsLoaded(true);
       document.body.appendChild(script);
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadChatbase();
     }
   }, [isAuthenticated]);
 
-  return null;
+  if (isAuthenticated) {
+    return null;
+  }
+
+  return (
+    <>
+      <button
+        onClick={loadChatbase}
+        className="fixed bottom-6 right-6 z-50 w-16 h-16 bg-primary hover:bg-primary/90 rounded-full flex items-center justify-center shadow-2xl shadow-primary/50 transition-all hover:scale-110 active:scale-95"
+        aria-label="Open AI Chatbot"
+      >
+        <MessageCircle className="w-7 h-7 text-primary-foreground" />
+      </button>
+
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        featureName="AI Chatbot"
+        title="Sign in to chat with your AI assistant"
+        description="Connect your PetPal account to chat with your AI-powered financial assistant. We'll help you learn about money management while taking care of your virtual pet!"
+      />
+    </>
+  );
 }
