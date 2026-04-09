@@ -25,12 +25,12 @@ export default function TermsPage() {
                 <div className="prose prose-slate dark:prose-invert max-w-none space-y-6 text-[var(--muted-foreground)]">
                     <section>
                         <h2 className="text-xl font-bold text-[var(--foreground)] mb-2">1. Educational Use Only</h2>
-                        <p>PetPal is a prototype application created for the FBLA State Leadership Conference. It is intended for educational and competitive purposes only.</p>
+                        <p>PetPal is a prototype application created for the FBLA State Leadership Conference. It is intended for educational and competitive purposes only. By using PetPal, you agree to follow our code of conduct. We reserve the right to suspend accounts that engage in &quot;farming&quot; or other activities that undermine the educational intent of the competition demo.</p>
                     </section>
 
                     <section>
                         <h2 className="text-xl font-bold text-[var(--foreground)] mb-2">2. No Real Financial Advice</h2>
-                        <p>All financial data, calculations, and "savings" represented in this app are purely simulated. They do not constitute financial advice.</p>
+                        <p>All financial data, calculations, and &quot;savings&quot; represented in this app are purely simulated. They do not constitute financial advice.</p>
                     </section>
 
                     <section>

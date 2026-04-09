@@ -115,6 +115,8 @@ function OnboardingInner() {
             monthData: { currentMonth: 1, requiredActions: [], actionsCompleted: {} },
             monthlyIncome,
             monthlyExpenses,
+            chatbot_count: 0,
+            image_gen_count: 0,
         };
 
         try {

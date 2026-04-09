@@ -272,7 +272,7 @@ export default function DashboardPage() {
         }
 
         // Record emergency expense if it happened
-        if (emergencyCost > 0) {
+        if (emergencyCost > 0 && nextPet.id) {
             saveExpense(nextPet.id, 'Vet Emergency', emergencyCost, 'Health');
         }
 

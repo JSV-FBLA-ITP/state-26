@@ -10,7 +10,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/no-unescaped-entities */
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, History, TrendingUp, Award, ReceiptText, BarChart3, Target } from 'lucide-react';
+import { X, History, TrendingUp, Award, ReceiptText, BarChart3, Target, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PetData } from '@/lib/gameLogic';
 import { Progress } from '@/components/ui/progress';
@@ -96,8 +96,14 @@ export function StatsOverlay({ isOpen, onClose, pet, onUpdatePet, inline }: Prop
                         <p className="text-xs text-muted-foreground mt-1">Lifetime care investment</p>
                     </div>
                 </div>
-
-                        <span className="text-sm font-black text-yellow">${pet.savingsGoal} Goal</span>
+                {/* Savings & Budget Section */}
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <Target className="w-5 h-5 text-emerald-500" />
+                            <h3 className="font-bold">Savings & Budget</h3>
+                        </div>
+                        <span className="text-sm font-black text-emerald-500">${pet.savingsGoal} Goal</span>
                     </div>
                     <div className="p-6 rounded-3xl bg-card border-2 space-y-4">
                         <div className="flex items-center justify-between gap-4 mb-2">
@@ -136,6 +142,34 @@ export function StatsOverlay({ isOpen, onClose, pet, onUpdatePet, inline }: Prop
                         <p className="text-[10px] text-center text-muted-foreground uppercase font-bold tracking-widest">
                             {savingsProgress >= 100 ? 'Goal Reached!' : `${Math.floor(100 - savingsProgress)}% remaining to target`}
                         </p>
+
+                        {/* AI Usage Limits */}
+                        <div className="pt-4 border-t border-border/10">
+                            <div className="flex items-center gap-2 mb-3">
+                                <Sparkles className="w-4 h-4 text-fuchsia-400" />
+                                <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Demo AI Limitations</h3>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3 text-[11px]">
+                                <div className="p-3 rounded-xl bg-card/40 border border-border/40 flex flex-col gap-1">
+                                    <span className="text-muted-foreground uppercase font-black text-[9px]">AI Assistant</span>
+                                    <div className="flex justify-between items-center">
+                                        <span className={pet.chatbot_count >= 3 ? "text-rose-500 font-black" : "font-black"}>
+                                            {pet.chatbot_count}/3 Used
+                                        </span>
+                                        {pet.chatbot_count >= 3 ? <X className="w-3 h-3 text-rose-500" /> : <div className="w-2 h-2 rounded-full bg-primary" />}
+                                    </div>
+                                </div>
+                                <div className="p-3 rounded-xl bg-card/40 border border-border/40 flex flex-col gap-1">
+                                    <span className="text-muted-foreground uppercase font-black text-[9px]">Image Mirror</span>
+                                    <div className="flex justify-between items-center">
+                                        <span className={pet.image_gen_count >= 3 ? "text-rose-500 font-black" : "font-black"}>
+                                            {pet.image_gen_count}/3 Used
+                                        </span>
+                                        {pet.image_gen_count >= 3 ? <X className="w-3 h-3 text-rose-500" /> : <div className="w-2 h-2 rounded-full bg-fuchsia-500" />}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

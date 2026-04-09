@@ -47,7 +47,9 @@ export default function MyPetsPage() {
             ...pet,
             name: editingName,
             petImage: pet.image_url || pet.petImage,
-            monthData: pet.month_data || pet.monthData
+            monthData: pet.month_data || pet.monthData,
+            chatbot_count: pet.chatbot_count || 0,
+            image_gen_count: pet.image_gen_count || 0
         };
 
         const { error } = await savePetToCloud(dataToSave);

@@ -41,6 +41,12 @@ const ACTION_COLORS: Record<ActionType, { bg: string; activeBg: string; text: st
         text: 'text-emerald-500',
         glow: 'shadow-emerald-500/30',
     },
+    train: {
+        bg: 'bg-purple-500/10 hover:bg-purple-500/20 border-purple-500/20 hover:border-purple-500/50',
+        activeBg: 'bg-purple-500 border-purple-500 ring-4 ring-purple-500/25',
+        text: 'text-purple-500',
+        glow: 'shadow-purple-500/30',
+    },
 };
 
 export function ActionGrid({ onAction }: Props) {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/utils/supabase/client';
 import { AuthModal } from '@/components/auth/AuthModal';
+import { checkAIUsage, incrementAIUsage } from '@/lib/aiLimit';
 
 interface Props {
     petType: string;
@@ -28,6 +29,12 @@ export function PetCustomizer({ petType, image, onImageChange }: Props) {
     const [isGenerating, setIsGenerating] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+    const [remainingUses, setRemainingUses] = useState<number | null>(null);
+
+    // Initial check for usage
+    useEffect(() => {
+        checkAIUsage('image_gen').then(res => setRemainingUses(res.remaining));
+    }, []);
 
     const generateImage = async () => {
         const trimmedPrompt = prompt.trim();
@@ -38,6 +45,14 @@ export function PetCustomizer({ petType, image, onImageChange }: Props) {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) {
             setIsAuthModalOpen(true);
+            return;
+        }
+
+        // Check limits
+        const { allowed } = await checkAIUsage('image_gen');
+        if (!allowed) {
+            setError("You have reached your limit of 3 AI image generations for this account.");
+            setRemainingUses(0);
             return;
         }
 
@@ -59,6 +74,9 @@ export function PetCustomizer({ petType, image, onImageChange }: Props) {
             }
 
             onImageChange(data.imageUrl);
+            await incrementAIUsage('image_gen');
+            const status = await checkAIUsage('image_gen');
+            setRemainingUses(status.remaining);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
         } finally {
@@ -80,7 +98,12 @@ export function PetCustomizer({ petType, image, onImageChange }: Props) {
                 <div>
                     <h2 className="text-xl font-black tracking-tight text-foreground leading-tight">Style Your Friend</h2>
                     <p className="text-muted-foreground text-xs">
-                        Use our AI mirror to create a unique look for your {petType}.
+                        Use our AI mirror to create a unique look for your {petType}. 
+                        {remainingUses !== null && (
+                            <span className={remainingUses === 0 ? "text-rose-500 font-bold ml-1" : "text-primary font-bold ml-1"}>
+                                ({remainingUses} uses remaining)
+                            </span>
+                        )}
                     </p>
                 </div>
             </div>

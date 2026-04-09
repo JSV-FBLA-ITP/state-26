@@ -63,6 +63,8 @@ export async function savePetToCloud(petData: PetData, explicitlyProvidedUserId?
             monthly_expenses: petData.monthlyExpenses,
             budget_limit: petData.budgetLimit,
             age: petData.age,
+            chatbot_count: petData.chatbot_count || 0,
+            image_gen_count: petData.image_gen_count || 0,
         };
 
         let result;
@@ -191,6 +193,8 @@ export async function loadPetFromCloud(petId: string): Promise<{ data: PetData |
             monthlyExpenses: data.monthly_expenses,
             budgetLimit: data.budget_limit || 100,
             age: data.age || 0,
+            chatbot_count: data.chatbot_count || 0,
+            image_gen_count: data.image_gen_count || 0,
         };
 
         return { data: mappedData, error: null };

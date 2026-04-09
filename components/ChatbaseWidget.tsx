@@ -1,9 +1,11 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { MessageCircle } from 'lucide-react';
 import { AuthModal } from '@/components/auth/AuthModal';
+import { motion } from 'framer-motion';
+import { checkAIUsage, incrementAIUsage } from '@/lib/aiLimit';
 
 declare global {
   interface Window {
@@ -17,6 +19,7 @@ declare global {
 export function ChatbaseWidget() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const constraintsRef = useRef(null);
 
   useEffect(() => {
     const supabase = createClient();
@@ -35,6 +38,7 @@ export function ChatbaseWidget() {
   }, []);
 
   const loadChatbase = useCallback(() => {
+    // Clean up existing elements if any
     const chatbaseElements = document.querySelectorAll('#chatbase-bubble, #chatbase-message-container, iframe[src*="chatbase.co"]');
     chatbaseElements.forEach(el => el.remove());
 
@@ -78,14 +82,38 @@ export function ChatbaseWidget() {
   }, []);
 
   const handleChatClick = async () => {
-    const supabase = createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    
-    if (!session) {
+    if (!isAuthenticated) {
       setShowAuthModal(true);
       return;
     }
-    loadChatbase();
+
+    const { allowed } = await checkAIUsage('chatbot');
+    
+    if (!allowed) {
+      alert("You have reached your limit of 3 AI assistant uses! This feature is restricted for the competition demo.");
+      return;
+    }
+    
+    // Toggle Chatbase
+    if (window.chatbase) {
+      // Chatbase API: 'open' opens the chat window
+      try {
+        window.chatbase('open');
+        await incrementAIUsage('chatbot');
+      } catch (e) {
+        console.warn('Chatbase not ready, attempting reload', e);
+        loadChatbase();
+      }
+    } else {
+      loadChatbase();
+      // Wait a bit for load then open
+      setTimeout(async () => {
+        try {
+          window.chatbase('open');
+          await incrementAIUsage('chatbot');
+        } catch (e) { console.error(e); }
+      }, 1000);
+    }
   };
 
   useEffect(() => {
@@ -101,19 +129,30 @@ export function ChatbaseWidget() {
     }
   }, [isAuthenticated, loadChatbase]);
 
-  if (isAuthenticated) {
-    return null;
-  }
-
   return (
     <>
-      <button
+      <style dangerouslySetInnerHTML={{ __html: `
+        #chatbase-bubble {
+          display: none !important;
+        }
+      `}} />
+
+      {/* Invisible container to define drag boundaries (viewport) */}
+      <div ref={constraintsRef} className="fixed inset-0 pointer-events-none z-[49]" />
+
+      <motion.button
+        drag
+        dragConstraints={constraintsRef}
+        dragMomentum={false}
+        dragElastic={0.1}
         onClick={handleChatClick}
-        className="fixed bottom-28 md:bottom-6 right-4 md:right-6 z-50 w-14 h-14 md:w-16 md:h-16 bg-primary hover:bg-primary/90 rounded-full flex items-center justify-center shadow-2xl shadow-primary/50 transition-all hover:scale-110 active:scale-95"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+        className="fixed bottom-28 md:bottom-6 right-4 md:right-6 z-50 w-14 h-14 md:w-16 md:h-16 bg-primary rounded-full flex items-center justify-center shadow-2xl shadow-primary/50 cursor-grab active:cursor-grabbing"
         aria-label="Open AI Chatbot"
       >
         <MessageCircle className="w-7 h-7 text-primary-foreground" />
-      </button>
+      </motion.button>
 
       <AuthModal
         isOpen={showAuthModal}
@@ -125,3 +164,4 @@ export function ChatbaseWidget() {
     </>
   );
 }
+

@@ -47,6 +47,8 @@ export interface PetData {
     savingsCurrent: number;
     budgetLimit: number;       // FBLA: Added budget limit
     age: number;               // FBLA: Added age in months
+    chatbot_count: number;     // AI restriction
+    image_gen_count: number;   // AI restriction
     lastInteraction: number;
     interactionCount: number;
     shop_multipliers: Record<string, number>;
@@ -255,7 +257,7 @@ export function applyMonthlyStatDecay(stats: PetStats, currentMonth: number): Pe
     return newStats;
 }
 
-export function processNextMonth(pet: PetData): PetData {
+export function processNextMonth(pet: PetData): { pet: PetData; emergencyCost: number; newTrick: string | null } {
     const newPet = { ...pet };
     const income = pet.monthlyIncome || 0;
     const expenses = pet.monthlyExpenses || 0;
