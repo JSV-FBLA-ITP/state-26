@@ -519,7 +519,13 @@ export default function DashboardPage() {
                                     className="flex-1 min-h-0 flex flex-col w-full max-w-4xl xl:max-w-5xl mx-auto items-center justify-center p-4 sm:p-6 lg:p-8"
                                 >
                                     <div className="w-full h-full flex flex-col bg-card/60 backdrop-blur-xl border border-border/40 rounded-3xl overflow-hidden shadow-2xl">
-                                        <StatsOverlay isOpen={true} onClose={() => { }} pet={pet} inline={true} />
+                                        <StatsOverlay 
+                                            isOpen={true} 
+                                            onClose={() => { }} 
+                                            pet={pet} 
+                                            inline={true} 
+                                            onUpdatePet={(updates) => setPet(prev => prev ? { ...prev, ...updates } : null)}
+                                        />
                                     </div>
                                 </motion.div>
                             )}
@@ -736,6 +742,7 @@ export default function DashboardPage() {
                         </motion.div>
                     </motion.div>
                 )}
+            </AnimatePresence>
             <AnimatePresence>
                 {monthlySummary && (
                     <motion.div

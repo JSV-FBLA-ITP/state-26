@@ -30,7 +30,7 @@ import { PetCustomizer } from '@/components/onboarding/PetCustomizer';
 import { PetNaming } from '@/components/onboarding/PetNaming';
 import { UserOnboarding } from '@/components/onboarding/UserOnboarding';
 import { randomizeInitialStats, PetData } from '@/lib/gameLogic';
-import { validatePetName } from '@/lib/validation';
+import { validatePetName, validateCurrency } from '@/lib/validation';
 import { savePetToCloud } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -50,14 +50,23 @@ function OnboardingInner() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isFinishing, setIsFinishing] = useState(false);
     const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+    const [validationError, setValidationError] = useState<string | null>(null);
 
     const router = useRouter();
     const searchParams = useSearchParams();
     const preselectedHousehold = searchParams.get('household') || undefined;
 
     const handleNext = () => {
+        const validation = canAdvance();
+        if (!validation.isValid) {
+            setValidationError(validation.message);
+            setTimeout(() => setValidationError(null), 4000);
+            return;
+        }
+
         if (step < STEPS.length - 1) {
             setStep(s => s + 1);
+            setValidationError(null);
         } else {
             handleFinalize();
         }
@@ -137,12 +146,22 @@ function OnboardingInner() {
         }
     };
 
-    const canAdvance = () => {
-        if (step === 0) return !!petType;
-        if (step === 1) return householdName.trim().length >= 2;
-        if (step === 2) return true;
-        if (step === 3) return validatePetName(petName).isValid;
-        return false;
+    const canAdvance = (): { isValid: boolean; message: string } => {
+        if (step === 0) return { isValid: !!petType, message: "Please select a pet type." };
+        if (step === 1) {
+            if (householdName.trim().length < 2) return { isValid: false, message: "Household name is too short." };
+            
+            const incomeVal = validateCurrency(monthlyIncome, "Monthly Income");
+            if (!incomeVal.isValid) return incomeVal;
+
+            const expenseVal = validateCurrency(monthlyExpenses, "Monthly Expenses");
+            if (!expenseVal.isValid) return expenseVal;
+
+            return { isValid: true, message: "" };
+        }
+        if (step === 2) return { isValid: true, message: "" };
+        if (step === 3) return validatePetName(petName);
+        return { isValid: false, message: "Unknown step" };
     };
 
     if (isFinishing) {
@@ -363,6 +382,21 @@ function OnboardingInner() {
                         </AnimatePresence>
                     </div>
 
+                    {/* Validation Error Feedback */}
+                    <AnimatePresence>
+                        {validationError && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className="bg-rose-50 border border-rose-200 p-4 rounded-2xl mb-4 flex items-center gap-3 text-rose-600 font-bold text-sm"
+                            >
+                                <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                                {validationError}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
                     {/* Navigation Buttons - Now Inside Modal */}
                     <div className="flex items-center justify-between mt-12 pt-8 border-t border-border/10 shrink-0">
                         <Button
@@ -376,8 +410,8 @@ function OnboardingInner() {
 
                         <Button
                             onClick={handleNext}
-                            disabled={!canAdvance() || isSubmitting}
-                            className={`rounded-2xl h-14 px-10 font-black gap-2 transition-all transform hover:scale-105 active:scale-95 shadow-xl ${canAdvance() ? 'bg-primary shadow-primary/30' : 'bg-muted'}`}
+                            disabled={!canAdvance().isValid || isSubmitting}
+                            className={`rounded-2xl h-14 px-10 font-black gap-2 transition-all transform hover:scale-105 active:scale-95 shadow-xl ${canAdvance().isValid ? 'bg-primary shadow-primary/30' : 'bg-muted'}`}
                         >
                             {isSubmitting ? (
                                 <>Creating Magic... <RefreshCw className="w-5 h-5 animate-spin" /></>

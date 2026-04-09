@@ -27,6 +27,7 @@ import {
     Loader2, 
     CheckCircle2
 } from 'lucide-react';
+import { validateEmail, validatePassword } from '@/lib/validation';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -42,6 +43,21 @@ export default function LoginPage() {
         e.preventDefault();
         setLoading(true);
         setError(null);
+
+        // Client-side validation for immediate feedback (FBLA Rubric compliance)
+        const emailValidation = validateEmail(email);
+        if (!emailValidation.isValid) {
+            setError(emailValidation.message);
+            setLoading(false);
+            return;
+        }
+
+        const passwordValidation = validatePassword(password);
+        if (!passwordValidation.isValid) {
+            setError(passwordValidation.message);
+            setLoading(false);
+            return;
+        }
 
         try {
             if (mode === 'signup') {

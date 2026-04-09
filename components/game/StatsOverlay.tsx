@@ -14,16 +14,36 @@ import { X, History, TrendingUp, Award, ReceiptText, BarChart3, Target } from 'l
 import { Button } from '@/components/ui/button';
 import { PetData } from '@/lib/gameLogic';
 import { Progress } from '@/components/ui/progress';
+import { Input } from '@/components/ui/input';
+import { validateBudgetLimit, validateCurrency } from '@/lib/validation';
+import { useState } from 'react';
 
 interface Props {
     isOpen: boolean;
     onClose: () => void;
     pet: PetData;
+    onUpdatePet?: (updates: Partial<PetData>) => void;
     inline?: boolean;
 }
 
-export function StatsOverlay({ isOpen, onClose, pet, inline }: Props) {
+export function StatsOverlay({ isOpen, onClose, pet, onUpdatePet, inline }: Props) {
+    const [editingLimit, setEditingLimit] = useState(false);
+    const [newLimit, setNewLimit] = useState(pet.budgetLimit?.toString() || '1000');
+    const [editError, setEditError] = useState<string | null>(null);
+
     const savingsProgress = (pet.savingsCurrent / pet.savingsGoal) * 100;
+
+    const handleUpdateLimit = () => {
+        const val = parseInt(newLimit);
+        const validation = validateBudgetLimit(val);
+        if (!validation.isValid) {
+            setEditError(validation.message);
+            return;
+        }
+        onUpdatePet?.({ budgetLimit: val });
+        setEditingLimit(false);
+        setEditError(null);
+    };
 
     if (!isOpen && !inline) return null;
 
@@ -77,16 +97,37 @@ export function StatsOverlay({ isOpen, onClose, pet, inline }: Props) {
                     </div>
                 </div>
 
-                {/* Savings Track */}
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <Target className="w-5 h-5 text-yellow" />
-                            <h3 className="font-bold">Next Milestone</h3>
-                        </div>
                         <span className="text-sm font-black text-yellow">${pet.savingsGoal} Goal</span>
                     </div>
                     <div className="p-6 rounded-3xl bg-card border-2 space-y-4">
+                        <div className="flex items-center justify-between gap-4 mb-2">
+                            <div className="flex flex-col">
+                                <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Monthly Budget Limit</p>
+                                <p className="text-lg font-black text-foreground">${pet.budgetLimit || 1000}</p>
+                            </div>
+                            {editingLimit ? (
+                                <div className="flex items-center gap-2">
+                                    <div className="relative">
+                                        <Input
+                                            type="number"
+                                            value={newLimit}
+                                            onChange={(e) => setNewLimit(e.target.value)}
+                                            className="w-24 h-9 rounded-lg font-bold"
+                                        />
+                                        {editError && (
+                                            <div className="absolute top-full left-0 mt-1 whitespace-nowrap text-[8px] text-rose-500 font-bold bg-white p-1 rounded border shadow-sm z-10">
+                                                {editError}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <Button onClick={handleUpdateLimit} size="sm" className="h-9 px-3 rounded-lg bg-emerald-500 hover:bg-emerald-600">Save</Button>
+                                    <Button onClick={() => { setEditingLimit(false); setEditError(null); }} variant="ghost" size="sm" className="h-9 px-3 rounded-lg text-rose-500">✕</Button>
+                                </div>
+                            ) : (
+                                <Button onClick={() => setEditingLimit(true)} variant="outline" size="sm" className="h-8 text-[10px] font-black uppercase tracking-widest px-3 border-2">Change</Button>
+                            )}
+                        </div>
+
                         <div className="flex justify-between text-sm">
                             <span className="text-muted-foreground">Current Savings</span>
                             <span className="font-black">${pet.savingsCurrent}</span>

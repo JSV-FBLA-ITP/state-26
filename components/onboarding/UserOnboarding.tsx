@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { validateCurrency } from '@/lib/validation';
 
 interface Props {
     householdName: string;
@@ -265,6 +266,9 @@ export function UserOnboarding({ householdName, onHouseholdChange, preselectedHo
                                                 className="h-11 rounded-xl border-2 pl-8 pr-4"
                                             />
                                         </div>
+                                        {!validateCurrency(monthlyIncome, "Income").isValid && monthlyIncome !== "" && (
+                                            <p className="text-[10px] text-rose-500 font-bold mt-1 ml-1 uppercase tracking-wider">Invalid Income Amount</p>
+                                        )}
                                     </div>
 
                                     <div className="space-y-3">
@@ -279,6 +283,9 @@ export function UserOnboarding({ householdName, onHouseholdChange, preselectedHo
                                                 className="h-11 rounded-xl border-2 pl-8 pr-4"
                                             />
                                         </div>
+                                        {!validateCurrency(monthlyExpenses, "Expenses").isValid && monthlyExpenses !== "" && (
+                                            <p className="text-[10px] text-rose-500 font-bold mt-1 ml-1 uppercase tracking-wider">Invalid Expense Amount</p>
+                                        )}
                                         <Button
                                             type="button"
                                             variant="outline"
