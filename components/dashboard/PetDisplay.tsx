@@ -46,18 +46,15 @@ export function PetDisplay({ pet, emotion, isGameOver }: Props) {
                             initial={{ scale: 0.8, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             transition={{ type: 'spring', damping: 20, stiffness: 100 }}
-                            className="w-full h-full flex items-center justify-center p-4 relative"
+                            className="w-full h-full flex items-center justify-center p-1.5 relative"
                         >
                             <Image 
                                 src={pet.petImage || '/favicon.svg'} 
                                 alt={pet.name} 
                                 fill 
-                                className={`object-contain transition-transform duration-700 hover:scale-110 ${isGameOver ? 'grayscale' : ''}`}
+                                className={`object-contain transition-transform duration-700 hover:scale-105 ${isGameOver ? 'grayscale' : ''}`}
                                 unoptimized
                             />
-                            
-                            {/* Decorative ambient light behind the image */}
-                            <div className="absolute inset-0 bg-radial-gradient(circle, rgba(var(--primary-rgb),0.05) 0%, transparent 70%) pointer-events-none" />
                         </motion.div>
                     </AnimatePresence>
                 </motion.div>

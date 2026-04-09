@@ -495,18 +495,18 @@ html {
 .game-topbar {
   align-items: center;
   justify-content: space-between;
-  padding: 0.8rem 1.75rem;
+  padding: 0.5rem 1.25rem;
   border-bottom: 1px solid oklch(0.5 0.08 260 / 0.12);
   background: var(--background);
   flex-shrink: 0;
   z-index: 2;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 @media (min-width: 1024px) {
   .game-topbar {
-    padding: 1rem 2.5rem;
-    gap: 1.5rem;
+    padding: 0.625rem 2rem;
+    gap: 1rem;
   }
 }
 
@@ -598,44 +598,44 @@ html {
 
 .pet-display-wrap {
   width: 100%;
-  max-width: 240px;
+  max-width: 320px;
   position: relative;
   z-index: 1;
 }
 
 @media (min-height: 700px) {
   .pet-display-wrap {
-    max-width: 280px;
+    max-width: 380px;
   }
 }
 
 @media (min-height: 850px) {
   .pet-display-wrap {
-    max-width: 320px;
+    max-width: 440px;
   }
 }
 
 @media (min-width: 640px) {
   .pet-display-wrap {
-    max-width: 300px;
+    max-width: 400px;
   }
 }
 
 @media (min-width: 768px) {
   .pet-display-wrap {
-    max-width: 320px;
+    max-width: 460px;
   }
 }
 
 @media (min-width: 1024px) {
   .pet-display-wrap {
-    max-width: 340px;
+    max-width: 520px;
   }
 }
 
 @media (min-width: 1280px) {
   .pet-display-wrap {
-    max-width: 380px;
+    max-width: 600px;
   }
 }
 
@@ -682,22 +682,22 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
+  gap: 0.75rem;
+  padding: 0.35rem 0.5rem;
   border-bottom: 1px solid oklch(0.5 0.08 260 / 0.08);
 }
 
 @media (min-width: 640px) {
   .stat-strip {
-    gap: 0.75rem;
-    padding: 0.625rem 1rem;
+    gap: 1.25rem;
+    padding: 0.5rem 1rem;
   }
 }
 
 @media (min-width: 1024px) {
   .stat-strip {
-    gap: 1rem;
-    padding: 0.75rem 1.25rem;
+    gap: 1.75rem;
+    padding: 0.625rem 1.25rem;
   }
 }
 
@@ -733,8 +733,8 @@ html {
 }
 
 .stat-strip-bar {
-  width: 50px;
-  height: 5px;
+  width: 70px;
+  height: 6px;
   border-radius: 9999px;
   background: oklch(0.25 0.03 260 / 0.5);
   overflow: hidden;
@@ -743,22 +743,22 @@ html {
 
 @media (min-width: 640px) {
   .stat-strip-bar {
-    width: 70px;
-    height: 7px;
+    width: 100px;
+    height: 8px;
   }
 }
 
 @media (min-width: 1024px) {
   .stat-strip-bar {
-    width: 90px;
-    height: 9px;
+    width: 140px;
+    height: 10px;
   }
 }
 
 @media (min-width: 1280px) {
   .stat-strip-bar {
-    width: 110px;
-    height: 10px;
+    width: 180px;
+    height: 12px;
   }
 }
 
@@ -774,8 +774,8 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem 0.5rem !important;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem 0.25rem !important;
   margin-bottom: 0 !important;
   flex-wrap: nowrap !important;
   overflow-x: auto;
@@ -783,21 +783,21 @@ html {
 
 @media (min-width: 640px) {
   .action-row {
-    gap: 0.75rem;
-    padding: 1rem 1.25rem 0.75rem !important;
+    gap: 1.25rem;
+    padding: 0.75rem 1.25rem 0.5rem !important;
   }
 }
 
 @media (min-width: 768px) {
   .action-row {
-    gap: 1rem;
+    gap: 1.5rem;
   }
 }
 
 @media (min-width: 1024px) {
   .action-row {
-    gap: 1.25rem;
-    padding: 1.25rem 1.5rem 1rem !important;
+    gap: 2rem;
+    padding: 1rem 1.5rem 0.75rem !important;
   }
 }
 
@@ -866,8 +866,8 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
+  gap: 0.75rem;
+  padding: 0.35rem 1rem;
   border-bottom: 1px solid oklch(0.5 0.08 260 / 0.12);
   background: var(--background);
   flex-shrink: 0;
@@ -875,8 +875,8 @@ html {
 
 @media (min-width: 1024px) {
   .mobile-tab-bar {
-    gap: 1rem;
-    padding: 0.75rem 2rem;
+    gap: 1.5rem;
+    padding: 0.5rem 2rem;
     border-top: 1px solid oklch(0.5 0.08 260 / 0.12);
     border-bottom: none;
   }

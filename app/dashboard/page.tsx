@@ -34,11 +34,11 @@ function StatItem({ icon: Icon, value, color }: { icon: LucideIcon; value: numbe
     const isLow = value < 30;
     return (
         <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg bg-muted/50 sm:bg-muted/30 backdrop-blur-sm">
-            <Icon className={cn("w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0", color, isLow && "animate-pulse")} />
-            <div className="hidden sm:block w-12 sm:w-16 h-1.5 sm:h-2 bg-muted rounded-full overflow-hidden">
+            <Icon className={cn("w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 shrink-0", color, isLow && "animate-pulse")} />
+            <div className="hidden sm:block w-16 sm:w-24 lg:w-32 h-2 sm:h-2.5 lg:h-3 bg-muted rounded-full overflow-hidden">
                 <div className={cn("h-full rounded-full transition-all duration-500", color)} style={{ width: `${value}%` }} />
             </div>
-            <span className={cn("text-[10px] sm:text-xs font-black tabular-nums w-4 sm:w-10 text-right", isLow ? "text-rose-500" : "text-muted-foreground")}>
+            <span className={cn("text-xs sm:text-sm lg:text-base font-black tabular-nums w-4 sm:w-12 text-right", isLow ? "text-rose-500" : "text-muted-foreground")}>
                 {value}
             </span>
         </div>
@@ -60,15 +60,15 @@ function ActionButton({ label, cost, icon: Icon, color, onClick }: { action: str
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className={cn(
-                "flex flex-col items-center justify-center gap-1 px-2 sm:px-3 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl border transition-all duration-200 min-w-[50px] sm:min-w-[70px] lg:min-w-[80px]",
+                "flex flex-col items-center justify-center gap-1.5 px-3 py-3 sm:px-4 sm:py-4 rounded-2xl sm:rounded-3xl border-2 transition-all duration-200 min-w-[70px] sm:min-w-[100px] lg:min-w-[130px]",
                 active
                     ? `${color}/20 border-current`
                     : `bg-muted/30 hover:bg-muted/50 border-border/50`
             )}
         >
-            <Icon className={cn("w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7", color)} />
-            <span className="text-[9px] sm:text-[10px] lg:text-xs font-bold uppercase tracking-wide">{label}</span>
-            <span className={cn("text-[8px] sm:text-[9px] lg:text-[10px] font-black", color)}>${cost}</span>
+            <Icon className={cn("w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10", color)} />
+            <span className="text-[10px] sm:text-xs lg:text-sm font-black uppercase tracking-wide">{label}</span>
+            <span className={cn("text-[9px] sm:text-[10px] lg:text-xs font-black", color)}>${cost}</span>
         </motion.button>
     );
 }
@@ -440,9 +440,9 @@ export default function DashboardPage() {
                                     className="flex flex-col h-full w-full"
                                 >
                                     {/* Pet Display Area - Centered */}
-                                    <div className="flex-1 flex flex-col items-center justify-center relative overflow-hidden min-h-0 py-2 sm:py-4">
+                                    <div className="flex-1 flex flex-col items-center justify-center relative overflow-hidden min-h-0 py-1 sm:py-2">
                                         <div className="pet-zone-glow" aria-hidden />
-                                        <div className="w-full max-w-[140px] sm:max-w-[180px] md:max-w-[220px] lg:max-w-[280px] relative z-1">
+                                        <div className="pet-display-wrap">
                                             <PetDisplay pet={pet} emotion={emotion} isGameOver={gameOver} />
                                         </div>
 
@@ -470,7 +470,7 @@ export default function DashboardPage() {
                                     {showGameUI && (
                                         <div className="shrink-0 bg-card/95 backdrop-blur-xl border-t border-border/30">
                                             {/* Stats Bar */}
-                                            <div className="flex items-center justify-center gap-2 sm:gap-3 lg:gap-4 px-3 sm:px-4 py-1.5 sm:py-2 border-b border-border/10">
+                                            <div className="flex items-center justify-center gap-2 sm:gap-3 lg:gap-4 px-3 sm:px-4 py-1 sm:py-1.5 border-b border-border/10">
                                                 <StatItem icon={Utensils} value={pet.stats.hunger} color="bg-orange-500" />
                                                 <StatItem icon={Heart} value={pet.stats.happy} color="bg-emerald-500" />
                                                 <StatItem icon={Zap} value={pet.stats.energy} color="bg-sky-400" />
@@ -478,7 +478,7 @@ export default function DashboardPage() {
                                             </div>
 
                                             {/* Action Buttons */}
-                                            <div className="flex items-center justify-center gap-2 sm:gap-3 lg:gap-4 px-3 sm:px-4 py-2 sm:py-2.5">
+                                            <div className="flex items-center justify-center gap-2 sm:gap-3 lg:gap-4 px-3 sm:px-4 py-1.5 sm:py-2">
                                                 <ActionButton action="feed" label="Feed" cost={5} icon={Utensils} color="text-orange-500" onClick={() => handleAction('feed')} />
                                                 <ActionButton action="play" label="Play" cost={8} icon={Heart} color="text-emerald-500" onClick={() => handleAction('play')} />
                                                 <ActionButton action="sleep" label="Sleep" cost={6} icon={Moon} color="text-indigo-500" onClick={() => handleAction('sleep')} />
@@ -578,7 +578,7 @@ export default function DashboardPage() {
                     </div>
 
                     {/* Unified Tab Bar */}
-                    <div className="mobile-tab-bar overflow-x-auto gap-3 sm:gap-4 lg:gap-5 py-2 sm:py-3 px-4 sm:px-6 lg:px-8 scrollbar-hide justify-center shrink-0">
+                    <div className="mobile-tab-bar overflow-x-auto gap-3 sm:gap-4 lg:gap-5 py-1.5 sm:py-2 px-4 sm:px-6 lg:px-8 scrollbar-hide justify-center shrink-0">
                         {[
                             { id: 'shop', label: 'Shop', icon: Store },
                             { id: 'quiz', label: 'Quiz', icon: BrainCircuit },
@@ -596,25 +596,25 @@ export default function DashboardPage() {
                                     whileHover={{ y: -2, scale: 1.02 }}
                                     whileTap={{ scale: 0.96 }}
                                     className={cn(
-                                        "group relative flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-2xl sm:rounded-2xl border-[1.5px] transition-all duration-200 shrink-0",
+                                        "group relative flex items-center gap-2.5 px-4 py-2.5 sm:px-6 sm:py-3.5 rounded-2xl sm:rounded-3xl border-2 transition-all duration-200 shrink-0",
                                         isActive
                                             ? `${colors.activeBg} shadow-lg ${colors.glow}`
                                             : `${colors.bg} hover:border-white/10 text-transparent`
                                     )}
                                 >
                                     <div className={cn(
-                                        "flex sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-none sm:rounded-2xl items-center justify-center transition-all duration-200",
+                                        "flex sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-none sm:rounded-2xl items-center justify-center transition-all duration-200",
                                         isActive
                                             ? 'bg-transparent sm:bg-white/20 text-white'
                                             : `bg-transparent sm:bg-white/5 ${colors.text}`
                                     )}>
                                         <Icon className={cn(
-                                            "w-5 h-5 sm:w-5 sm:h-5 transition-transform duration-200",
+                                            "w-6 h-6 sm:w-6 sm:h-6 transition-transform duration-200",
                                             isActive && "scale-110"
                                         )} />
                                     </div>
                                     <span className={cn(
-                                        "text-[10px] sm:text-xs lg:text-sm font-black uppercase tracking-widest transition-colors pr-1 hidden sm:block",
+                                        "text-xs sm:text-sm lg:text-base font-black uppercase tracking-widest transition-colors pr-1 hidden sm:block",
                                         isActive ? 'text-white' : 'text-foreground/70'
                                     )}>
                                         {tab.label}
