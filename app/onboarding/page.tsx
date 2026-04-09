@@ -15,7 +15,7 @@
  * 
  * Logic Highlights:
  * - Starting capital calculation based on user-provided income/expenses.
- * - Dynamic 3D model state initialization (age, stats, budget limits).
+ * - Dynamic pet state initialization (age, stats, budget limits).
  * - Guest mode vs Cloud sync handling for data persistence using Supabase.
  */
 

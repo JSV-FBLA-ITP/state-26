@@ -12,7 +12,7 @@
  * 
  * FBLA Competitive Requirements addressed:
  * - Interactive Virtual Pet caring logic.
- * - Dynamic 3D visual feedback system.
+ * - Dynamic visual feedback system.
  * - Budgeting and Financial Responsibility (alert systems and expense categorization).
  * - Multi-pet support logic.
  */

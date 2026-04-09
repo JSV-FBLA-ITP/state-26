@@ -12,11 +12,10 @@
  * 3. Responsive Framing: Optimized aspect ratios to ensure the pet remains fixed and legible on all screen sizes.
  */
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { PetData, EmotionData } from '@/lib/gameLogic';
 import Image from 'next/image';
 import * as Icons from 'lucide-react';
-import { Pet3DView } from './Pet3DView';
 
 interface Props {
     pet: PetData;
@@ -41,11 +40,26 @@ export function PetDisplay({ pet, emotion, isGameOver }: Props) {
                 <motion.div
                     className={`relative w-full h-full rounded-[2rem] overflow-hidden border-[3px] shadow-2xl bg-gradient-to-b from-white to-slate-50 dark:from-slate-900 dark:to-card transition-all duration-300 ${isGameOver ? 'border-rose-500/60 grayscale' : 'border-white/80 dark:border-white/20'}`}
                 >
-                    <Pet3DView 
-                        stats={pet.stats} 
-                        age={pet.age} 
-                        isGameOver={isGameOver} 
-                    />
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={pet.petImage}
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ type: 'spring', damping: 20, stiffness: 100 }}
+                            className="w-full h-full flex items-center justify-center p-4 relative"
+                        >
+                            <Image 
+                                src={pet.petImage || '/favicon.svg'} 
+                                alt={pet.name} 
+                                fill 
+                                className={`object-contain transition-transform duration-700 hover:scale-110 ${isGameOver ? 'grayscale' : ''}`}
+                                unoptimized
+                            />
+                            
+                            {/* Decorative ambient light behind the image */}
+                            <div className="absolute inset-0 bg-radial-gradient(circle, rgba(var(--primary-rgb),0.05) 0%, transparent 70%) pointer-events-none" />
+                        </motion.div>
+                    </AnimatePresence>
                 </motion.div>
             </div>
 

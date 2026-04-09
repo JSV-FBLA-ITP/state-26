@@ -7,14 +7,14 @@
  * Designed for the FBLA 2025-2026 Competitive Event (Introduction to Programming).
  * 
  * Features:
- * - Dynamic Hero Section with interactive 3D elements.
+ * - Dynamic Hero Section with premium visual elements.
  * - Value Proposition highlight (Financial Literacy + Pet Care).
  * - Multi-section layout (Features, Why PetPal, How it Works, FAQ).
  * - Real-time pet status check for returning users using Supabase storage logic.
  * 
  * Technical Highlights:
  * - Framer Motion for smooth entrances and scroll-triggered animations.
- * - Three.js (via HeroCanvas) for premium visual engagement.
+ * - High-fidelity pet visuals with dynamic state-based feedback.
  * - Responsive design architecture for desktop and mobile devices.
  */
 
@@ -75,7 +75,7 @@ const whyPetPal = [
         color: '#8B5CF6',
         title: 'Learn Finance Through Play',
         reasons: [
-            'Care for a 3D virtual pet as you learn',
+            'Care for your virtual pet as you learn',
             'Earn rewards for completing lessons',
             'Fun mini-games that teach real concepts',
             'Progress tracking that keeps you hooked',
