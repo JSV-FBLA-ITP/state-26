@@ -1,61 +1,187 @@
 'use client';
+
+import { Suspense } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { Environment, ContactShadows } from '@react-three/drei';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
+import * as THREE from 'three';
+import { useRef, useMemo } from 'react';
+import { useFrame } from '@react-three/fiber';
+
+function HeroDog() {
+    const groupRef = useRef<THREE.Group>(null);
+    const tailRef = useRef<THREE.Mesh>(null);
+    const headGroupRef = useRef<THREE.Group>(null);
+
+    const mouseRef = useRef({ x: 0, y: 0 });
+
+    useFrame((state) => {
+        const { x, y } = mouseRef.current;
+
+        if (tailRef.current) {
+            tailRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 10) * 0.4;
+        }
+
+        if (groupRef.current) {
+            groupRef.current.position.y = Math.sin(state.clock.elapsedTime * 1.5) * 0.1;
+            groupRef.current.scale.setScalar(1);
+
+            const targetBodyX = (x * Math.PI) / 4;
+            groupRef.current.rotation.y = THREE.MathUtils.lerp(
+                groupRef.current.rotation.y,
+                targetBodyX * 0.3,
+                0.06
+            );
+
+            if (headGroupRef.current) {
+                headGroupRef.current.rotation.x = THREE.MathUtils.lerp(
+                    headGroupRef.current.rotation.x,
+                    -(y * Math.PI) / 5,
+                    0.08
+                );
+                headGroupRef.current.rotation.y = THREE.MathUtils.lerp(
+                    headGroupRef.current.rotation.y,
+                    targetBodyX * 0.8,
+                    0.08
+                );
+            }
+        }
+    });
+
+    const furMaterial = useMemo(() => new THREE.MeshStandardMaterial({
+        color: '#D4A373',
+        roughness: 0.9,
+    }), []);
+
+    const darkFurMaterial = useMemo(() => new THREE.MeshStandardMaterial({
+        color: '#A87B51',
+        roughness: 0.9,
+    }), []);
+
+    const blackMaterial = useMemo(() => new THREE.MeshStandardMaterial({
+        color: '#1A1A1A',
+        roughness: 0.5,
+    }), []);
+
+    const whiteMaterial = useMemo(() => new THREE.MeshStandardMaterial({
+        color: '#FAFAFA',
+        roughness: 0.9,
+    }), []);
+
+    return (
+        <group ref={groupRef} dispose={null} position={[0, 0, 0]}>
+            <mesh position={[0, 0, -0.2]} material={furMaterial}>
+                <boxGeometry args={[0.7, 0.7, 1.4]} />
+            </mesh>
+
+            <mesh position={[0, -0.1, 0.51]} material={whiteMaterial}>
+                <boxGeometry args={[0.4, 0.5, 0.05]} />
+            </mesh>
+
+            <group ref={headGroupRef} position={[0, 0.4, 0.5]}>
+                <mesh position={[0, -0.15, -0.1]} material={furMaterial}>
+                    <boxGeometry args={[0.4, 0.4, 0.4]} />
+                </mesh>
+
+                <mesh position={[0, 0.2, 0]} material={furMaterial}>
+                    <boxGeometry args={[0.6, 0.6, 0.6]} />
+                </mesh>
+
+                <mesh position={[0, 0, 0.4]} material={whiteMaterial}>
+                    <boxGeometry args={[0.3, 0.25, 0.3]} />
+                </mesh>
+
+                <mesh position={[0, 0.15, 0.55]} material={blackMaterial}>
+                    <boxGeometry args={[0.12, 0.08, 0.08]} />
+                </mesh>
+
+                <mesh position={[-0.15, 0.3, 0.31]} material={blackMaterial}>
+                    <boxGeometry args={[0.08, 0.08, 0.08]} />
+                </mesh>
+
+                <mesh position={[0.15, 0.3, 0.31]} material={blackMaterial}>
+                    <boxGeometry args={[0.08, 0.08, 0.08]} />
+                </mesh>
+
+                <mesh position={[-0.35, 0.2, -0.1]} rotation={[0, 0, 0.2]} material={darkFurMaterial}>
+                    <boxGeometry args={[0.12, 0.4, 0.3]} />
+                </mesh>
+
+                <mesh position={[0.35, 0.2, -0.1]} rotation={[0, 0, -0.2]} material={darkFurMaterial}>
+                    <boxGeometry args={[0.12, 0.4, 0.3]} />
+                </mesh>
+            </group>
+
+            <mesh position={[-0.2, -0.6, 0.3]} material={furMaterial}>
+                <boxGeometry args={[0.18, 0.6, 0.18]} />
+            </mesh>
+            <mesh position={[-0.2, -0.9, 0.33]} material={whiteMaterial}>
+                <boxGeometry args={[0.2, 0.1, 0.22]} />
+            </mesh>
+
+            <mesh position={[0.2, -0.6, 0.3]} material={furMaterial}>
+                <boxGeometry args={[0.18, 0.6, 0.18]} />
+            </mesh>
+            <mesh position={[0.2, -0.9, 0.33]} material={whiteMaterial}>
+                <boxGeometry args={[0.2, 0.1, 0.22]} />
+            </mesh>
+
+            <mesh position={[-0.2, -0.6, -0.7]} material={furMaterial}>
+                <boxGeometry args={[0.18, 0.6, 0.18]} />
+            </mesh>
+            <mesh position={[-0.2, -0.9, -0.67]} material={furMaterial}>
+                <boxGeometry args={[0.2, 0.1, 0.22]} />
+            </mesh>
+
+            <mesh position={[0.2, -0.6, -0.7]} material={furMaterial}>
+                <boxGeometry args={[0.18, 0.6, 0.18]} />
+            </mesh>
+            <mesh position={[0.2, -0.9, -0.67]} material={furMaterial}>
+                <boxGeometry args={[0.2, 0.1, 0.22]} />
+            </mesh>
+
+            <group position={[0, 0.2, -0.8]}>
+                <mesh ref={tailRef} position={[0, 0.2, -0.15]} rotation={[-Math.PI / 4, 0, 0]} material={darkFurMaterial}>
+                    <boxGeometry args={[0.1, 0.5, 0.1]} />
+                </mesh>
+            </group>
+        </group>
+    );
+}
+
+function Scene() {
+    return (
+        <>
+            <ambientLight intensity={0.6} />
+            <spotLight position={[5, 5, 5]} angle={0.3} penumbra={1} intensity={1.2} />
+            <pointLight position={[-5, 3, 0]} intensity={0.4} />
+            
+            <Suspense fallback={null}>
+                <HeroDog />
+                <ContactShadows 
+                    position={[0, -1.2, 0]} 
+                    opacity={0.3} 
+                    scale={8} 
+                    blur={2} 
+                    far={4} 
+                />
+            </Suspense>
+        </>
+    );
+}
 
 export function HeroCanvas() {
     return (
-        <div className="w-full h-full min-h-[500px] md:min-h-[700px] relative z-10 flex items-center justify-center">
-            <motion.div
-                initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                animate={{ 
-                    opacity: 1, 
-                    scale: 1, 
-                    y: [0, -20, 0],
-                }}
-                transition={{ 
-                    opacity: { duration: 1 },
-                    scale: { duration: 1 },
-                    y: { 
-                        duration: 4, 
-                        repeat: Infinity, 
-                        ease: "easeInOut" 
-                    }
-                }}
-                className="relative w-full aspect-square max-w-[500px]"
+        <div className="w-full h-full min-h-[400px] md:min-h-[600px] relative z-10">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/50" />
+            <Canvas 
+                shadows 
+                gl={{ antialias: true, alpha: true }}
+                camera={{ position: [0, 0.5, 5], fov: 45 }}
+                style={{ background: 'transparent' }}
             >
-                {/* Background Glow */}
-                <div className="absolute inset-0 bg-primary/20 rounded-full blur-[100px] animate-pulse" />
-                
-                <div className="relative w-full h-full rounded-[3rem] overflow-hidden border-8 border-white shadow-2xl bg-white/50 backdrop-blur-sm">
-                    <Image 
-                        src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=1000" 
-                        alt="Hero Pet" 
-                        fill 
-                        className="object-cover"
-                        unoptimized
-                    />
-                </div>
-
-                {/* Decorative floating elements */}
-                <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                    className="absolute -top-10 -right-10 w-24 h-24 border-2 border-dashed border-primary/30 rounded-full flex items-center justify-center"
-                >
-                    <div className="w-4 h-4 bg-primary rounded-full" />
-                </motion.div>
-                
-                <motion.div
-                    animate={{ y: [0, 15, 0] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute -bottom-5 -left-5 bg-white p-4 rounded-2xl shadow-xl border border-border"
-                >
-                    <div className="flex items-center gap-3">
-                        <div className="w-3 h-3 bg-green-500 rounded-full" />
-                        <span className="text-sm font-black uppercase tracking-wider">Healthy & Happy</span>
-                    </div>
-                </motion.div>
-            </motion.div>
+                <Scene />
+            </Canvas>
         </div>
     );
 }
