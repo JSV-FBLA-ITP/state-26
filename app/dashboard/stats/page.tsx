@@ -29,7 +29,8 @@ import {
     Wallet,
     Target,
     History,
-    Award
+    Award,
+    Download
 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
@@ -61,6 +62,37 @@ export default function StatsPage() {
         });
         return counts;
     }, [expenses]);
+
+    const expensesPerMonth = useMemo(() => {
+        const grouped: Record<string, any[]> = {};
+        expenses.forEach(exp => {
+            const date = new Date(exp.created_at);
+            const monthYear = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+            if (!grouped[monthYear]) grouped[monthYear] = [];
+            grouped[monthYear].push(exp);
+        });
+        return grouped;
+    }, [expenses]);
+
+    const downloadCSV = () => {
+        const headers = ["Date", "Item", "Category", "Cost ($)"];
+        const rows = expenses.map(e => [
+            new Date(e.created_at).toLocaleDateString(),
+            `"${e.item.replace(/"/g, '""')}"`,
+            `"${(e.category || 'Maintenance').replace(/"/g, '""')}"`,
+            e.cost
+        ]);
+        const csvContent = "data:text/csv;charset=utf-8," 
+            + headers.join(",") + "\n" 
+            + rows.map(e => e.join(",")).join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `${pet?.name || 'pet'}_expenses.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
 
     if (loading) return (
         <div className="flex items-center justify-center min-h-[60vh]">
@@ -193,6 +225,25 @@ export default function StatsPage() {
                             )}
                         </div>
                     </div>
+
+                    {/* Interactions List */}
+                    <div className="p-6 rounded-2xl bg-card border border-border/50">
+                        <div className="flex items-center gap-2 mb-4">
+                            <Award className="w-5 h-5 text-primary" />
+                            <span className="text-primary font-bold">This Month's Interactions</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                            {Object.entries(pet?.monthData?.actionsCompleted || {}).map(([action, count]) => (
+                                <div key={action} className="flex justify-between items-center bg-muted/50 p-3 rounded-lg text-sm">
+                                    <span className="capitalize text-muted-foreground">{action}</span>
+                                    <span className="font-bold">{count as number}</span>
+                                </div>
+                            ))}
+                            {(!pet?.monthData?.actionsCompleted || Object.keys(pet.monthData.actionsCompleted).length === 0) && (
+                                <p className="text-xs text-muted-foreground col-span-2 text-center py-2">No interactions recorded this month.</p>
+                            )}
+                        </div>
+                    </div>
                 </div>
 
                 {/* Transaction List */}
@@ -202,7 +253,13 @@ export default function StatsPage() {
                             <ReceiptText className="w-5 h-5 text-foreground" />
                             Ledger & Transactions
                         </h2>
-                        <span className="text-xs text-muted-foreground font-semibold bg-muted/50 px-3 py-1 rounded-full">{expenses.length} records</span>
+                        <div className="flex items-center gap-3">
+                            <span className="text-xs text-muted-foreground font-semibold bg-muted/50 px-3 py-1 rounded-full">{expenses.length} records</span>
+                            <button onClick={downloadCSV} className="flex items-center gap-1.5 text-xs bg-primary text-primary-foreground px-3 py-1.5 rounded-full font-bold hover:bg-primary/90 transition-colors">
+                                <Download className="w-3.5 h-3.5" />
+                                Export CSV
+                            </button>
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
@@ -213,7 +270,7 @@ export default function StatsPage() {
                                 <div className="w-full h-1 bg-muted rounded-full mt-2 overflow-hidden">
                                     <div 
                                         className="h-full bg-primary" 
-                                        style={{ width: `${Math.min(100, (amount / Math.max(1, totalSpent)) * 100)}%` }} 
+                                        style={{ width: `${Math.min(100, (amount as number / Math.max(1, totalSpent)) * 100)}%` }} 
                                     />
                                 </div>
                             </div>
@@ -227,34 +284,39 @@ export default function StatsPage() {
                             <p className="text-sm text-muted-foreground mt-1">Shop upgrades and purchases will appear here.</p>
                         </div>
                     ) : (
-                        <div className="space-y-3">
-                            {expenses.map((exp, i) => (
-                                <motion.div
-                                    key={exp.id}
-                                    initial={{ opacity: 0, x: -16 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: i * 0.04 }}
-                                    className="bg-card border border-border/50 rounded-2xl px-5 py-4 flex items-center justify-between hover:border-rose-500/30 transition-all group"
-                                >
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
-                                            <ArrowUpRight className="w-5 h-5 text-rose-500" />
-                                        </div>
-                                        <div>
-                                            <p className="font-bold">{exp.item}</p>
-                                            <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
-                                                <Calendar className="w-3 h-3" />
-                                                {new Date(exp.created_at).toLocaleDateString()}
-                                                <span className="w-1 h-1 rounded-full bg-border inline-block" />
-                                                {exp.category || 'Maintenance'}
+                        <div className="space-y-6">
+                            {Object.entries(expensesPerMonth).map(([month, monthExps]) => (
+                                <div key={month} className="space-y-3">
+                                    <h3 className="font-bold text-sm text-muted-foreground px-1 border-b border-border/50 pb-2">{month}</h3>
+                                    {monthExps.map((exp: any, i: number) => (
+                                        <motion.div
+                                            key={exp.id || i}
+                                            initial={{ opacity: 0, x: -16 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: i * 0.04 }}
+                                            className="bg-card border border-border/50 rounded-2xl px-5 py-4 flex items-center justify-between hover:border-rose-500/30 transition-all group"
+                                        >
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
+                                                    <ArrowUpRight className="w-5 h-5 text-rose-500" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-bold">{exp.item}</p>
+                                                    <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
+                                                        <Calendar className="w-3 h-3" />
+                                                        {new Date(exp.created_at).toLocaleDateString()}
+                                                        <span className="w-1 h-1 rounded-full bg-border inline-block" />
+                                                        {exp.category || 'Maintenance'}
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div className="text-right shrink-0 ml-2">
-                                        <p className="text-lg font-black text-rose-500">-${exp.cost}</p>
-                                        <p className="text-[9px] uppercase font-bold tracking-widest text-muted-foreground mt-0.5">Settled</p>
-                                    </div>
-                                </motion.div>
+                                            <div className="text-right shrink-0 ml-2">
+                                                <p className="text-lg font-black text-rose-500">-${exp.cost}</p>
+                                                <p className="text-[9px] uppercase font-bold tracking-widest text-muted-foreground mt-0.5">Settled</p>
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
                             ))}
                         </div>
                     )}
