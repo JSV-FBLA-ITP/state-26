@@ -82,7 +82,10 @@ export function ChatbaseWidget() {
   }, []);
 
   const handleChatClick = async () => {
-    if (!isAuthenticated) {
+    const supabase = createClient();
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
       setShowAuthModal(true);
       return;
     }
@@ -128,6 +131,10 @@ export function ChatbaseWidget() {
       }
     }
   }, [isAuthenticated, loadChatbase]);
+
+  if (isAuthenticated) {
+    return null;
+  }
 
   return (
     <>

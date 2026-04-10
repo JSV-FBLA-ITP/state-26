@@ -65,7 +65,7 @@ export default function LoginPage() {
                     email,
                     password,
                     options: {
-                        emailRedirectTo: `${window.location.origin}/auth/callback`,
+                        emailRedirectTo: `https://petpal.dev/auth/callback`,
                     },
                 });
                 if (signUpError) throw signUpError;
@@ -91,7 +91,7 @@ export default function LoginPage() {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider,
                 options: {
-                    redirectTo: `${window.location.origin}/auth/callback`,
+                    redirectTo: `https://petpal.dev/auth/callback`,
                     queryParams: provider === 'google' ? {
                         access_type: 'offline',
                         prompt: 'select_account',
