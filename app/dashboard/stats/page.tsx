@@ -82,8 +82,8 @@ export default function StatsPage() {
             `"${(e.category || 'Maintenance').replace(/"/g, '""')}"`,
             e.cost
         ]);
-        const csvContent = "data:text/csv;charset=utf-8," 
-            + headers.join(",") + "\n" 
+        const csvContent = "data:text/csv;charset=utf-8,"
+            + headers.join(",") + "\n"
             + rows.map(e => e.join(",")).join("\n");
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
@@ -197,9 +197,9 @@ export default function StatsPage() {
                                 <span className="text-rose-500/70">Expenditure</span>
                                 <span className="font-black text-rose-500">${totalSpent}</span>
                             </div>
-                            <Progress 
-                                value={Math.min(100, (totalSpent / (pet?.budgetLimit || 500)) * 100)} 
-                                className="h-4 bg-rose-500/20" 
+                            <Progress
+                                value={Math.min(100, (totalSpent / (pet?.budgetLimit || 500)) * 100)}
+                                className="h-4 bg-rose-500/20"
                             />
                             <p className="text-[10px] text-center text-rose-500/70 uppercase font-bold tracking-widest">
                                 {totalSpent > (pet?.budgetLimit || 500) ? 'OVER BUDGET!' : `${Math.floor(100 - (totalSpent / (pet?.budgetLimit || 500) * 100))}% safe margin`}
@@ -208,7 +208,7 @@ export default function StatsPage() {
                     </div>
 
                     {/* Learned Tricks */}
-                    <div className="p-6 rounded-2xl bg-indigo-500/10 border border-indigo-500/20">
+                    {/* <div className="p-6 rounded-2xl bg-indigo-500/10 border border-indigo-500/20">
                         <div className="flex items-center gap-2 mb-4">
                             <History className="w-5 h-5 text-indigo-500" />
                             <span className="text-indigo-500 font-bold">Evolution History</span>
@@ -224,7 +224,7 @@ export default function StatsPage() {
                                 <p className="text-sm text-indigo-500/60 w-full text-center py-4 border-2 border-dashed border-indigo-500/20 rounded-xl">No evolution traits yet.</p>
                             )}
                         </div>
-                    </div>
+                    </div> */}
 
                     {/* Interactions List */}
                     <div className="p-6 rounded-2xl bg-card border border-border/50">
@@ -268,9 +268,9 @@ export default function StatsPage() {
                                 <p className="text-[10px] font-black uppercase text-muted-foreground tracking-tighter mb-1">{cat}</p>
                                 <p className="font-bold text-sm">${amount}</p>
                                 <div className="w-full h-1 bg-muted rounded-full mt-2 overflow-hidden">
-                                    <div 
-                                        className="h-full bg-primary" 
-                                        style={{ width: `${Math.min(100, (amount as number / Math.max(1, totalSpent)) * 100)}%` }} 
+                                    <div
+                                        className="h-full bg-primary"
+                                        style={{ width: `${Math.min(100, (amount as number / Math.max(1, totalSpent)) * 100)}%` }}
                                     />
                                 </div>
                             </div>
